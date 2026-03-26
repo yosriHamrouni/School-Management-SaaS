@@ -10,6 +10,9 @@ export function UserInfo({
     showEmail?: boolean;
 }) {
     const getInitials = useInitials();
+    const establishmentName = user.establishment?.name;
+    const roleNames = user.roles?.map((role) => role.name).join(', ');
+    const userMeta = [establishmentName, roleNames].filter(Boolean).join(' | ');
 
     return (
         <>
@@ -24,6 +27,11 @@ export function UserInfo({
                 {showEmail && (
                     <span className="truncate text-xs text-muted-foreground">
                         {user.email}
+                    </span>
+                )}
+                {userMeta && (
+                    <span className="truncate text-xs text-muted-foreground">
+                        {userMeta}
                     </span>
                 )}
             </div>

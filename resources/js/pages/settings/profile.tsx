@@ -28,6 +28,11 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage().props;
+    const establishmentName =
+        auth.user.establishment?.name ?? 'Aucun etablissement assigne';
+    const roleNames =
+        auth.user.roles?.map((role) => role.name).join(', ') ??
+        'Aucun role assigne';
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -88,6 +93,32 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.email}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="establishment">
+                                        Establishment
+                                    </Label>
+
+                                    <Input
+                                        id="establishment"
+                                        className="mt-1 block w-full"
+                                        value={establishmentName}
+                                        disabled
+                                        readOnly
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="roles">Role(s)</Label>
+
+                                    <Input
+                                        id="roles"
+                                        className="mt-1 block w-full"
+                                        value={roleNames}
+                                        disabled
+                                        readOnly
                                     />
                                 </div>
 
