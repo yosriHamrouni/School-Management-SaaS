@@ -27,4 +27,59 @@ class Establishment extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function academicYears(): HasMany
+    {
+        return $this->hasMany(AcademicYear::class);
+    }
+
+    public function levels(): HasMany
+    {
+        return $this->hasMany(Level::class);
+    }
+
+    public function classes(): HasMany
+    {
+        return $this->hasMany(SchoolClass::class, 'establishment_id');
+    }
+
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(Subject::class);
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function terms(): HasMany
+    {
+        return $this->hasMany(Term::class);
+    }
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function assignmentSubmissions(): HasMany
+    {
+        return $this->hasMany(AssignmentSubmission::class);
+    }
 }

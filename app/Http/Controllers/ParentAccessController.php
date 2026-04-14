@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Pipeline;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
+use Laravel\Fortify\Actions\AttemptToAuthenticate;
+use Laravel\Fortify\Actions\CanonicalizeUsername;
+use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
+use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
+use Laravel\Fortify\Contracts\RedirectsIfTwoFactorAuthenticatable;
+use Laravel\Fortify\Features;
+use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Http\Requests\LoginRequest;
+
+class ParentAccessController extends Controller
+{
+    public function __construct(
+        private readonly StatefulGuard $guard,
+    ) {
+    }
+
+    public function create(Request $request): Response
+    {
+        return Inertia::render('ParentAccess', [
+            'canResetPassword' => Features::enabled(Features::resetPasswords()),
+            'status' => $request->session()->get('status'),
+        ]);
+    }
+
+    public function store(LoginRequest $request)
+    {
+        $this->ensureParentAccount($request);
+
+        return $this->loginPipeline($request)->then(function (LoginRequest $request) {
+            $user = $request->user();
+
+            if (! $user || ! $user->hasRole('parent')) {
+                $this->guard->logout();
+
+                if ($request->hasSession()) {
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                }
+
+                throw ValidationException::withMessages([
+                    Fortify::username() => ['Cet espace est reserve aux parents.'],
+                ]);
+            }
+
+            return redirect()->intended(route('dashboard', absolute: false));
+        });
+    }
+
+    private function ensureParentAccount(LoginRequest $request): void
+    {
+        $provider = $this->guard->getProvider();
+        $credentials = $request->only(Fortify::username(), 'password');
+        $user = $provider->retrieveByCredentials($credentials);
+
+        if (! $user || ! $provider->validateCredentials($user, ['password' => $request->password])) {
+            return;
+        }
+
+        if (! method_exists($user, 'hasRole') || ! $user->hasRole('parent')) {
+            throw ValidationException::withMessages([
+                Fortify::username() => ['Cet espace est reserve aux parents.'],
+            ]);
+        }
+    }
+
+    private function loginPipeline(LoginRequest $request): Pipeline
+    {
+        return (new Pipeline(app()))->send($request)->through(array_filter([
+            config('fortify.limiters.login') ? null : EnsureLoginIsNotThrottled::class,
+            config('fortify.lowercase_usernames') ? CanonicalizeUsername::class : null,
+            Features::enabled(Features::twoFactorAuthentication()) ? RedirectsIfTwoFactorAuthenticatable::class : null,
+            AttemptToAuthenticate::class,
+            PrepareAuthenticatedSession::class,
+        ]));
+    }
+}

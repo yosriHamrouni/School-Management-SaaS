@@ -1,7 +1,37 @@
-import { FormEvent, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    InputAdornment,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
+    Typography,
+} from '@mui/material';
+import { useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
+import FlashAlerts from '@/components/ui/flash-alerts';
+import PageHeader from '@/components/ui/page-header';
+import StatCard from '@/components/ui/stat-card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -57,6 +87,12 @@ export default function EstablishmentsIndex({
 }: PageProps) {
     const { flash } = usePage<PageProps>().props;
     const [search, setSearch] = useState(filters.search ?? '');
+    const [deleteTarget, setDeleteTarget] = useState<EstablishmentRow | null>(null);
+
+    const activeCount = useMemo(
+        () => establishments.data.filter((item) => item.is_active).length,
+        [establishments.data],
+    );
 
     const submitSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -68,16 +104,6 @@ export default function EstablishmentsIndex({
         );
     };
 
-    const handleDelete = (id: number) => {
-        if (!window.confirm('Delete this establishment?')) {
-            return;
-        }
-
-        router.delete(`/platform-admin/establishments/${id}`, {
-            preserveScroll: true,
-        });
-    };
-
     const handleToggleStatus = (id: number) => {
         router.patch(
             `/platform-admin/establishments/${id}/toggle-status`,
@@ -86,54 +112,101 @@ export default function EstablishmentsIndex({
         );
     };
 
+    const stats = [
+        {
+            label: 'Visible rows',
+            value: `${establishments.data.length}`,
+            caption: 'Current page of tenant records',
+            color: 'primary' as const,
+            icon: <SearchRoundedIcon />,
+        },
+        {
+            label: 'Active',
+            value: `${activeCount}`,
+            caption: 'Establishments currently enabled',
+            color: 'success' as const,
+            icon: <SwapHorizRoundedIcon />,
+        },
+        {
+            label: 'Filtered by',
+            value: search ? 'Search' : 'All',
+            caption: search || 'No search filter applied',
+            color: 'secondary' as const,
+            icon: <VisibilityRoundedIcon />,
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Establishments" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-center md:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-semibold">Establishments</h1>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            Manage the establishments accessible to the platform.
-                        </p>
-                    </div>
-
-                    <Button asChild>
-                        <Link href="/platform-admin/establishments/create">
+            <Stack spacing={3}>
+                <PageHeader
+                    eyebrow="Platform administration"
+                    title="Establishments"
+                    description="Manage tenant establishments without changing the existing backend workflows. Search, review status and open create or edit flows from the same management view."
+                    actions={
+                        <Button
+                            component={Link}
+                            href="/platform-admin/establishments/create"
+                            variant="contained"
+                            startIcon={<AddRoundedIcon />}
+                        >
                             Add establishment
-                        </Link>
-                    </Button>
-                </div>
+                        </Button>
+                    }
+                />
 
-                {flash?.success ? (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                        {flash.success}
-                    </div>
-                ) : null}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gap: 3,
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            md: 'repeat(3, minmax(0, 1fr))',
+                        },
+                    }}
+                >
+                    {stats.map((item) => (
+                        <StatCard key={item.label} {...item} />
+                    ))}
+                </Box>
 
-                {flash?.error ? (
-                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                        {flash.error}
-                    </div>
-                ) : null}
+                <FlashAlerts flash={flash} />
 
-                <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form
-                        onSubmit={submitSearch}
-                        className="flex flex-col gap-3 md:flex-row"
-                    >
-                        <Input
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Search by name or code"
-                            className="w-full"
-                        />
-                        <div className="flex gap-2">
-                            <Button type="submit">Search</Button>
+                <Card>
+                    <CardContent>
+                        <Box
+                            component="form"
+                            onSubmit={submitSearch}
+                            sx={{
+                                display: 'grid',
+                                gap: 2,
+                                gridTemplateColumns: {
+                                    xs: '1fr',
+                                    md: 'minmax(0, 1fr) auto auto',
+                                },
+                            }}
+                        >
+                            <TextField
+                                value={search}
+                                onChange={(event) => setSearch(event.target.value)}
+                                placeholder="Search by name or code"
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchRoundedIcon color="action" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <Button type="submit" variant="contained">
+                                Search
+                            </Button>
                             <Button
                                 type="button"
-                                variant="outline"
+                                variant="outlined"
                                 onClick={() => {
                                     setSearch('');
                                     router.get(
@@ -145,162 +218,232 @@ export default function EstablishmentsIndex({
                             >
                                 Reset
                             </Button>
-                        </div>
-                    </form>
-                </div>
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <div className="overflow-hidden rounded-xl border border-sidebar-border/70 bg-background">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-border">
-                            <thead className="bg-muted/50">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                        Name
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                        Code
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                        Type
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                        City
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                        Status
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {establishments.data.length > 0 ? (
-                                    establishments.data.map((establishment) => (
-                                        <tr
-                                            key={establishment.id}
-                                            className="hover:bg-muted/30"
-                                        >
-                                            <td className="px-4 py-3 text-sm">
-                                                {establishment.name}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm">
-                                                {establishment.code}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm">
-                                                {establishment.type}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm">
-                                                {establishment.city ?? '-'}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm">
-                                                <span
-                                                    className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                                        establishment.is_active
-                                                            ? 'bg-emerald-100 text-emerald-700'
-                                                            : 'bg-slate-200 text-slate-700'
-                                                    }`}
-                                                >
-                                                    {establishment.is_active
-                                                        ? 'Active'
-                                                        : 'Inactive'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        asChild
+                <Card>
+                    <CardContent sx={{ p: 0 }}>
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Code</TableCell>
+                                        <TableCell>Type</TableCell>
+                                        <TableCell>City</TableCell>
+                                        <TableCell>Status</TableCell>
+                                        <TableCell align="right">Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {establishments.data.length > 0 ? (
+                                        establishments.data.map((establishment) => (
+                                            <TableRow
+                                                key={establishment.id}
+                                                hover
+                                                sx={{
+                                                    '&:last-child td': {
+                                                        borderBottom: 0,
+                                                    },
+                                                }}
+                                            >
+                                                <TableCell>
+                                                    <Stack spacing={0.5}>
+                                                        <Typography
+                                                            variant="subtitle2"
+                                                            sx={{ fontWeight: 700 }}
+                                                        >
+                                                            {establishment.name}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="text.secondary"
+                                                        >
+                                                            {establishment.email ??
+                                                                'No email'}
+                                                        </Typography>
+                                                    </Stack>
+                                                </TableCell>
+                                                <TableCell>{establishment.code}</TableCell>
+                                                <TableCell>{establishment.type}</TableCell>
+                                                <TableCell>
+                                                    {establishment.city ?? '-'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={
+                                                            establishment.is_active
+                                                                ? 'Active'
+                                                                : 'Inactive'
+                                                        }
+                                                        color={
+                                                            establishment.is_active
+                                                                ? 'success'
+                                                                : 'default'
+                                                        }
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <Stack
+                                                        direction="row"
+                                                        spacing={1}
+                                                        justifyContent="flex-end"
+                                                        flexWrap="wrap"
+                                                        useFlexGap
                                                     >
-                                                        <Link
+                                                        <Button
+                                                            component={Link}
                                                             href={`/platform-admin/establishments/${establishment.id}`}
+                                                            variant="outlined"
+                                                            size="small"
+                                                            startIcon={
+                                                                <VisibilityRoundedIcon />
+                                                            }
                                                         >
                                                             View
-                                                        </Link>
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        asChild
-                                                    >
-                                                        <Link
+                                                        </Button>
+                                                        <Button
+                                                            component={Link}
                                                             href={`/platform-admin/establishments/${establishment.id}/edit`}
+                                                            variant="outlined"
+                                                            size="small"
+                                                            startIcon={<EditRoundedIcon />}
                                                         >
                                                             Edit
-                                                        </Link>
-                                                    </Button>
-                                                    <Button
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            handleToggleStatus(
-                                                                establishment.id,
-                                                            )
-                                                        }
+                                                        </Button>
+                                                        <Button
+                                                            variant="text"
+                                                            size="small"
+                                                            color="secondary"
+                                                            onClick={() =>
+                                                                handleToggleStatus(
+                                                                    establishment.id,
+                                                                )
+                                                            }
+                                                        >
+                                                            {establishment.is_active
+                                                                ? 'Disable'
+                                                                : 'Activate'}
+                                                        </Button>
+                                                        <Button
+                                                            variant="text"
+                                                            size="small"
+                                                            color="error"
+                                                            startIcon={
+                                                                <DeleteOutlineRoundedIcon />
+                                                            }
+                                                            onClick={() =>
+                                                                setDeleteTarget(
+                                                                    establishment,
+                                                                )
+                                                            }
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </Stack>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={6}>
+                                                <Box
+                                                    sx={{
+                                                        py: 8,
+                                                        textAlign: 'center',
+                                                    }}
+                                                >
+                                                    <Typography variant="h6">
+                                                        No establishments found
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{ mt: 1 }}
                                                     >
-                                                        {establishment.is_active
-                                                            ? 'Disable'
-                                                            : 'Activate'}
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                establishment.id,
-                                                            )
-                                                        }
-                                                    >
-                                                        Delete
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan={6}
-                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
-                                        >
-                                            No establishments found.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                                        Adjust the search filter or
+                                                        create the first tenant.
+                                                    </Typography>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardContent>
+                </Card>
 
-                <div className="flex flex-wrap gap-2">
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    flexWrap="wrap"
+                    useFlexGap
+                    justifyContent="flex-end"
+                >
                     {establishments.links.map((link, index) => (
                         <Button
                             key={`${link.label}-${index}`}
-                            variant={link.active ? 'default' : 'outline'}
-                            size="sm"
+                            variant={link.active ? 'contained' : 'outlined'}
+                            size="small"
                             disabled={!link.url}
-                            asChild={Boolean(link.url)}
+                            onClick={() => {
+                                if (!link.url) {
+                                    return;
+                                }
+
+                                router.visit(link.url, { preserveScroll: true });
+                            }}
                         >
-                            {link.url ? (
-                                <Link
-                                    href={link.url}
-                                    preserveScroll
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ) : (
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            )}
+                            <span
+                                dangerouslySetInnerHTML={{
+                                    __html: link.label,
+                                }}
+                            />
                         </Button>
                     ))}
-                </div>
-            </div>
+                </Stack>
+            </Stack>
+
+            <Dialog
+                open={Boolean(deleteTarget)}
+                onClose={() => setDeleteTarget(null)}
+                maxWidth="xs"
+                fullWidth
+            >
+                <DialogTitle>Delete establishment</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {deleteTarget
+                            ? `Delete "${deleteTarget.name}"? This keeps the existing destructive action, but now uses a clearer confirmation dialog.`
+                            : ''}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteTarget(null)}>Cancel</Button>
+                    <Button
+                        color="error"
+                        variant="contained"
+                        onClick={() => {
+                            if (!deleteTarget) {
+                                return;
+                            }
+
+                            router.delete(
+                                `/platform-admin/establishments/${deleteTarget.id}`,
+                                {
+                                    preserveScroll: true,
+                                    onFinish: () => setDeleteTarget(null),
+                                },
+                            );
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </AppLayout>
     );
 }

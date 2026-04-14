@@ -2,11 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Message;
+use App\Policies\DatabaseNotificationPolicy;
+use App\Policies\MessagePolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Notifications\DatabaseNotification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
+        Gate::policy(Message::class, MessagePolicy::class);
+        Gate::policy(DatabaseNotification::class, DatabaseNotificationPolicy::class);
 
         DB::prohibitDestructiveCommands(
             app()->isProduction(),

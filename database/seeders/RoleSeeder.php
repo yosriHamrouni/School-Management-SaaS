@@ -11,6 +11,7 @@ class RoleSeeder extends Seeder
     {
         foreach ([
             'platform_admin',
+            'establishment_admin',
             'admin',
             'manager',
             'teacher',

@@ -1,0 +1,67 @@
+import { Head, Link, useForm } from '@inertiajs/react';
+import TeacherForm from '@/components/establishment-admin/teacher-form';
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
+
+type AssignmentGroup = {
+    class_id: number;
+    class_name: string;
+    subjects: Array<{
+        key: string;
+        subject_id: number;
+        subject_name: string;
+    }>;
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Teachers', href: '/establishment-admin/teachers' },
+    { title: 'Create', href: '/establishment-admin/teachers/create' },
+];
+
+type Props = {
+    assignmentOptions: AssignmentGroup[];
+};
+
+export default function TeachersCreate({ assignmentOptions }: Props) {
+    const form = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        assignments: [] as string[],
+    });
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Create Teacher" />
+            <div className="flex h-full flex-1 flex-col gap-6 p-4">
+                <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl font-semibold">Create Teacher</h1>
+                            <p className="mt-2 text-sm text-muted-foreground">Add a teacher to your establishment.</p>
+                        </div>
+                        <Button variant="outline" asChild>
+                            <Link href="/establishment-admin/teachers">Back to list</Link>
+                        </Button>
+                    </div>
+                </div>
+                <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
+                    <TeacherForm
+                        data={form.data}
+                        errors={form.errors}
+                        processing={form.processing}
+                        submitLabel="Create teacher"
+                        assignmentOptions={assignmentOptions}
+                        setData={form.setData}
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            form.post('/establishment-admin/teachers');
+                        }}
+                    />
+                </div>
+            </div>
+        </AppLayout>
+    );
+}

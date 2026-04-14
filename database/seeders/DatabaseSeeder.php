@@ -12,8 +12,13 @@ class DatabaseSeeder extends Seeder
             EstablishmentSeeder::class,
             RoleSeeder::class,
             PermissionSeeder::class,
+            AcademicYearSeeder::class,
+            LevelSeeder::class,
+            SubjectSeeder::class,
+            SchoolClassSeeder::class,
             AdminUserSeeder::class,
             DemoUsersSeeder::class,
+            GradeDemoSeeder::class,
         ]);
     }
 }

@@ -8,12 +8,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
+        $acceptedRoles = collect($roles)
+            ->flatMap(fn (string $role) => explode('|', $role))
+            ->filter()
+            ->values();
 
-        if ($user === null || $role !== 'platform_admin' || ! $user->hasRole('platform_admin')) {
-            abort(403, 'Accès non autorisé');
+        if ($user === null || $acceptedRoles->isEmpty() || ! $acceptedRoles->contains(
+            fn (string $role) => $user->hasRole($role),
+        )) {
+            abort(403, 'Acces non autorise');
         }
 
         return $next($request);

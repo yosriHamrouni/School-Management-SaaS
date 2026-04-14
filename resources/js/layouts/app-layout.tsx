@@ -1,8 +1,8 @@
-import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
+import AdminShell from '@/components/navigation/admin-shell';
 import type { AppLayoutProps } from '@/types';
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
-    <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+    <AdminShell breadcrumbs={breadcrumbs} {...props}>
         {children}
-    </AppLayoutTemplate>
+    </AdminShell>
 );

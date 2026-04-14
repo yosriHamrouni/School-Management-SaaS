@@ -1,8 +1,13 @@
+import {
+    Box,
+    Button,
+    FormControlLabel,
+    Stack,
+    Switch,
+    TextField,
+    Typography,
+} from '@mui/material';
 import type { FormEvent } from 'react';
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 type EstablishmentFormData = {
     name: string;
@@ -44,119 +49,143 @@ export default function EstablishmentForm({
     setData,
 }: EstablishmentFormProps) {
     return (
-        <form onSubmit={onSubmit} className="grid gap-6">
-            <div className="grid gap-6 md:grid-cols-2">
-                <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                        id="name"
+        <Box component="form" onSubmit={onSubmit}>
+            <Stack spacing={4}>
+                <Box>
+                    <Typography variant="h6">Establishment details</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Capture the core identity, contact details and operational
+                        status for this tenant.
+                    </Typography>
+                </Box>
+
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gap: 3,
+                        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+                    }}
+                >
+                    <TextField
+                        label="Name"
                         value={data.name}
                         onChange={(event) => setData('name', event.target.value)}
+                        error={Boolean(errors.name)}
+                        helperText={errors.name}
                         placeholder="Establishment name"
+                        fullWidth
                     />
-                    <InputError message={errors.name} />
-                </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="code">Code</Label>
-                    <Input
-                        id="code"
+                    <TextField
+                        label="Code"
                         value={data.code}
                         onChange={(event) => setData('code', event.target.value)}
+                        error={Boolean(errors.code)}
+                        helperText={errors.code}
                         placeholder="EST-001"
+                        fullWidth
                     />
-                    <InputError message={errors.code} />
-                </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="type">Type</Label>
-                    <Input
-                        id="type"
+                    <TextField
+                        label="Type"
                         value={data.type}
                         onChange={(event) => setData('type', event.target.value)}
+                        error={Boolean(errors.type)}
+                        helperText={errors.type}
                         placeholder="School"
+                        fullWidth
                     />
-                    <InputError message={errors.type} />
-                </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                        id="city"
+                    <TextField
+                        label="City"
                         value={data.city}
                         onChange={(event) => setData('city', event.target.value)}
+                        error={Boolean(errors.city)}
+                        helperText={errors.city}
                         placeholder="Tunis"
+                        fullWidth
                     />
-                    <InputError message={errors.city} />
-                </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input
-                        id="phone"
+                    <TextField
+                        label="Phone"
                         value={data.phone}
                         onChange={(event) => setData('phone', event.target.value)}
+                        error={Boolean(errors.phone)}
+                        helperText={errors.phone}
                         placeholder="+216 00 000 000"
+                        fullWidth
                     />
-                    <InputError message={errors.phone} />
-                </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                        id="email"
+                    <TextField
+                        label="Email"
                         type="email"
                         value={data.email}
                         onChange={(event) => setData('email', event.target.value)}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email}
                         placeholder="contact@establishment.test"
+                        fullWidth
                     />
-                    <InputError message={errors.email} />
-                </div>
 
-                <div className="grid gap-2 md:col-span-2">
-                    <Label htmlFor="director_name">Director Name</Label>
-                    <Input
-                        id="director_name"
+                    <TextField
+                        label="Director name"
                         value={data.director_name}
                         onChange={(event) =>
                             setData('director_name', event.target.value)
                         }
+                        error={Boolean(errors.director_name)}
+                        helperText={errors.director_name}
                         placeholder="Director full name"
+                        fullWidth
+                        sx={{ gridColumn: { md: 'span 2' } }}
                     />
-                    <InputError message={errors.director_name} />
-                </div>
 
-                <div className="grid gap-2 md:col-span-2">
-                    <Label htmlFor="address">Address</Label>
-                    <textarea
-                        id="address"
+                    <TextField
+                        label="Address"
                         value={data.address}
                         onChange={(event) => setData('address', event.target.value)}
+                        error={Boolean(errors.address)}
+                        helperText={errors.address}
                         placeholder="Full address"
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 min-h-28 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                        multiline
+                        minRows={4}
+                        fullWidth
+                        sx={{ gridColumn: { md: 'span 2' } }}
                     />
-                    <InputError message={errors.address} />
-                </div>
-            </div>
+                </Box>
 
-            <label className="flex items-center gap-3 rounded-lg border border-border px-4 py-3 text-sm text-foreground">
-                <input
-                    type="checkbox"
-                    checked={data.is_active}
-                    onChange={(event) =>
-                        setData('is_active', event.target.checked)
-                    }
-                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                />
-                <span>Establishment is active</span>
-            </label>
-            <InputError message={errors.is_active} />
+                <Box
+                    sx={{
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
+                        borderRadius: 3,
+                        px: 2,
+                        py: 1.5,
+                    }}
+                >
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={data.is_active}
+                                onChange={(event) =>
+                                    setData('is_active', event.target.checked)
+                                }
+                            />
+                        }
+                        label="Establishment is active"
+                    />
+                    {errors.is_active ? (
+                        <Typography variant="caption" color="error.main">
+                            {errors.is_active}
+                        </Typography>
+                    ) : null}
+                </Box>
 
-            <div className="flex justify-end">
-                <Button type="submit" disabled={processing}>
-                    {submitLabel}
-                </Button>
-            </div>
-        </form>
+                <Stack direction="row" justifyContent="flex-end">
+                    <Button type="submit" variant="contained" disabled={processing}>
+                        {submitLabel}
+                    </Button>
+                </Stack>
+            </Stack>
+        </Box>
     );
 }

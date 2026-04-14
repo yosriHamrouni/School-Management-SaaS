@@ -1,6 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
+import { Button, Card, CardContent, Stack } from '@mui/material';
 import EstablishmentForm from '@/components/platform-admin/establishment-form';
-import { Button } from '@/components/ui/button';
+import PageHeader from '@/components/ui/page-header';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -53,42 +55,41 @@ export default function EstablishmentsEdit({ establishment }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Establishment" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
-                    <div className="flex items-center justify-between gap-4">
-                        <div>
-                            <h1 className="text-2xl font-semibold">
-                                Edit Establishment
-                            </h1>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                Update the information for {establishment.name}.
-                            </p>
-                        </div>
-
-                        <Button variant="outline" asChild>
-                            <Link href="/platform-admin/establishments">
-                                Back to list
-                            </Link>
+            <Stack spacing={3}>
+                <PageHeader
+                    eyebrow="Platform administration"
+                    title="Edit establishment"
+                    description={`Update the information for ${establishment.name} with the existing persistence flow preserved.`}
+                    actions={
+                        <Button
+                            component={Link}
+                            href="/platform-admin/establishments"
+                            variant="outlined"
+                            startIcon={<KeyboardBackspaceRoundedIcon />}
+                        >
+                            Back to list
                         </Button>
-                    </div>
-                </div>
+                    }
+                />
 
-                <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
-                    <EstablishmentForm
-                        data={form.data}
-                        errors={form.errors}
-                        processing={form.processing}
-                        submitLabel="Save changes"
-                        setData={form.setData}
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            form.put(
-                                `/platform-admin/establishments/${establishment.id}`,
-                            );
-                        }}
-                    />
-                </div>
-            </div>
+                <Card>
+                    <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                        <EstablishmentForm
+                            data={form.data}
+                            errors={form.errors}
+                            processing={form.processing}
+                            submitLabel="Save changes"
+                            setData={form.setData}
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                form.put(
+                                    `/platform-admin/establishments/${establishment.id}`,
+                                );
+                            }}
+                        />
+                    </CardContent>
+                </Card>
+            </Stack>
         </AppLayout>
     );
 }

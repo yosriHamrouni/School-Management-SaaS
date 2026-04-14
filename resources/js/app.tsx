@@ -3,8 +3,14 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import '../css/app.css';
 import { initializeTheme } from '@/hooks/use-appearance';
+import '@/lib/echo';
+import AppThemeProvider from '@/theme/provider';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '../css/app.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -20,9 +26,11 @@ createInertiaApp({
 
         root.render(
             <StrictMode>
-                <TooltipProvider delayDuration={0}>
-                    <App {...props} />
-                </TooltipProvider>
+                <AppThemeProvider>
+                    <TooltipProvider delayDuration={0}>
+                        <App {...props} />
+                    </TooltipProvider>
+                </AppThemeProvider>
             </StrictMode>,
         );
     },

@@ -30,6 +30,24 @@ export default function Welcome({
                         ) : (
                             <>
                                 <Link
+                                    href="/teacher-access"
+                                    className="inline-block rounded-sm border border-[#d97706]/30 bg-[#fff7ed] px-5 py-1.5 text-sm leading-normal text-[#9a3412] hover:border-[#d97706]/50 dark:border-[#92400e] dark:bg-[#2b1907] dark:text-[#fdba74]"
+                                >
+                                    Espace Enseignant
+                                </Link>
+                                <Link
+                                    href="/student-access"
+                                    className="inline-block rounded-sm border border-[#0ea5e9]/30 bg-[#f0f9ff] px-5 py-1.5 text-sm leading-normal text-[#075985] hover:border-[#0ea5e9]/50 dark:border-[#0c4a6e] dark:bg-[#082f49] dark:text-[#7dd3fc]"
+                                >
+                                    Espace Eleve
+                                </Link>
+                                <Link
+                                    href="/parent-access"
+                                    className="inline-block rounded-sm border border-[#10b981]/30 bg-[#ecfdf5] px-5 py-1.5 text-sm leading-normal text-[#065f46] hover:border-[#10b981]/50 dark:border-[#14532d] dark:bg-[#052e16] dark:text-[#86efac]"
+                                >
+                                    Espace Parents
+                                </Link>
+                                <Link
                                     href={login()}
                                     className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
                                 >

@@ -2,11 +2,17 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\NotificationCenterService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(
+        private readonly NotificationCenterService $notificationCenter,
+    ) {
+    }
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -65,6 +71,15 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'notificationCenter' => $request->user()
+                ? [
+                    'unread_count' => $this->notificationCenter->unreadCountFor($request->user()),
+                    'recent' => $this->notificationCenter->recentFor($request->user()),
+                ]
+                : [
+                    'unread_count' => 0,
+                    'recent' => [],
+                ],
         ];
     }
 }
