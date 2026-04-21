@@ -18,6 +18,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import {
     AppBar,
     Avatar,
@@ -154,6 +155,7 @@ export default function AdminShell({
     const isStudent = roles.some((role) => role.name === 'student');
     const isParent = roles.some((role) => role.name === 'parent');
     const canViewAcademicDashboard = isEstablishmentAdmin || isAdmin;
+    const canViewRiskModule = isTeacher || isEstablishmentAdmin || isAdmin;
 
     const navigation = useMemo<NavEntry[]>(
         () => [
@@ -192,6 +194,15 @@ export default function AdminShell({
                           title: 'Exports de rapports',
                           href: '/reports/exports',
                           icon: <AssignmentRoundedIcon fontSize="small" />,
+                      },
+                  ]
+                : []),
+            ...(canViewRiskModule
+                ? [
+                      {
+                          title: 'Analyse des risques',
+                          href: '/risk',
+                          icon: <WarningAmberRoundedIcon fontSize="small" />,
                       },
                   ]
                 : []),
@@ -346,6 +357,7 @@ export default function AdminShell({
             isStudent,
             isTeacher,
             canViewAcademicDashboard,
+            canViewRiskModule,
         ],
     );
     const workspaceLabel = getWorkspaceLabel({

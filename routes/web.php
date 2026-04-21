@@ -7,6 +7,8 @@ use App\Http\Controllers\AcademicDashboardController;
 use App\Http\Controllers\AcademicReportExportController;
 use App\Http\Controllers\DetailedPerformanceAnalysisController;
 use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\Risk\RiskDashboardController;
+use App\Http\Controllers\Risk\RiskStudentController;
 use App\Http\Controllers\EstablishmentAdmin\AcademicYearController;
 use App\Http\Controllers\EstablishmentAdmin\ParentController;
 use App\Http\Controllers\MessagingController;
@@ -183,6 +185,22 @@ Route::middleware('auth')->group(function () {
             ->name('reports.exports.pdf');
         Route::get('/reports/exports/excel', [AcademicReportExportController::class, 'excel'])
             ->name('reports.exports.excel');
+    });
+
+    Route::middleware(['auth', 'role:teacher|establishment_admin|admin'])->group(function () {
+        Route::get('/risk', [RiskDashboardController::class, 'index'])
+            ->name('risk.dashboard');
+        Route::get('/risk/students/{student}/details', [RiskDashboardController::class, 'show'])
+            ->whereNumber('student')
+            ->name('risk.students.details');
+    });
+
+    Route::middleware(['auth', 'role:teacher|establishment_admin|admin'])->prefix('risk')->name('risk.')->group(function () {
+        Route::get('/students', [RiskStudentController::class, 'index'])
+            ->name('students.index');
+        Route::get('/students/{student}', [RiskStudentController::class, 'show'])
+            ->whereNumber('student')
+            ->name('students.show');
     });
 
     Route::middleware(['auth', 'role:teacher'])->group(function () {

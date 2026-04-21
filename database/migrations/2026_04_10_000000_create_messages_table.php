@@ -24,7 +24,9 @@ return new class extends Migration
             $table->index(['sender_id', 'created_at']);
         });
 
-        DB::statement('alter table messages add constraint messages_sender_receiver_check check (sender_id <> receiver_id)');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('alter table messages add constraint messages_sender_receiver_check check (sender_id <> receiver_id)');
+        }
     }
 
     public function down(): void

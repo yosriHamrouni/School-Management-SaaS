@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             DemoUsersSeeder::class,
             GradeDemoSeeder::class,
+            RiskDemoSeeder::class,
         ]);
     }
 }

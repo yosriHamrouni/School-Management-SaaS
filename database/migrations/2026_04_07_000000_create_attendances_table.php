@@ -30,16 +30,20 @@ return new class extends Migration
             $table->index(['recorded_at']);
         });
 
-        DB::statement("
-            alter table attendances
-            add constraint attendances_status_check
-            check (status in ('present', 'absent', 'late'))
-        ");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("
+                alter table attendances
+                add constraint attendances_status_check
+                check (status in ('present', 'absent', 'late'))
+            ");
+        }
     }
 
     public function down(): void
     {
-        DB::statement('alter table attendances drop constraint if exists attendances_status_check');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('alter table attendances drop constraint if exists attendances_status_check');
+        }
 
         Schema::dropIfExists('attendances');
     }
