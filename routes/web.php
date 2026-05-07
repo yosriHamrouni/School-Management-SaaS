@@ -3,6 +3,7 @@
 use App\Http\Controllers\PlatformAdmin\EstablishmentController;
 use App\Http\Controllers\Parent\ReportController as ParentReportController;
 use App\Http\Controllers\Parent\ScheduleController as ParentScheduleController;
+use App\Http\Controllers\AcademicAssistantController;
 use App\Http\Controllers\AcademicDashboardController;
 use App\Http\Controllers\AcademicReportExportController;
 use App\Http\Controllers\DetailedPerformanceAnalysisController;
@@ -58,6 +59,14 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/academic-assistant', [AcademicAssistantController::class, 'index'])
+        ->name('academic-assistant.index');
+    Route::post('/academic-assistant/messages', [AcademicAssistantController::class, 'store'])
+        ->name('academic-assistant.messages.store');
+    Route::get('/academic-assistant/conversations/{conversation}', [AcademicAssistantController::class, 'show'])
+        ->whereNumber('conversation')
+        ->name('academic-assistant.conversations.show');
+
     Route::get('/messaging', [MessagingController::class, 'index'])->name('messaging.index');
     Route::get('/messaging/{participant}', [MessagingController::class, 'index'])
         ->whereNumber('participant')

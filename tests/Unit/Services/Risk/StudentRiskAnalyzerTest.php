@@ -2,11 +2,16 @@
 
 use App\Models\StudentRiskPrediction;
 use App\Services\Risk\StudentRiskAnalyzer;
+use App\Services\Risk\StudentRiskMlPredictor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\RiskTestDataFactory;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
+
+beforeEach(function () {
+    config(['risk.ml_enabled' => false]);
+});
 
 test('it analyzes a valid student and persists the prediction', function () {
     $establishment = RiskTestDataFactory::createEstablishment('Tenant A', 'TEN-A');
@@ -213,4 +218,115 @@ test('it keeps full history when a student is analyzed multiple times', function
         ->and($second)->not->toBeNull()
         ->and($first?->id)->not->toBe($second?->id)
         ->and(StudentRiskPrediction::query()->count())->toBe(2);
+});
+
+test('it uses ml prediction when available and keeps rule based reasons', function () {
+    config(['risk.ml_enabled' => true]);
+
+    app()->instance(StudentRiskMlPredictor::class, new class extends StudentRiskMlPredictor
+    {
+        public function predict(array $features): ?array
+        {
+            return [
+                'prediction' => 'high',
+                'score' => 0.969,
+                'source' => 'ml',
+            ];
+        }
+    });
+
+    $establishment = RiskTestDataFactory::createEstablishment('Tenant A', 'TEN-A');
+    $schoolYear = RiskTestDataFactory::createAcademicYear($establishment, '2025-2026', true);
+    $class = RiskTestDataFactory::createClass($establishment, $schoolYear, '1A');
+    $student = RiskTestDataFactory::createStudent(
+        $establishment,
+        $class,
+        'A001',
+        'Student A',
+        'student-a@example.com',
+    );
+
+    $subject = RiskTestDataFactory::createSubject($establishment, 'Mathematics');
+    $term = RiskTestDataFactory::createTerm($establishment, $schoolYear, 'Term 1');
+    $evaluation = RiskTestDataFactory::createEvaluation(
+        $establishment,
+        $class,
+        $subject,
+        $term,
+        'Math Exam',
+        '2025-11-15',
+    );
+
+    RiskTestDataFactory::createGrade($student['user']->id, $evaluation, 8.0);
+
+    $prediction = app(StudentRiskAnalyzer::class)->analyzeStudent(
+        $student['profile']->id,
+        $establishment->id,
+        $schoolYear->id,
+    );
+
+    expect($prediction)->not->toBeNull()
+        ->and($prediction->risk_level)->toBe('high')
+        ->and($prediction->risk_score)->toBe(97)
+        ->and($prediction->source)->toBe('ml')
+        ->and($prediction->reasons)->toContain('Moyenne generale inferieure a 10')
+        ->and($prediction->features)->toBeArray();
+
+    expect(StudentRiskPrediction::query()->first())
+        ->risk_level->toBe('high')
+        ->risk_score->toBe(97)
+        ->source->toBe('ml');
+});
+
+test('it falls back to rule based prediction when ml is unavailable', function () {
+    config(['risk.ml_enabled' => true]);
+
+    app()->instance(StudentRiskMlPredictor::class, new class extends StudentRiskMlPredictor
+    {
+        public function predict(array $features): ?array
+        {
+            return null;
+        }
+    });
+
+    $establishment = RiskTestDataFactory::createEstablishment('Tenant A', 'TEN-A');
+    $schoolYear = RiskTestDataFactory::createAcademicYear($establishment, '2025-2026', true);
+    $class = RiskTestDataFactory::createClass($establishment, $schoolYear, '1A');
+    $student = RiskTestDataFactory::createStudent(
+        $establishment,
+        $class,
+        'A001',
+        'Student A',
+        'student-a@example.com',
+    );
+
+    $subject = RiskTestDataFactory::createSubject($establishment, 'Mathematics');
+    $term = RiskTestDataFactory::createTerm($establishment, $schoolYear, 'Term 1');
+    $evaluation = RiskTestDataFactory::createEvaluation(
+        $establishment,
+        $class,
+        $subject,
+        $term,
+        'Math Exam',
+        '2025-11-15',
+    );
+
+    RiskTestDataFactory::createGrade($student['user']->id, $evaluation, 8.0);
+
+    $prediction = app(StudentRiskAnalyzer::class)->analyzeStudent(
+        $student['profile']->id,
+        $establishment->id,
+        $schoolYear->id,
+    );
+
+    expect($prediction)->not->toBeNull()
+        ->and($prediction->risk_level)->toBe('medium')
+        ->and($prediction->risk_score)->toBe(45)
+        ->and($prediction->source)->toBe('rule_based')
+        ->and($prediction->reasons)->toContain('Moyenne generale inferieure a 10');
+
+    expect(StudentRiskPrediction::query()->first())
+        ->risk_level->toBe('medium')
+        ->risk_score->toBe(45)
+        ->source->toBe('rule_based');
 });

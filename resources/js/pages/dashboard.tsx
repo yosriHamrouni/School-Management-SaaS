@@ -76,6 +76,12 @@ export default function Dashboard() {
 
     const quickLinks = [
         {
+            title: 'Academic assistant',
+            description: 'Ask quick questions about grades, attendance, classes and risk indicators.',
+            href: '/academic-assistant',
+            visible: true,
+        },
+        {
             title: 'Manage establishments',
             description: 'Review tenants, onboarding details and activation state.',
             href: '/platform-admin/establishments',

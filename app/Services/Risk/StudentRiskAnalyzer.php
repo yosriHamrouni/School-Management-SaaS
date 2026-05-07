@@ -9,10 +9,13 @@ class StudentRiskAnalyzer
 {
     private const SOURCE_RULE_BASED = 'rule_based';
 
+    private const SOURCE_ML = 'ml';
+
     public function __construct(
         private readonly StudentRiskDataService $studentRiskDataService,
         private readonly StudentRiskFeatureBuilder $studentRiskFeatureBuilder,
         private readonly StudentRiskRuleEngine $studentRiskRuleEngine,
+        private readonly StudentRiskMlPredictor $studentRiskMlPredictor,
     ) {
     }
 
@@ -57,14 +60,28 @@ class StudentRiskAnalyzer
     }
 
     /**
-     * Placeholder for the future ML branch. Phase 2 persists rule-based analyses only.
-     *
      * @param  array<string, mixed>  $featurePayload
-     * @return array{risk_level: string, risk_score: int, reasons: array<int, string>}
+     * @return array{risk_level: string, risk_score: int, reasons: array<int, string>, source: string}
      */
     private function evaluateWithMlOrFallback(array $featurePayload): array
     {
-        return $this->evaluateWithRules($featurePayload);
+        $ruleEvaluation = $this->evaluateWithRules($featurePayload);
+        $features = is_array($featurePayload['features'] ?? null) ? $featurePayload['features'] : [];
+        $mlPrediction = $this->studentRiskMlPredictor->predict($features);
+
+        if ($mlPrediction !== null) {
+            return [
+                'risk_level' => $mlPrediction['prediction'],
+                'risk_score' => $this->normalizeMlScore($mlPrediction['score']),
+                'reasons' => $ruleEvaluation['reasons'],
+                'source' => self::SOURCE_ML,
+            ];
+        }
+
+        return [
+            ...$ruleEvaluation,
+            'source' => self::SOURCE_RULE_BASED,
+        ];
     }
 
     /**
@@ -76,12 +93,19 @@ class StudentRiskAnalyzer
         return $this->studentRiskRuleEngine->evaluate($featurePayload);
     }
 
+    private function normalizeMlScore(float $score): int
+    {
+        $normalized = $score <= 1.0 ? $score * 100 : $score;
+
+        return (int) round(min(100, max(0, $normalized)));
+    }
+
     /**
      * Phase 2 keeps full history so each re-analysis creates a new snapshot.
      *
      * @param  array<string, mixed>  $rawData
      * @param  array<string, mixed>  $featurePayload
-     * @param  array{risk_level: string, risk_score: int, reasons: array<int, string>}  $evaluation
+     * @param  array{risk_level: string, risk_score: int, reasons: array<int, string>, source: string}  $evaluation
      */
     private function persistPrediction(
         array $rawData,
@@ -96,7 +120,7 @@ class StudentRiskAnalyzer
             'risk_score' => (int) $evaluation['risk_score'],
             'reasons' => array_values($evaluation['reasons']),
             'features' => is_array($featurePayload['features'] ?? null) ? $featurePayload['features'] : [],
-            'source' => self::SOURCE_RULE_BASED,
+            'source' => (string) $evaluation['source'],
             'analyzed_at' => now(),
         ]);
     }

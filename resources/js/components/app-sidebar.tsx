@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, BookOpenText, Building2, CalendarClock, CalendarRange, CheckSquare, FileText, FolderGit2, GraduationCap, LayoutGrid, MessageSquare, School, UserRoundCheck, UserRoundPen, Users } from 'lucide-react';
+import { BookOpen, BookOpenText, Bot, Building2, CalendarClock, CalendarRange, CheckSquare, FileText, FolderGit2, GraduationCap, LayoutGrid, MessageSquare, School, UserRoundCheck, UserRoundPen, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -59,6 +59,11 @@ export function AppSidebar() {
             title: 'Dashboard',
             href: dashboard(),
             icon: LayoutGrid,
+        },
+        {
+            title: 'Assistant academique',
+            href: '/academic-assistant',
+            icon: Bot,
         },
         ...(isPlatformAdmin
             ? [
