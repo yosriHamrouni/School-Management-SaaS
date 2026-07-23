@@ -1,24 +1,9 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
-import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
-import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
-import CalendarViewWeekRoundedIcon from '@mui/icons-material/CalendarViewWeekRounded';
-import ChecklistRoundedIcon from '@mui/icons-material/ChecklistRounded';
-import ClassRoundedIcon from '@mui/icons-material/ClassRounded';
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
-import HomeWorkRoundedIcon from '@mui/icons-material/HomeWorkRounded';
-import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import MessageRoundedIcon from '@mui/icons-material/MessageRounded';
-import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import {
     AppBar,
     Avatar,
@@ -43,12 +28,14 @@ import {
 import { alpha, useTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material/styles';
 import { useEffect, useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { ElementType, ReactNode } from 'react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import MobileBottomNavigation from '@/components/navigation/mobile-bottom-navigation';
 import NotificationMenu from '@/components/notifications/notification-menu';
-import { dashboard, logout } from '@/routes';
-import { edit as editAppearance } from '@/routes/appearance';
+import { useTranslation } from '@/i18n';
+import { visibleSidebarSections } from '@/navigation/sidebar-sections';
+import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
-import { edit as editSecurity } from '@/routes/security';
 import { drawerWidth } from '@/theme/theme';
 import type { Auth, BreadcrumbItem, UserRole } from '@/types';
 
@@ -56,86 +43,96 @@ type SharedPageProps = {
     auth: Auth;
 };
 
-type NavEntry = {
-    title: string;
-    href: string;
-    icon: ReactNode;
-};
-
 type AdminShellProps = {
     children: ReactNode;
     breadcrumbs?: BreadcrumbItem[];
 };
 
-const settingsItems: NavEntry[] = [
-    {
-        title: 'Profile',
-        href: edit().url,
-        icon: <PersonRoundedIcon fontSize="small" />,
-    },
-    {
-        title: 'Security',
-        href: editSecurity().url,
-        icon: <TuneRoundedIcon fontSize="small" />,
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance().url,
-        icon: <SettingsRoundedIcon fontSize="small" />,
-    },
-];
+const navigationTitleKeys: Record<string, string> = {
+    'Academic Assistant': 'navigation.academicAssistant',
+    'Academic Dashboard': 'navigation.academicDashboard',
+    'Academic Years': 'navigation.academicYears',
+    'Analyse des risques': 'navigation.riskAnalysis',
+    Appearance: 'navigation.appearance',
+    'Assignment Submissions': 'navigation.assignmentSubmissions',
+    Assignments: 'navigation.assignments',
+    Attendance: 'navigation.attendance',
+    'Attendance History': 'navigation.attendanceHistory',
+    'Child Grades': 'navigation.childGrades',
+    'Child Schedule': 'navigation.childSchedule',
+    Classes: 'navigation.classes',
+    Dashboard: 'navigation.dashboard',
+    Establishments: 'navigation.establishments',
+    Evaluations: 'navigation.evaluations',
+    'Exports de rapports': 'navigation.reportsExports',
+    Levels: 'navigation.levels',
+    Messaging: 'navigation.messaging',
+    'My Classes': 'navigation.myClasses',
+    'My Schedule': 'navigation.mySchedule',
+    Notifications: 'navigation.notifications',
+    Parents: 'navigation.parents',
+    'Payment invoices': 'navigation.paymentInvoices',
+    Payments: 'navigation.payments',
+    'Performance Analysis': 'navigation.performanceAnalysis',
+    Profile: 'navigation.profile',
+    Schedules: 'navigation.schedule',
+    Security: 'navigation.security',
+    Settings: 'navigation.settings',
+    'School Fees': 'navigation.schoolFees',
+    Students: 'navigation.students',
+    'Student Assignments': 'navigation.assignments',
+    Subjects: 'navigation.subjects',
+    Teachers: 'navigation.teachers',
+    Users: 'navigation.users',
+};
 
-function getRoleLabel(roles: UserRole[] = []) {
-    return roles
-        .map((role) =>
-            role.name
-                .split('_')
-                .map((segment) => segment[0].toUpperCase() + segment.slice(1))
-                .join(' '),
-        )
-        .join(', ');
+const sectionTitleKeys: Record<string, string> = {
+    Compte: 'navigation.account',
+    Communication: 'navigation.communication',
+    'Administration plateforme': 'navigation.platformAdministration',
+    'Emplois du temps': 'navigation.schedule',
+    Finance: 'navigation.finance',
+    'Gestion academique': 'navigation.academicManagement',
+    Reporting: 'navigation.reports',
+    'Suivi pedagogique': 'navigation.pedagogicalFollowUp',
+    'Vue generale': 'navigation.overview',
+};
+
+function getRoleLabel(roles: UserRole[] = [], t: (key: string) => string) {
+    return roles.map((role) => t(`roles.${role.name}`)).join(', ');
 }
 
-function getWorkspaceLabel({
-    isPlatformAdmin,
-    isEstablishmentAdmin,
-    isTeacher,
-    isStudent,
-    isParent,
-}: {
-    isPlatformAdmin: boolean;
-    isEstablishmentAdmin: boolean;
-    isTeacher: boolean;
-    isStudent: boolean;
-    isParent: boolean;
-}) {
-    if (isPlatformAdmin) {
-        return 'Platform workspace';
+function getWorkspaceLabel(roles: UserRole[] = [], t: (key: string) => string) {
+    const roleNames = roles.map((role) => role.name);
+
+    if (roleNames.includes('platform_admin')) {
+        return t('navigation.workspace.platformAdmin');
     }
 
-    if (isEstablishmentAdmin) {
-        return 'Admin workspace';
+    if (roleNames.includes('establishment_admin')) {
+        return t('navigation.workspace.establishmentAdmin');
     }
 
-    if (isTeacher) {
-        return 'Teacher workspace';
+    if (roleNames.includes('teacher')) {
+        return t('navigation.workspace.teacher');
     }
 
-    if (isStudent) {
-        return 'Student workspace';
+    if (roleNames.includes('student')) {
+        return t('navigation.workspace.student');
     }
 
-    if (isParent) {
-        return 'Parent workspace';
+    if (roleNames.includes('parent')) {
+        return t('navigation.workspace.parent');
     }
 
-    return 'Academic workspace';
+    return t('navigation.academicWorkspace');
 }
 
 export default function AdminShell({
     children,
     breadcrumbs = [],
 }: AdminShellProps) {
+    const { dir, t } = useTranslation();
     const { auth } = usePage<SharedPageProps>().props;
     const currentUrl = usePage().url.split('?')[0];
     const theme = useTheme();
@@ -145,228 +142,13 @@ export default function AdminShell({
     const [mobileOpen, setMobileOpen] = useState(false);
     const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
-    const roles = auth.user.roles ?? [];
-    const isPlatformAdmin = roles.some((role) => role.name === 'platform_admin');
-    const isEstablishmentAdmin = roles.some(
-        (role) => role.name === 'establishment_admin',
+    const roles = useMemo(() => auth.user.roles ?? [], [auth.user.roles]);
+    const navigationSections = useMemo(
+        () => visibleSidebarSections(roles, Boolean(auth.user.email_verified_at)),
+        [auth.user.email_verified_at, roles],
     );
-    const isAdmin = roles.some((role) => role.name === 'admin');
-    const isTeacher = roles.some((role) => role.name === 'teacher');
-    const isStudent = roles.some((role) => role.name === 'student');
-    const isParent = roles.some((role) => role.name === 'parent');
-    const canViewAcademicDashboard = isEstablishmentAdmin || isAdmin;
-    const canViewRiskModule = isTeacher || isEstablishmentAdmin || isAdmin;
-
-    const navigation = useMemo<NavEntry[]>(
-        () => [
-            {
-                title: 'Dashboard',
-                href: dashboard().url,
-                icon: <DashboardRoundedIcon fontSize="small" />,
-            },
-            ...(isPlatformAdmin
-                ? [
-                      {
-                          title: 'Establishments',
-                          href: '/platform-admin/establishments',
-                          icon: <HomeWorkRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Users',
-                          href: '/users',
-                          icon: <PeopleAltRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-            ...(canViewAcademicDashboard
-                ? [
-                      {
-                          title: 'Academic Dashboard',
-                          href: '/academic-dashboard',
-                          icon: <InsightsRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Performance Analysis',
-                          href: '/performance-analysis',
-                          icon: <AutoStoriesRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Exports de rapports',
-                          href: '/reports/exports',
-                          icon: <AssignmentRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-            ...(canViewRiskModule
-                ? [
-                      {
-                          title: 'Analyse des risques',
-                          href: '/risk',
-                          icon: <WarningAmberRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-            ...(isEstablishmentAdmin
-                ? [
-                      {
-                          title: 'Academic Years',
-                          href: '/establishment-admin/academic-years',
-                          icon: <CalendarMonthRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Levels',
-                          href: '/establishment-admin/levels',
-                          icon: <SchoolRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Classes',
-                          href: '/establishment-admin/classes',
-                          icon: <ClassRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Subjects',
-                          href: '/establishment-admin/subjects',
-                          icon: <AutoStoriesRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Teachers',
-                          href: '/establishment-admin/teachers',
-                          icon: <PersonRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Schedules',
-                          href: '/establishment-admin/schedules',
-                          icon: (
-                              <CalendarViewWeekRoundedIcon fontSize="small" />
-                          ),
-                      },
-                      {
-                          title: 'Students',
-                          href: '/establishment-admin/students',
-                          icon: <GroupsRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Parents',
-                          href: '/establishment-admin/parents',
-                          icon: <PeopleAltRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Messaging',
-                          href: '/messaging',
-                          icon: <MessageRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-            ...(isTeacher
-                ? [
-                      {
-                          title: 'My Schedule',
-                          href: '/teacher/schedules',
-                          icon: <CalendarViewWeekRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'My Classes',
-                          href: '/teacher/classes',
-                          icon: <ClassRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Attendance',
-                          href: '/teacher/attendances',
-                          icon: <ChecklistRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Assignments',
-                          href: '/teacher/assignments',
-                          icon: <AssignmentRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Assignment Submissions',
-                          href: '/teacher/assignment-submissions',
-                          icon: <AssignmentRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Attendance History',
-                          href: '/teacher/attendances/history',
-                          icon: <CalendarMonthRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Evaluations',
-                          href: '/evaluations',
-                          icon: <AutoStoriesRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Messaging',
-                          href: '/messaging',
-                          icon: <MessageRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-            ...(isStudent
-                ? [
-                  {
-                      title: 'My Schedule',
-                      href: '/student/schedules',
-                      icon: <CalendarViewWeekRoundedIcon fontSize="small" />,
-                  },
-                  {
-                      title: 'Assignments',
-                      href: '/student/assignments',
-                      icon: <AssignmentRoundedIcon fontSize="small" />,
-                  },
-                  {
-                      title: 'Profile',
-                      href: edit().url,
-                      icon: <PersonRoundedIcon fontSize="small" />,
-                  },
-                  {
-                      title: 'Messaging',
-                      href: '/messaging',
-                      icon: <MessageRoundedIcon fontSize="small" />,
-                  },
-                  ]
-                : []),
-            ...(isParent
-                ? [
-                      {
-                          title: 'Child Grades',
-                          href: '/parent/reports',
-                          icon: <AssignmentRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Child Schedule',
-                          href: '/parent/schedules',
-                          icon: <CalendarViewWeekRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Profile',
-                          href: edit().url,
-                          icon: <PersonRoundedIcon fontSize="small" />,
-                      },
-                      {
-                          title: 'Messaging',
-                          href: '/messaging',
-                          icon: <MessageRoundedIcon fontSize="small" />,
-                      },
-                  ]
-                : []),
-        ],
-        [
-            isEstablishmentAdmin,
-            isParent,
-            isPlatformAdmin,
-            isStudent,
-            isTeacher,
-            canViewAcademicDashboard,
-            canViewRiskModule,
-        ],
-    );
-    const workspaceLabel = getWorkspaceLabel({
-        isPlatformAdmin,
-        isEstablishmentAdmin,
-        isTeacher,
-        isStudent,
-        isParent,
-    });
+    const workspaceLabel = getWorkspaceLabel(roles, t);
+    const isRtl = dir === 'rtl';
 
     useEffect(() => {
         if (!auth.user?.id || !window.Echo) {
@@ -388,10 +170,14 @@ export default function AdminShell({
     }, [auth.user?.id]);
 
     const pageTitle =
-        breadcrumbs[breadcrumbs.length - 1]?.title ?? 'Administration';
+        breadcrumbs[breadcrumbs.length - 1]?.title ?? t('navigation.administration');
+    const translateNavigationTitle = (title: string) =>
+        t(navigationTitleKeys[title] ?? title);
+    const translateSectionTitle = (title: string) =>
+        t(sectionTitleKeys[title] ?? title);
 
     const drawerContent = (
-        <Stack sx={{ height: '100%' }}>
+        <Stack sx={{ height: '100%', minHeight: 0 }}>
             <Box
                 sx={{
                     px: 3,
@@ -412,11 +198,11 @@ export default function AdminShell({
                 >
                     <SchoolRoundedIcon />
                 </Avatar>
-                <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }} noWrap>
                         Academic SaaS
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" noWrap>
                         {workspaceLabel}
                     </Typography>
                 </Box>
@@ -425,129 +211,135 @@ export default function AdminShell({
             <Box sx={{ px: 2, pb: 2 }}>
                 <Box
                     sx={{
-                        borderRadius: 4,
+                        borderRadius: 3,
                         p: 2,
                         backgroundColor: alpha(theme.palette.primary.main, 0.08),
                     }}
                 >
                     <Typography variant="body2" color="text.secondary">
-                        Connected as
+                        {t('navigation.connectedAs')}
                     </Typography>
-                    <Typography variant="subtitle2" sx={{ mt: 0.5 }}>
+                    <Typography variant="subtitle2" sx={{ mt: 0.5 }} noWrap>
                         {auth.user.name}
                     </Typography>
                     {roles.length > 0 ? (
                         <Chip
                             size="small"
-                            label={getRoleLabel(roles)}
+                            label={getRoleLabel(roles, t)}
                             color="primary"
-                            sx={{ mt: 1 }}
+                            sx={{ mt: 1, maxWidth: '100%' }}
                         />
                     ) : null}
                 </Box>
             </Box>
 
-            <Box sx={{ flex: 1, px: 2 }}>
-                <Typography
-                    variant="overline"
-                    color="text.secondary"
-                    sx={{ px: 1.5 }}
-                >
-                    Navigation
-                </Typography>
-                <List sx={{ mt: 1, gap: 0.5, display: 'grid' }}>
-                    {navigation.map((item) => {
-                        const isActive =
-                            currentUrl === item.href ||
-                            currentUrl.startsWith(`${item.href}/`);
-
-                        return (
-                            <ListItemButton
-                                key={item.title}
-                                component={Link as React.ElementType}
-                                href={item.href}
-                                selected={isActive}
-                                onClick={() => setMobileOpen(false)}
-                                sx={{
-                                    borderRadius: 3,
-                                    minHeight: 46,
-                                    '&.Mui-selected': {
-                                        bgcolor: alpha(
-                                            theme.palette.primary.main,
-                                            0.12,
-                                        ),
-                                        color: 'primary.main',
-                                    },
-                                    '&.Mui-selected:hover': {
-                                        bgcolor: alpha(
-                                            theme.palette.primary.main,
-                                            0.16,
-                                        ),
-                                    },
-                                }}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 38,
-                                        color: isActive
-                                            ? 'primary.main'
-                                            : 'text.secondary',
-                                    }}
-                                >
-                                    {item.icon}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={item.title}
-                                    primaryTypographyProps={{
-                                        fontWeight: isActive ? 700 : 500,
-                                    }}
-                                />
-                            </ListItemButton>
-                        );
-                    })}
-                </List>
-            </Box>
-
-            <Box sx={{ px: 2, py: 2 }}>
-                <Divider sx={{ mb: 1.5 }} />
-                <List sx={{ gap: 0.5, display: 'grid' }}>
-                    {settingsItems.map((item) => (
-                        <ListItemButton
-                            key={item.title}
-                            component={Link as React.ElementType}
-                            href={item.href}
-                            onClick={() => setMobileOpen(false)}
-                            sx={{ borderRadius: 3 }}
+            <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: 2, pb: 2 }}>
+                {navigationSections.map((section, sectionIndex) => (
+                    <Box key={section.title} sx={{ mt: sectionIndex === 0 ? 0 : 2 }}>
+                        <Typography
+                            variant="overline"
+                            color="text.secondary"
+                            sx={{
+                                display: 'block',
+                                px: 1.5,
+                                pb: 0.5,
+                                fontSize: 11,
+                                fontWeight: 700,
+                                letterSpacing: 0,
+                            }}
                         >
-                            <ListItemIcon sx={{ minWidth: 38 }}>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.title} />
-                        </ListItemButton>
-                    ))}
-                </List>
+                            {translateSectionTitle(section.title)}
+                        </Typography>
+                        <List sx={{ gap: 0.35, display: 'grid', py: 0 }}>
+                            {section.items.map((item) => {
+                                const isActive =
+                                    currentUrl === item.href ||
+                                    currentUrl.startsWith(`${item.href}/`);
+
+                                return (
+                                    <ListItemButton
+                                        key={`${section.title}-${item.href}`}
+                                        component={Link as ElementType}
+                                        href={item.href}
+                                        selected={isActive}
+                                        onClick={() => setMobileOpen(false)}
+                                        sx={{
+                                            borderRadius: 2,
+                                            minHeight: 42,
+                                            px: 1.5,
+                                            '&.Mui-selected': {
+                                                bgcolor: alpha(
+                                                    theme.palette.primary.main,
+                                                    0.12,
+                                                ),
+                                                color: 'primary.main',
+                                                boxShadow: `inset ${isRtl ? '-3px' : '3px'} 0 0 ${theme.palette.primary.main}`,
+                                            },
+                                            '&.Mui-selected:hover': {
+                                                bgcolor: alpha(
+                                                    theme.palette.primary.main,
+                                                    0.16,
+                                                ),
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: 34,
+                                                color: isActive
+                                                    ? 'primary.main'
+                                                    : 'text.secondary',
+                                            }}
+                                        >
+                                            {item.icon}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={translateNavigationTitle(item.title)}
+                                            primaryTypographyProps={{
+                                                fontSize: 14,
+                                                fontWeight: isActive ? 700 : 500,
+                                                noWrap: true,
+                                            }}
+                                        />
+                                    </ListItemButton>
+                                );
+                            })}
+                        </List>
+                        {sectionIndex < navigationSections.length - 1 ? (
+                            <Divider sx={{ mt: 1.5 }} />
+                        ) : null}
+                    </Box>
+                ))}
             </Box>
         </Stack>
     );
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', overflowX: 'hidden' }} dir={dir}>
             <AppBar
                 position="fixed"
                 color="inherit"
                 sx={{
                     width: { lg: `calc(100% - ${drawerWidth}px)` },
-                    ml: { lg: `${drawerWidth}px` },
+                    ...(isRtl
+                        ? { mr: { lg: `${drawerWidth}px` } }
+                        : { ml: { lg: `${drawerWidth}px` } }),
                     borderBottom: `1px solid ${theme.palette.divider}`,
-                    bgcolor: alpha(theme.palette.background.paper, 0.82),
+                    bgcolor: alpha(theme.palette.background.paper, 0.92),
+                    backdropFilter: 'blur(10px)',
                 }}
             >
-                <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
+                <Toolbar
+                    sx={{
+                        gap: { xs: 0.5, sm: 1 },
+                        px: { xs: 1, sm: 2, md: 3 },
+                    }}
+                >
                     {!isDesktop ? (
                         <IconButton
                             edge="start"
                             onClick={() => setMobileOpen(true)}
-                            sx={{ mr: 1.5 }}
+                            sx={isRtl ? { ml: 1.5 } : { mr: 1.5 }}
                         >
                             <MenuRoundedIcon />
                         </IconButton>
@@ -557,7 +349,7 @@ export default function AdminShell({
                         {breadcrumbs.length > 1 ? (
                             <Breadcrumbs
                                 sx={{ mb: 0.5 }}
-                                separator="›"
+                                separator=">"
                                 aria-label="breadcrumb"
                             >
                                 {breadcrumbs.map((item, index) => {
@@ -574,7 +366,7 @@ export default function AdminShell({
                                     ) : (
                                         <Typography
                                             key={`${item.title}-${index}`}
-                                            component={Link as React.ElementType}
+                                            component={Link as ElementType}
                                             href={item.href}
                                             variant="body2"
                                             color="text.secondary"
@@ -601,39 +393,59 @@ export default function AdminShell({
                         endIcon={<ExpandMoreRoundedIcon />}
                         sx={{
                             borderRadius: 999,
-                            px: 1,
+                            flexShrink: 0,
+                            maxWidth: { xs: 52, lg: 244 },
+                            overflow: 'hidden',
+                            px: { xs: 0.5, sm: 1 },
                             color: 'text.primary',
+                            minWidth: 0,
                         }}
                     >
                         <Stack
                             direction="row"
                             spacing={1.5}
                             alignItems="center"
-                            sx={{ minWidth: 0 }}
+                            sx={{ minWidth: 0, overflow: 'hidden' }}
                         >
-                            <Avatar sx={{ bgcolor: 'primary.main' }}>
+                            <Avatar
+                                sx={{
+                                    bgcolor: 'primary.main',
+                                    width: { xs: 36, sm: 40 },
+                                    height: { xs: 36, sm: 40 },
+                                }}
+                            >
                                 {auth.user.name.charAt(0).toUpperCase()}
                             </Avatar>
                             <Box
                                 sx={{
-                                    display: { xs: 'none', sm: 'block' },
-                                    textAlign: 'left',
+                                    display: { xs: 'none', lg: 'block' },
+                                    textAlign: isRtl ? 'right' : 'left',
                                     minWidth: 0,
+                                    maxWidth: 180,
+                                    overflow: 'hidden',
                                 }}
                             >
-                                <Typography variant="subtitle2" noWrap>
+                                <Typography
+                                    variant="subtitle2"
+                                    noWrap
+                                    title={auth.user.name}
+                                    sx={{ display: 'block', maxWidth: '100%' }}
+                                >
                                     {auth.user.name}
                                 </Typography>
                                 <Typography
                                     variant="caption"
                                     color="text.secondary"
                                     noWrap
+                                    title={auth.user.email}
+                                    sx={{ display: 'block', maxWidth: '100%' }}
                                 >
                                     {auth.user.email}
                                 </Typography>
                             </Box>
                         </Stack>
                     </Button>
+                    <LanguageSwitcher compact />
                     <NotificationMenu />
                 </Toolbar>
             </AppBar>
@@ -643,6 +455,7 @@ export default function AdminShell({
                 sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }}
             >
                 <Drawer
+                    anchor={isRtl ? 'right' : 'left'}
                     variant={isDesktop ? 'permanent' : 'temporary'}
                     open={isDesktop ? true : mobileOpen}
                     onClose={() => setMobileOpen(false)}
@@ -651,6 +464,7 @@ export default function AdminShell({
                         '& .MuiDrawer-paper': {
                             width: drawerWidth,
                             boxSizing: 'border-box',
+                            overflowX: 'hidden',
                         },
                     }}
                 >
@@ -662,6 +476,7 @@ export default function AdminShell({
                 component="main"
                 sx={{
                     flexGrow: 1,
+                    minWidth: 0,
                     width: { lg: `calc(100% - ${drawerWidth}px)` },
                 }}
             >
@@ -670,6 +485,8 @@ export default function AdminShell({
                     sx={{
                         px: { xs: 2, sm: 3, md: 4 },
                         py: { xs: 3, md: 4 },
+                        pb: { xs: 'calc(88px + env(safe-area-inset-bottom))', lg: 4 },
+                        maxWidth: '100%',
                     }}
                 >
                     {children}
@@ -681,7 +498,10 @@ export default function AdminShell({
                 open={Boolean(menuAnchor)}
                 onClose={() => setMenuAnchor(null)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: isRtl ? 'left' : 'right',
+                }}
                 PaperProps={{
                     sx: {
                         width: 220,
@@ -690,14 +510,14 @@ export default function AdminShell({
                 }}
             >
                 <MenuItem
-                    component={Link as React.ElementType}
+                    component={Link as ElementType}
                     href={edit().url}
                     onClick={() => setMenuAnchor(null)}
                 >
                     <ListItemIcon>
                         <SettingsRoundedIcon fontSize="small" />
                     </ListItemIcon>
-                    Settings
+                    {t('navigation.settings')}
                 </MenuItem>
                 <MenuItem
                     onClick={() => {
@@ -708,9 +528,10 @@ export default function AdminShell({
                     <ListItemIcon>
                         <LogoutRoundedIcon fontSize="small" />
                     </ListItemIcon>
-                    Log out
+                    {t('navigation.logout')}
                 </MenuItem>
             </Menu>
+            <MobileBottomNavigation roles={roles} currentUrl={currentUrl} />
         </Box>
     );
 }

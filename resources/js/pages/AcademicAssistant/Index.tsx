@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
@@ -137,33 +138,18 @@ export default function AcademicAssistantIndex({
         });
 
         try {
-            const response = await fetch('/academic-assistant/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-CSRF-TOKEN':
-                        document.querySelector<HTMLMetaElement>(
-                            'meta[name="csrf-token"]',
-                        )?.content ?? '',
-                },
-                body: JSON.stringify({
+            const { data: result } = await axios.post(
+                '/academic-assistant/messages',
+                {
                     question: trimmedQuestion,
                     conversation_id: activeConversationId,
-                }),
-            });
-
-            if (!response.ok) {
-                const payload = await response.json().catch(() => null);
-                const message =
-                    typeof payload?.message === 'string'
-                        ? payload.message
-                        : "Erreur lors de l'envoi du message.";
-
-                throw new Error(message);
-            }
-
-            const result = await response.json();
+                },
+                {
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                },
+            );
 
             setCurrentConversation(result.conversation);
             setConversationsList((previous) => {
@@ -233,21 +219,33 @@ export default function AcademicAssistantIndex({
                             Assistant academique
                         </Typography>
                     </Stack>
-                    <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                        Posez une question sur les notes, absences, retards, classes
-                        ou eleves a risque. Les reponses respectent votre perimetre
-                        d acces.
+                    <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        sx={{ mt: 1 }}
+                    >
+                        Posez une question sur les notes, absences, retards,
+                        classes ou eleves a risque. Les reponses respectent
+                        votre perimetre d acces.
                     </Typography>
                 </Box>
 
-                {flash?.success ? <Alert severity="success">{flash.success}</Alert> : null}
-                {flash?.error ? <Alert severity="error">{flash.error}</Alert> : null}
+                {flash?.success ? (
+                    <Alert severity="success">{flash.success}</Alert>
+                ) : null}
+                {flash?.error ? (
+                    <Alert severity="error">{flash.error}</Alert>
+                ) : null}
                 {errors.conversation_id ? (
                     <Alert severity="error">{errors.conversation_id}</Alert>
                 ) : null}
                 {error ? <Alert severity="error">{error}</Alert> : null}
 
-                <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} alignItems="stretch">
+                <Stack
+                    direction={{ xs: 'column', lg: 'row' }}
+                    spacing={3}
+                    alignItems="stretch"
+                >
                     <Paper
                         variant="outlined"
                         sx={{
@@ -257,7 +255,10 @@ export default function AcademicAssistantIndex({
                         }}
                     >
                         <Box sx={{ p: 2.5 }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{ fontWeight: 700 }}
+                            >
                                 Conversations
                             </Typography>
                             <Button
@@ -274,43 +275,62 @@ export default function AcademicAssistantIndex({
                         <List disablePadding>
                             {conversationsList.length === 0 ? (
                                 <Box sx={{ p: 2.5 }}>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
                                         Aucune conversation pour le moment.
                                     </Typography>
                                 </Box>
                             ) : (
                                 conversationsList.map((conversation) => {
-                                    const latestMessage = conversation.messages?.length
-                                        ? conversation.messages[conversation.messages.length - 1]
+                                    const latestMessage = conversation.messages
+                                        ?.length
+                                        ? conversation.messages[
+                                              conversation.messages.length - 1
+                                          ]
                                         : undefined;
 
                                     return (
                                         <ListItemButton
                                             key={conversation.id}
-                                            selected={conversation.id === currentConversation?.id}
+                                            selected={
+                                                conversation.id ===
+                                                currentConversation?.id
+                                            }
                                             href={`/academic-assistant/conversations/${conversation.id}`}
                                             component={Link}
-                                            sx={{ alignItems: 'flex-start', py: 1.5 }}
+                                            sx={{
+                                                alignItems: 'flex-start',
+                                                py: 1.5,
+                                            }}
                                         >
-                                            <Stack spacing={0.5} sx={{ minWidth: 0 }}>
+                                            <Stack
+                                                spacing={0.5}
+                                                sx={{ minWidth: 0 }}
+                                            >
                                                 <Typography
                                                     variant="body2"
                                                     sx={{
                                                         fontWeight: 700,
                                                         overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
+                                                        textOverflow:
+                                                            'ellipsis',
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {conversation.title ?? 'Conversation'}
+                                                    {conversation.title ??
+                                                        'Conversation'}
                                                 </Typography>
                                                 {latestMessage ? (
                                                     <Typography
                                                         variant="caption"
                                                         color="text.secondary"
                                                         sx={{
-                                                            display: '-webkit-box',
-                                                            WebkitBoxOrient: 'vertical',
+                                                            display:
+                                                                '-webkit-box',
+                                                            WebkitBoxOrient:
+                                                                'vertical',
                                                             WebkitLineClamp: 2,
                                                             overflow: 'hidden',
                                                         }}
@@ -343,11 +363,19 @@ export default function AcademicAssistantIndex({
                                 spacing={1.5}
                             >
                                 <Box>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                                        {currentConversation?.title ?? 'Nouvelle question'}
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{ fontWeight: 700 }}
+                                    >
+                                        {currentConversation?.title ??
+                                            'Nouvelle question'}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Assistant IA local avec fallback rule-based securise.
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        Assistant IA local avec fallback
+                                        rule-based securise.
                                     </Typography>
                                 </Box>
                                 <Chip
@@ -380,26 +408,51 @@ export default function AcademicAssistantIndex({
                                                 key={message.id}
                                                 sx={{
                                                     display: 'flex',
-                                                    justifyContent: isUser ? 'flex-end' : 'flex-start',
+                                                    justifyContent: isUser
+                                                        ? 'flex-end'
+                                                        : 'flex-start',
                                                 }}
                                             >
                                                 <Paper
                                                     elevation={0}
                                                     sx={{
-                                                        maxWidth: { xs: '100%', md: '78%' },
+                                                        maxWidth: {
+                                                            xs: '100%',
+                                                            md: '78%',
+                                                        },
                                                         p: 2,
                                                         borderRadius: 2,
-                                                        opacity: message.pending ? 0.7 : 1,
-                                                        bgcolor: isUser ? 'primary.main' : 'background.paper',
-                                                        color: isUser ? 'primary.contrastText' : 'text.primary',
-                                                        border: isUser ? 0 : '1px solid',
+                                                        opacity: message.pending
+                                                            ? 0.7
+                                                            : 1,
+                                                        bgcolor: isUser
+                                                            ? 'primary.main'
+                                                            : 'background.paper',
+                                                        color: isUser
+                                                            ? 'primary.contrastText'
+                                                            : 'text.primary',
+                                                        border: isUser
+                                                            ? 0
+                                                            : '1px solid',
                                                         borderColor: 'divider',
                                                     }}
                                                 >
-                                                    <Typography variant="caption" sx={{ opacity: 0.75 }}>
-                                                        {isUser ? 'Vous' : 'Assistant'}
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{ opacity: 0.75 }}
+                                                    >
+                                                        {isUser
+                                                            ? 'Vous'
+                                                            : 'Assistant'}
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ mt: 0.75, whiteSpace: 'pre-wrap' }}>
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            mt: 0.75,
+                                                            whiteSpace:
+                                                                'pre-wrap',
+                                                        }}
+                                                    >
                                                         {message.content}
                                                     </Typography>
                                                 </Paper>
@@ -419,10 +472,17 @@ export default function AcademicAssistantIndex({
                                     }}
                                 >
                                     <Stack spacing={1.5} alignItems="center">
-                                        <AutoAwesomeRoundedIcon color="disabled" sx={{ fontSize: 44 }} />
-                                        <Typography variant="body2" color="text.secondary">
-                                            Demandez par exemple : Quelle est la moyenne ?
-                                            Combien d absences ? Quels eleves sont a risque ?
+                                        <AutoAwesomeRoundedIcon
+                                            color="disabled"
+                                            sx={{ fontSize: 44 }}
+                                        />
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                        >
+                                            Demandez par exemple : Quelle est la
+                                            moyenne ? Combien d absences ? Quels
+                                            eleves sont a risque ?
                                         </Typography>
                                     </Stack>
                                 </Box>
@@ -436,14 +496,21 @@ export default function AcademicAssistantIndex({
                                 <TextField
                                     label="Votre question"
                                     value={question}
-                                    onChange={(event) => setQuestion(event.target.value)}
+                                    onChange={(event) =>
+                                        setQuestion(event.target.value)
+                                    }
                                     multiline
                                     minRows={3}
                                     error={Boolean(errors.question)}
                                     helperText={errors.question}
                                     fullWidth
                                 />
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                    }}
+                                >
                                     <Button
                                         type="submit"
                                         variant="contained"

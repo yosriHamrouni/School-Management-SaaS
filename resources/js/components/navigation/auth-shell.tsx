@@ -1,6 +1,8 @@
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import { Box, Card, CardContent, Container, Stack, Typography } from '@mui/material';
 import type { PropsWithChildren } from 'react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useTranslation } from '@/i18n';
 
 type AuthShellProps = PropsWithChildren<{
     title: string;
@@ -12,6 +14,8 @@ export default function AuthShell({
     title,
     description,
 }: AuthShellProps) {
+    const { t } = useTranslation();
+
     return (
         <Box
             sx={{
@@ -22,6 +26,9 @@ export default function AuthShell({
             }}
         >
             <Container maxWidth="lg">
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                    <LanguageSwitcher />
+                </Box>
                 <Box
                     sx={{
                         display: 'grid',
@@ -66,29 +73,26 @@ export default function AuthShell({
                                     </Box>
                                     <Box>
                                         <Typography variant="h6">
-                                            Academic Management
+                                            {t('auth.brand.name')}
                                         </Typography>
                                         <Typography
                                             variant="body2"
                                             sx={{ opacity: 0.8 }}
                                         >
-                                            Multi-tenant administration platform
+                                            {t('auth.brand.subtitle')}
                                         </Typography>
                                     </Box>
                                 </Stack>
 
                                 <Box sx={{ pt: 6 }}>
                                     <Typography variant="h3" sx={{ maxWidth: 440 }}>
-                                        Modern administration experience for schools,
-                                        teams and establishments.
+                                        {t('auth.brand.headline')}
                                     </Typography>
                                     <Typography
                                         variant="body1"
                                         sx={{ mt: 2, maxWidth: 460, opacity: 0.88 }}
                                     >
-                                        Secure access, clearer workflows, and a more
-                                        consistent interface across dashboards,
-                                        forms and management views.
+                                        {t('auth.brand.description')}
                                     </Typography>
                                 </Box>
                             </Stack>

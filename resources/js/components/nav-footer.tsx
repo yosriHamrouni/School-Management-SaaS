@@ -6,6 +6,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useTranslation } from '@/i18n';
 import { toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
@@ -16,6 +17,14 @@ export function NavFooter({
 }: ComponentPropsWithoutRef<typeof SidebarGroup> & {
     items: NavItem[];
 }) {
+    const { t } = useTranslation();
+    const translateTitle = (title: string) =>
+        title === 'Repository'
+            ? t('navigation.repository')
+            : title === 'Documentation'
+              ? t('navigation.documentation')
+              : title;
+
     return (
         <SidebarGroup
             {...props}
@@ -37,7 +46,7 @@ export function NavFooter({
                                     {item.icon && (
                                         <item.icon className="h-5 w-5" />
                                     )}
-                                    <span>{item.title}</span>
+                                    <span>{translateTitle(item.title)}</span>
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

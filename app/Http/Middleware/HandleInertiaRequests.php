@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                         'id' => $request->user()->id,
                         'name' => $request->user()->name,
                         'email' => $request->user()->email,
+                        'email_verified_at' => $request->user()->email_verified_at,
                         'establishment' => $request->user()->establishment
                             ? [
                                 'id' => $request->user()->establishment->id,
@@ -71,6 +72,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'locale' => app()->getLocale(),
             'notificationCenter' => $request->user()
                 ? [
                     'unread_count' => $this->notificationCenter->unreadCountFor($request->user()),

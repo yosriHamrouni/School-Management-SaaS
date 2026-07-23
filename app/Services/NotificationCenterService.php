@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Collection;
 
 class NotificationCenterService
@@ -57,13 +57,27 @@ class NotificationCenterService
 
     private function queryFor(User $user): MorphMany
     {
-        return $user->notifications()
-            ->where(function ($query) use ($user) {
+        $query = $user->notifications();
+        $establishmentId = (string) $user->establishment_id;
+
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return $query->where(function ($query) use ($establishmentId) {
                 $query
                     ->whereRaw("(data::jsonb ->> 'establishment_id') is null")
                     ->orWhereRaw(
                         "(data::jsonb ->> 'establishment_id') = ?",
-                        [(string) $user->establishment_id],
+                        [$establishmentId],
+                    );
+            });
+        }
+
+        return $user->notifications()
+            ->where(function ($query) use ($establishmentId) {
+                $query
+                    ->whereRaw("json_extract(data, '$.establishment_id') is null")
+                    ->orWhereRaw(
+                        "json_extract(data, '$.establishment_id') = ?",
+                        [$establishmentId],
                     );
             });
     }

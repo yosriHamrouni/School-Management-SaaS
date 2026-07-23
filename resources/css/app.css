@@ -139,5 +139,98 @@
 
     body {
         @apply bg-background text-foreground;
+        min-width: 320px;
+        overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html[dir='rtl'] body {
+        text-align: start;
+    }
+
+    html[dir='rtl'] input,
+    html[dir='rtl'] textarea,
+    html[dir='rtl'] select {
+        text-align: start;
+    }
+
+    html[dir='rtl'] input[type='email'],
+    html[dir='rtl'] input[type='url'],
+    html[dir='rtl'] input[type='tel'],
+    html[dir='rtl'] input[type='number'],
+    html[dir='rtl'] code,
+    html[dir='rtl'] pre {
+        direction: ltr;
+        text-align: left;
+    }
+}
+
+@layer components {
+    .schedule-calendar .fc {
+        @apply text-sm text-foreground;
+    }
+
+    .schedule-calendar .fc .fc-toolbar {
+        @apply flex-wrap gap-3;
+    }
+
+    .schedule-calendar .fc .fc-toolbar-title {
+        @apply text-lg font-semibold md:text-xl;
+    }
+
+    .schedule-calendar .fc .fc-button {
+        @apply rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50;
+    }
+
+    .schedule-calendar .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .schedule-calendar .fc .fc-button-primary:not(:disabled):active {
+        @apply border-primary bg-primary text-primary-foreground;
+    }
+
+    .schedule-calendar .fc .fc-scrollgrid,
+    .schedule-calendar .fc .fc-theme-standard td,
+    .schedule-calendar .fc .fc-theme-standard th {
+        @apply border-border;
+    }
+
+    .schedule-calendar .fc .fc-col-header-cell {
+        @apply bg-muted/40 py-2;
+    }
+
+    .schedule-calendar .fc .fc-col-header-cell-cushion {
+        @apply py-2 text-xs font-semibold uppercase text-muted-foreground no-underline;
+    }
+
+    .schedule-calendar .fc .fc-timegrid-axis-cushion,
+    .schedule-calendar .fc .fc-timegrid-slot-label-cushion {
+        @apply text-xs font-medium text-muted-foreground;
+    }
+
+    .schedule-calendar .fc .fc-timegrid-slot {
+        height: var(--schedule-slot-height, 2.6rem);
+    }
+
+    .schedule-calendar .fc .fc-event {
+        @apply overflow-hidden rounded-md border-l-4 shadow-xs;
+    }
+
+    .schedule-calendar .fc .fc-event-main {
+        @apply text-current;
+    }
+
+    .schedule-calendar .fc .fc-event-main > div {
+        font-size: calc(1em * var(--schedule-event-scale, 1));
+    }
+
+    .schedule-calendar .fc .fc-timegrid-now-indicator-line {
+        @apply border-primary;
+    }
+
+    .schedule-calendar .fc .fc-timegrid-now-indicator-arrow {
+        @apply border-r-primary;
+    }
+
+    .schedule-calendar .fc .fc-highlight {
+        @apply bg-primary/10;
     }
 }

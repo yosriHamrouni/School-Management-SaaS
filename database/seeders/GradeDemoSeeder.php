@@ -6,6 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\ClassSubject;
 use App\Models\Evaluation;
 use App\Models\Grade;
+use App\Models\Role;
 use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\Subject;
@@ -13,7 +14,9 @@ use App\Models\Term;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class GradeDemoSeeder extends Seeder
 {
@@ -64,22 +67,35 @@ class GradeDemoSeeder extends Seeder
 
         $subjects = Subject::query()
             ->where('establishment_id', $establishmentId)
-            ->whereIn('name', ['Mathematics', 'English', 'Computer Science'])
+            ->whereIn('name', [
+                'Mathematics',
+                'English',
+                'Computer Science',
+                'Physics',
+                'History',
+            ])
             ->get()
             ->keyBy('name');
 
         $classes = SchoolClass::query()
             ->where('establishment_id', $establishmentId)
-            ->whereIn('name', ['Primary A', 'Primary B', 'Middle 1'])
+            ->whereIn('name', ['Primary A', 'Primary B', 'Middle 1', 'Middle 2', 'High 1', 'High 2'])
             ->get()
             ->keyBy('name');
 
-        if ($classes->count() < 3 || $subjects->count() < 3) {
+        if ($classes->count() < 6 || $subjects->count() < 5) {
             return;
         }
 
+        if (Schema::hasTable('class_subjects')) {
+            ClassSubject::query()
+                ->where('teacher_id', $teacher->id)
+                ->where('subject_id', '!=', $subjects['Computer Science']->id)
+                ->delete();
+        }
+
         $this->seedClassEvaluation(
-            teacher: $teacher,
+            teacher: $this->teacherForSubject($subjects['Mathematics']->name, $establishmentId),
             academicYear: $academicYear,
             term: $term,
             schoolClass: $classes['Primary A'],
@@ -93,7 +109,7 @@ class GradeDemoSeeder extends Seeder
         );
 
         $this->seedClassEvaluation(
-            teacher: $teacher,
+            teacher: $this->teacherForSubject($subjects['English']->name, $establishmentId),
             academicYear: $academicYear,
             term: $term,
             schoolClass: $classes['Primary A'],
@@ -107,7 +123,7 @@ class GradeDemoSeeder extends Seeder
         );
 
         $this->seedClassEvaluation(
-            teacher: $teacher,
+            teacher: $this->teacherForSubject($subjects['Mathematics']->name, $establishmentId),
             academicYear: $academicYear,
             term: $term,
             schoolClass: $classes['Primary B'],
@@ -134,6 +150,37 @@ class GradeDemoSeeder extends Seeder
             ],
         );
 
+        $this->seedClassEvaluation(
+            teacher: $this->teacherForSubject($subjects['Physics']->name, $establishmentId),
+            academicYear: $academicYear,
+            term: $term,
+            schoolClass: $classes['Middle 1'],
+            subject: $subjects['Physics'],
+            title: 'Middle 1 Physics Lab',
+            evaluationDate: '2026-04-09',
+            rows: [
+                'student5@school-management.test' => 12.0,
+                'student6@school-management.test' => 14.0,
+            ],
+        );
+
+        $this->seedClassEvaluation(
+            teacher: $this->teacherForSubject($subjects['History']->name, $establishmentId),
+            academicYear: $academicYear,
+            term: $term,
+            schoolClass: $classes['Primary B'],
+            subject: $subjects['History'],
+            title: 'Primary B History Assessment',
+            evaluationDate: '2026-04-16',
+            rows: [
+                'student3@school-management.test' => 10.0,
+                'student4@school-management.test' => 15.0,
+            ],
+        );
+
+        $performanceStudentsByClass = $this->ensurePerformanceDemoStudents($establishmentId, $classes);
+        $this->seedPerformanceMatrix($academicYear, $term, $classes, $subjects, $performanceStudentsByClass);
+
         foreach ([
             'student@school-management.test' => $classes['Primary A']->id,
             'student2@school-management.test' => $classes['Primary A']->id,
@@ -150,6 +197,28 @@ class GradeDemoSeeder extends Seeder
 
             $this->ensureStudentMembership($student->id, $classId, $establishmentId);
         }
+    }
+
+    private function teacherForSubject(string $subjectName, int $establishmentId): User
+    {
+        $subjectSlug = Str::slug($subjectName);
+
+        $teacher = User::query()->updateOrCreate(
+            ['email' => "teacher-{$subjectSlug}@school-management.test"],
+            [
+                'establishment_id' => $establishmentId,
+                'name' => "{$subjectName} Teacher",
+                'password' => Hash::make('password'),
+            ],
+        );
+
+        $teacherRoleId = Role::query()->where('name', 'teacher')->value('id');
+
+        if ($teacherRoleId !== null) {
+            $teacher->roles()->syncWithoutDetaching([$teacherRoleId]);
+        }
+
+        return $teacher;
     }
 
     private function seedClassEvaluation(
@@ -244,6 +313,128 @@ class GradeDemoSeeder extends Seeder
                 'end_date' => '2025-12-31',
             ],
         );
+    }
+
+    private function ensurePerformanceDemoStudents(int $establishmentId, $classes): array
+    {
+        $studentRoleId = Role::query()->where('name', 'student')->value('id');
+        $studentsByClass = [];
+
+        foreach ($classes as $className => $schoolClass) {
+            $classSlug = Str::slug($className);
+            $studentsByClass[$className] = [];
+
+            for ($index = 1; $index <= 4; $index++) {
+                $email = "performance-{$classSlug}-{$index}@school-management.test";
+
+                $student = User::query()->updateOrCreate(
+                    ['email' => $email],
+                    [
+                        'establishment_id' => $establishmentId,
+                        'name' => "{$className} Learner {$index}",
+                        'password' => Hash::make('password'),
+                    ],
+                );
+
+                if ($studentRoleId !== null) {
+                    $student->roles()->syncWithoutDetaching([$studentRoleId]);
+                }
+
+                $this->ensureStudentMembership($student->id, $schoolClass->id, $establishmentId);
+
+                StudentProfile::query()
+                    ->where('user_id', $student->id)
+                    ->update([
+                        'student_number' => sprintf('PERF-%s-%02d', strtoupper(str_replace('-', '', $classSlug)), $index),
+                        'date_of_birth' => sprintf('%d-%02d-%02d', str_starts_with($className, 'High') ? 2008 : 2010, $index + 1, 10 + $index),
+                        'gender' => $index % 2 === 0 ? 'female' : 'male',
+                    ]);
+
+                $studentsByClass[$className][] = $email;
+            }
+        }
+
+        return $studentsByClass;
+    }
+
+    private function seedPerformanceMatrix(
+        AcademicYear $academicYear,
+        ?Term $term,
+        $classes,
+        $subjects,
+        array $studentsByClass,
+    ): void {
+        $targetAverages = [
+            'Primary A' => [
+                'Mathematics' => 13.5,
+                'English' => 9.5,
+                'Computer Science' => 12.0,
+                'Physics' => 11.0,
+                'History' => 14.0,
+            ],
+            'Primary B' => [
+                'Mathematics' => 8.5,
+                'English' => 12.5,
+                'Computer Science' => 10.5,
+                'Physics' => 9.0,
+                'History' => 15.5,
+            ],
+            'Middle 1' => [
+                'Mathematics' => 12.0,
+                'English' => 11.5,
+                'Computer Science' => 14.5,
+                'Physics' => 13.5,
+                'History' => 10.5,
+            ],
+            'Middle 2' => [
+                'Mathematics' => 10.0,
+                'English' => 15.0,
+                'Computer Science' => 9.5,
+                'Physics' => 11.5,
+                'History' => 13.5,
+            ],
+            'High 1' => [
+                'Mathematics' => 14.5,
+                'English' => 12.0,
+                'Computer Science' => 16.0,
+                'Physics' => 15.0,
+                'History' => 11.0,
+            ],
+            'High 2' => [
+                'Mathematics' => 7.5,
+                'English' => 10.5,
+                'Computer Science' => 11.0,
+                'Physics' => 8.5,
+                'History' => 12.0,
+            ],
+        ];
+
+        $studentOffsets = [-1.5, -0.25, 0.75, 1.0];
+
+        foreach ($targetAverages as $className => $subjectsAverage) {
+            foreach ($subjectsAverage as $subjectName => $targetAverage) {
+                $rows = [];
+
+                foreach (($studentsByClass[$className] ?? []) as $index => $studentEmail) {
+                    $rows[$studentEmail] = max(0, min(20, round($targetAverage + $studentOffsets[$index], 2)));
+                }
+
+                if ($rows === []) {
+                    continue;
+                }
+
+                $this->seedClassEvaluation(
+                    teacher: $this->teacherForSubject($subjectName, (int) $classes[$className]->establishment_id),
+                    academicYear: $academicYear,
+                    term: $term,
+                    schoolClass: $classes[$className],
+                    subject: $subjects[$subjectName],
+                    title: "{$className} {$subjectName} Benchmark",
+                    evaluationDate: '2026-05-15',
+                    rows: $rows,
+                );
+            }
+        }
     }
 
     private function ensureTeacherAssignment(int $teacherId, int $classId, int $subjectId): void

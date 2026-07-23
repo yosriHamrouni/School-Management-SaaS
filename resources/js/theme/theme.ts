@@ -1,5 +1,5 @@
-import { alpha, createTheme  } from '@mui/material/styles';
-import type {PaletteMode} from '@mui/material/styles';
+import { alpha, createTheme } from '@mui/material/styles';
+import type { PaletteMode } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
     interface Palette {
@@ -13,10 +13,11 @@ declare module '@mui/material/styles' {
 
 export const drawerWidth = 280;
 
-export function createAppTheme(mode: PaletteMode) {
+export function createAppTheme(mode: PaletteMode, direction: 'ltr' | 'rtl' = 'ltr') {
     const isDark = mode === 'dark';
 
     return createTheme({
+        direction,
         palette: {
             mode,
             primary: {

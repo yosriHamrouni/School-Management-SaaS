@@ -38,6 +38,26 @@ class Establishment extends Model
         return $this->hasMany(Level::class);
     }
 
+    public function feeTypes(): HasMany
+    {
+        return $this->hasMany(FeeType::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function paymentInvoices(): HasMany
+    {
+        return $this->hasMany(PaymentInvoice::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function classes(): HasMany
     {
         return $this->hasMany(SchoolClass::class, 'establishment_id');

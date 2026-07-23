@@ -1,14 +1,21 @@
-import { Head, Link, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
 import type { DateSelectArg, EventClickArg } from '@fullcalendar/core';
+import { Head, Link, router } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import FlashAlerts from '@/components/ui/flash-alerts';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
+import {
+    buildScheduleSummaries,
+    legendItems,
+    SchedulePageHeader,
+    ScheduleSummaryCards,
+} from '@/pages/EstablishmentAdmin/Schedules/Partials/schedule-ui';
+import type { ScheduleCalendarEvent } from '@/pages/EstablishmentAdmin/Schedules/Partials/schedule-ui';
 import ScheduleCalendar from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleCalendar';
-import ScheduleFormModal, {
-    type ScheduleModalData,
-} from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleFormModal';
+import ScheduleFormModal from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleFormModal';
+import type { ScheduleModalData } from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleFormModal';
 import type { BreadcrumbItem } from '@/types';
 
 type Option = {
@@ -103,11 +110,14 @@ export default function SchedulesIndex({
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState<ScheduleModalData>(emptyModalData);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [events, setEvents] = useState<ScheduleCalendarEvent[]>([]);
 
     const activeFilterCount = useMemo(
         () => Object.values(filters).filter((value) => value !== '').length,
         [filters],
     );
+    const summaries = useMemo(() => buildScheduleSummaries(events, 'admin'), [events]);
+    const legend = useMemo(() => legendItems(events, 'class_name'), [events]);
 
     const applyFilters = () => {
         router.get('/establishment-admin/schedules', filters, {
@@ -176,23 +186,26 @@ export default function SchedulesIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Schedules" />
+            <Head title="Schedule Management" />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-center md:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-semibold">Schedules</h1>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            Plan sessions visually with a weekly calendar and keep conflicts out of your timetable.
-                        </p>
-                    </div>
-
-                    <Button onClick={openCreateModal}>Add schedule</Button>
-                </div>
+                <SchedulePageHeader
+                    title="Schedule Management"
+                    subtitle="Create, organize and monitor class timetables across the establishment."
+                    eyebrow="Administration"
+                    action={
+                        <Button onClick={openCreateModal}>
+                            <Plus className="size-4" />
+                            Add schedule
+                        </Button>
+                    }
+                />
 
                 <FlashAlerts flash={flash} />
 
-                <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
+                <ScheduleSummaryCards items={summaries} />
+
+                <div className="rounded-lg border border-sidebar-border/70 bg-card p-4 shadow-sm">
                     <div className="mb-4 flex items-center justify-between">
                         <div>
                             <h2 className="text-lg font-semibold">Filters</h2>
@@ -302,17 +315,41 @@ export default function SchedulesIndex({
                             Reset filters
                         </Button>
                     </div>
+
+                    {legend.length > 0 ? (
+                        <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
+                            {legend.map((item) => (
+                                <span
+                                    key={item.label}
+                                    className="inline-flex items-center gap-2 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground"
+                                >
+                                    <span
+                                        className="size-2.5 rounded-full"
+                                        style={{ backgroundColor: item.color }}
+                                    />
+                                    {item.label}
+                                </span>
+                            ))}
+                        </div>
+                    ) : null}
                 </div>
 
                 <ScheduleCalendar
                     feedUrl={calendarFeedUrl}
                     filters={filters}
                     refreshKey={refreshKey}
+                    audience="admin"
+                    colorBy="class_name"
+                    title="Planning calendar"
+                    description="Select a free slot to create a session, or select an event to update it."
+                    emptyTitle="No schedules found"
+                    emptyDescription="No sessions match the selected week or filters. Create one from the button above or by selecting a slot."
+                    onEventsLoaded={setEvents}
                     onSelectSlot={handleSlotSelect}
                     onEventSelect={handleEventSelect}
                 />
 
-                <div className="rounded-xl border border-sidebar-border/70 bg-background">
+                <div className="rounded-lg border border-sidebar-border/70 bg-card shadow-sm">
                     <div className="border-b border-border px-4 py-4">
                         <h2 className="text-lg font-semibold">Administrative list</h2>
                         <p className="text-sm text-muted-foreground">

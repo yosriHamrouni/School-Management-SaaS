@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
             SchoolClassSeeder::class,
             AdminUserSeeder::class,
             DemoUsersSeeder::class,
+            ScheduleSeeder::class,
+            MyScheduleDemoSeeder::class,
+            AssignmentDemoSeeder::class,
+            FinanceSeeder::class,
             GradeDemoSeeder::class,
             RiskDemoSeeder::class,
         ]);

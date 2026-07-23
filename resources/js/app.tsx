@@ -2,8 +2,11 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import PwaUpdatePrompt from '@/components/pwa-update-prompt';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
+import { I18nProvider } from '@/i18n';
+import '@/bootstrap';
 import '@/lib/echo';
 import AppThemeProvider from '@/theme/provider';
 import '@fontsource/roboto/300.css';
@@ -23,14 +26,18 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
+        const initialLocale = props.initialPage.props.locale;
 
         root.render(
             <StrictMode>
-                <AppThemeProvider>
-                    <TooltipProvider delayDuration={0}>
-                        <App {...props} />
-                    </TooltipProvider>
-                </AppThemeProvider>
+                <I18nProvider initialLocale={initialLocale}>
+                    <AppThemeProvider>
+                        <TooltipProvider delayDuration={0}>
+                            <App {...props} />
+                            <PwaUpdatePrompt />
+                        </TooltipProvider>
+                    </AppThemeProvider>
+                </I18nProvider>
             </StrictMode>,
         );
     },

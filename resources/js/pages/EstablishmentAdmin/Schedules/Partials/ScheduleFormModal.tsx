@@ -1,4 +1,5 @@
 import { router, useForm } from '@inertiajs/react';
+import { Save, Trash2, X } from 'lucide-react';
 import AlertError from '@/components/alert-error';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -40,7 +41,7 @@ type Props = {
 };
 
 const selectClassName =
-    'border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]';
+    'border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-[3px]';
 
 export default function ScheduleFormModal({
     open,
@@ -67,6 +68,7 @@ export default function ScheduleFormModal({
 
         if (isEditing && form.data.id) {
             form.put(`/establishment-admin/schedules/${form.data.id}`, options);
+
             return;
         }
 
@@ -91,7 +93,7 @@ export default function ScheduleFormModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>{isEditing ? 'Edit Schedule' : 'Create Schedule'}</DialogTitle>
+                    <DialogTitle>{isEditing ? 'Edit schedule' : 'Create schedule'}</DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? 'Update the selected teaching session.'
@@ -106,7 +108,7 @@ export default function ScheduleFormModal({
                     />
                 ) : null}
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 rounded-lg border border-border bg-muted/20 p-4 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label htmlFor="modal_class_id">Class</Label>
                         <select
@@ -210,6 +212,7 @@ export default function ScheduleFormModal({
                                 variant="destructive"
                                 onClick={handleDelete}
                             >
+                                <Trash2 className="size-4" />
                                 Delete
                             </Button>
                         ) : null}
@@ -221,6 +224,7 @@ export default function ScheduleFormModal({
                             variant="outline"
                             onClick={() => onOpenChange(false)}
                         >
+                            <X className="size-4" />
                             Cancel
                         </Button>
                         <Button
@@ -228,6 +232,7 @@ export default function ScheduleFormModal({
                             disabled={form.processing}
                             onClick={handleSubmit}
                         >
+                            <Save className="size-4" />
                             {isEditing ? 'Save changes' : 'Create schedule'}
                         </Button>
                     </div>

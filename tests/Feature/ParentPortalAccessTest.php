@@ -13,6 +13,20 @@ use App\Models\Term;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
+test('parent dashboard calculates the linked child average through evaluations', function () {
+    $context = parentPortalContext('dashboard');
+
+    $this
+        ->actingAs($context['parent'])
+        ->get(route('dashboard', ['student' => $context['student']->id]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('dashboard')
+            ->where('parentDashboard.selected_student_id', $context['student']->id)
+            ->where('parentDashboard.student.summary.average', 15),
+        );
+});
+
 test('parent can only view reports for linked children', function () {
     $context = parentPortalContext();
 

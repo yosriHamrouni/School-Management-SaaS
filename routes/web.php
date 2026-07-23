@@ -6,11 +6,15 @@ use App\Http\Controllers\Parent\ScheduleController as ParentScheduleController;
 use App\Http\Controllers\AcademicAssistantController;
 use App\Http\Controllers\AcademicDashboardController;
 use App\Http\Controllers\AcademicReportExportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetailedPerformanceAnalysisController;
 use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\Finance\PaymentInvoiceController;
+use App\Http\Controllers\Finance\PaymentTrackingController;
 use App\Http\Controllers\Risk\RiskDashboardController;
 use App\Http\Controllers\Risk\RiskStudentController;
 use App\Http\Controllers\EstablishmentAdmin\AcademicYearController;
+use App\Http\Controllers\EstablishmentAdmin\FeeTypeController;
 use App\Http\Controllers\EstablishmentAdmin\ParentController;
 use App\Http\Controllers\MessagingController;
 use App\Http\Controllers\NotificationController;
@@ -32,8 +36,19 @@ use App\Http\Controllers\Teacher\AssignmentSubmissionController;
 use App\Http\Controllers\TeacherClassController;
 use App\Http\Controllers\TeacherAccessController;
 use App\Http\Controllers\UserManagementController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+
+Route::post('/locale', function (Request $request) {
+    $validated = $request->validate([
+        'locale' => ['required', 'string', 'in:fr,en,ar'],
+    ]);
+
+    $request->session()->put('locale', $validated['locale']);
+
+    return back(303);
+})->name('locale.update');
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -58,7 +73,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('/academic-assistant', [AcademicAssistantController::class, 'index'])
         ->name('academic-assistant.index');
     Route::post('/academic-assistant/messages', [AcademicAssistantController::class, 'store'])
@@ -194,6 +209,31 @@ Route::middleware('auth')->group(function () {
             ->name('reports.exports.pdf');
         Route::get('/reports/exports/excel', [AcademicReportExportController::class, 'excel'])
             ->name('reports.exports.excel');
+
+        Route::prefix('finance')
+            ->name('finance.')
+            ->group(function () {
+                Route::get('/fee-types', [FeeTypeController::class, 'index'])
+                    ->name('fee-types.index');
+                Route::post('/fee-types', [FeeTypeController::class, 'store'])
+                    ->name('fee-types.store');
+                Route::put('/fee-types/{feeType}', [FeeTypeController::class, 'update'])
+                    ->name('fee-types.update');
+                Route::delete('/fee-types/{feeType}', [FeeTypeController::class, 'destroy'])
+                    ->name('fee-types.destroy');
+                Route::get('/payments', [PaymentTrackingController::class, 'index'])
+                    ->name('payments.index');
+                Route::get('/payment-invoices', [PaymentInvoiceController::class, 'index'])
+                    ->name('payment-invoices.index');
+                Route::get('/payment-invoices/{paymentInvoice}/pdf', [PaymentInvoiceController::class, 'download'])
+                    ->name('payment-invoices.download');
+                Route::get('/invoices/{invoice}', [PaymentTrackingController::class, 'show'])
+                    ->name('invoices.show');
+                Route::post('/invoices/{invoice}/payments', [PaymentTrackingController::class, 'storePayment'])
+                    ->name('invoices.payments.store');
+                Route::patch('/payments/{payment}/cancel', [PaymentTrackingController::class, 'cancelPayment'])
+                    ->name('payments.cancel');
+            });
     });
 
     Route::middleware(['auth', 'role:teacher|establishment_admin|admin'])->group(function () {

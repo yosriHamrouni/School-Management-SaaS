@@ -1,0 +1,42 @@
+<?php
+
+return [
+    'accepted' => 'Le champ :attribute doit être accepté.',
+    'active_url' => 'Le champ :attribute doit être une URL valide.',
+    'after' => 'Le champ :attribute doit être une date postérieure à :date.',
+    'after_or_equal' => 'Le champ :attribute doit être une date postérieure ou égale à :date.',
+    'before' => 'Le champ :attribute doit être une date antérieure à :date.',
+    'before_or_equal' => 'Le champ :attribute doit être une date antérieure ou égale à :date.',
+    'between' => [
+        'array' => 'Le champ :attribute doit contenir entre :min et :max éléments.',
+        'file' => 'Le fichier :attribute doit peser entre :min et :max kilo-octets.',
+        'numeric' => 'Le champ :attribute doit être compris entre :min et :max.',
+        'string' => 'Le champ :attribute doit contenir entre :min et :max caractères.',
+    ],
+    'boolean' => 'Le champ :attribute doit être vrai ou faux.',
+    'confirmed' => 'La confirmation du champ :attribute ne correspond pas.',
+    'date' => 'Le champ :attribute doit être une date valide.',
+    'email' => 'Le champ :attribute doit être une adresse e-mail valide.',
+    'exists' => 'La valeur sélectionnée pour :attribute est invalide.',
+    'file' => 'Le champ :attribute doit être un fichier.',
+    'image' => 'Le champ :attribute doit être une image.',
+    'in' => 'La valeur sélectionnée pour :attribute est invalide.',
+    'integer' => 'Le champ :attribute doit être un nombre entier.',
+    'max' => [
+        'array' => 'Le champ :attribute ne doit pas contenir plus de :max éléments.',
+        'file' => 'Le fichier :attribute ne doit pas dépasser :max kilo-octets.',
+        'numeric' => 'Le champ :attribute ne doit pas être supérieur à :max.',
+        'string' => 'Le champ :attribute ne doit pas dépasser :max caractères.',
+    ],
+    'min' => [
+        'array' => 'Le champ :attribute doit contenir au moins :min éléments.',
+        'file' => 'Le fichier :attribute doit peser au moins :min kilo-octets.',
+        'numeric' => 'Le champ :attribute doit être au moins :min.',
+        'string' => 'Le champ :attribute doit contenir au moins :min caractères.',
+    ],
+    'numeric' => 'Le champ :attribute doit être un nombre.',
+    'required' => 'Le champ :attribute est obligatoire.',
+    'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+    'unique' => 'La valeur du champ :attribute est déjà utilisée.',
+    'url' => 'Le champ :attribute doit être une URL valide.',
+];

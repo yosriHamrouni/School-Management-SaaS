@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import AuthLayout from '@/layouts/auth-layout';
+import { useTranslation } from '@/i18n';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -32,6 +33,7 @@ export default function Login({
     canResetPassword,
     canRegister,
 }: Props) {
+    const { t } = useTranslation();
     const [showPassword, setShowPassword] = useState(false);
     const form = useForm({
         email: '',
@@ -41,10 +43,10 @@ export default function Login({
 
     return (
         <AuthLayout
-            title="Sign in to your workspace"
-            description="Access the academic administration platform with your existing account."
+            title={t('auth.login.title')}
+            description={t('auth.login.description')}
         >
-            <Head title="Log in" />
+            <Head title={t('auth.login.headTitle')} />
 
             <Box
                 component="form"
@@ -59,7 +61,7 @@ export default function Login({
                     {status ? <Alert severity="success">{status}</Alert> : null}
 
                     <TextField
-                        label="Email address"
+                        label={t('auth.login.email')}
                         type="email"
                         name="email"
                         autoComplete="email"
@@ -75,7 +77,7 @@ export default function Login({
                     />
 
                     <TextField
-                        label="Password"
+                        label={t('auth.login.password')}
                         type={showPassword ? 'text' : 'password'}
                         name="password"
                         autoComplete="current-password"
@@ -90,6 +92,11 @@ export default function Login({
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton
+                                        aria-label={
+                                            showPassword
+                                                ? t('auth.login.hidePassword')
+                                                : t('auth.login.showPassword')
+                                        }
                                         edge="end"
                                         onClick={() =>
                                             setShowPassword((value) => !value)
@@ -124,7 +131,7 @@ export default function Login({
                                     }
                                 />
                             }
-                            label="Remember me"
+                            label={t('auth.login.remember')}
                         />
 
                         {canResetPassword ? (
@@ -134,7 +141,7 @@ export default function Login({
                                 underline="hover"
                                 color="primary.main"
                             >
-                                Forgot password?
+                                {t('auth.login.forgotPassword')}
                             </MuiLink>
                         ) : null}
                     </Stack>
@@ -153,7 +160,7 @@ export default function Login({
                                 sx={{ color: 'inherit', mr: 1 }}
                             />
                         ) : null}
-                        Sign in
+                        {t('auth.login.submit')}
                     </Button>
 
                     {canRegister ? (
@@ -162,13 +169,13 @@ export default function Login({
                             color="text.secondary"
                             textAlign="center"
                         >
-                            Don&apos;t have an account?{' '}
+                            {t('auth.login.noAccount')}{' '}
                             <MuiLink
                                 component={Link}
                                 href={register()}
                                 underline="hover"
                             >
-                                Create one
+                                {t('auth.login.createAccount')}
                             </MuiLink>
                         </Typography>
                     ) : null}

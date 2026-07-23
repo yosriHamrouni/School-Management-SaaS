@@ -44,6 +44,11 @@ class AcademicYear extends Model
         return $this->hasMany(Assignment::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function assignmentSubmissions(): HasManyThrough
     {
         return $this->hasManyThrough(AssignmentSubmission::class, Assignment::class);

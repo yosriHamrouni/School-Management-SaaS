@@ -1,0 +1,42 @@
+<?php
+
+return [
+    'accepted' => 'يجب قبول حقل :attribute.',
+    'active_url' => 'يجب أن يكون حقل :attribute رابطًا صالحًا.',
+    'after' => 'يجب أن يكون حقل :attribute تاريخًا بعد :date.',
+    'after_or_equal' => 'يجب أن يكون حقل :attribute تاريخًا بعد أو يساوي :date.',
+    'before' => 'يجب أن يكون حقل :attribute تاريخًا قبل :date.',
+    'before_or_equal' => 'يجب أن يكون حقل :attribute تاريخًا قبل أو يساوي :date.',
+    'between' => [
+        'array' => 'يجب أن يحتوي حقل :attribute على عناصر بين :min و :max.',
+        'file' => 'يجب أن يكون حجم ملف :attribute بين :min و :max كيلوبايت.',
+        'numeric' => 'يجب أن تكون قيمة حقل :attribute بين :min و :max.',
+        'string' => 'يجب أن يكون طول حقل :attribute بين :min و :max حرفًا.',
+    ],
+    'boolean' => 'يجب أن يكون حقل :attribute صحيحًا أو خطأ.',
+    'confirmed' => 'تأكيد حقل :attribute غير مطابق.',
+    'date' => 'يجب أن يكون حقل :attribute تاريخًا صالحًا.',
+    'email' => 'يجب أن يكون حقل :attribute بريدًا إلكترونيًا صالحًا.',
+    'exists' => 'القيمة المحددة في حقل :attribute غير صالحة.',
+    'file' => 'يجب أن يكون حقل :attribute ملفًا.',
+    'image' => 'يجب أن يكون حقل :attribute صورة.',
+    'in' => 'القيمة المحددة في حقل :attribute غير صالحة.',
+    'integer' => 'يجب أن يكون حقل :attribute عددًا صحيحًا.',
+    'max' => [
+        'array' => 'يجب ألا يحتوي حقل :attribute على أكثر من :max عناصر.',
+        'file' => 'يجب ألا يتجاوز حجم ملف :attribute :max كيلوبايت.',
+        'numeric' => 'يجب ألا تكون قيمة حقل :attribute أكبر من :max.',
+        'string' => 'يجب ألا يتجاوز طول حقل :attribute :max حرفًا.',
+    ],
+    'min' => [
+        'array' => 'يجب أن يحتوي حقل :attribute على :min عناصر على الأقل.',
+        'file' => 'يجب ألا يقل حجم ملف :attribute عن :min كيلوبايت.',
+        'numeric' => 'يجب ألا تقل قيمة حقل :attribute عن :min.',
+        'string' => 'يجب ألا يقل طول حقل :attribute عن :min حرفًا.',
+    ],
+    'numeric' => 'يجب أن يكون حقل :attribute رقمًا.',
+    'required' => 'حقل :attribute مطلوب.',
+    'string' => 'يجب أن يكون حقل :attribute نصًا.',
+    'unique' => 'قيمة حقل :attribute مستخدمة بالفعل.',
+    'url' => 'يجب أن يكون حقل :attribute رابطًا صالحًا.',
+];

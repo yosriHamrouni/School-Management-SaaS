@@ -14,6 +14,7 @@ import {
     Typography,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@/i18n';
 
 type NotificationItem = {
     id: string;
@@ -32,14 +33,24 @@ type SharedProps = {
     };
 };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-});
+const dateLocales = {
+    ar: 'ar-TN',
+    en: 'en-US',
+    fr: 'fr-FR',
+};
 
 export default function NotificationMenu() {
     const { notificationCenter } = usePage<SharedProps>().props;
+    const { locale, t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const dateFormatter = useMemo(
+        () =>
+            new Intl.DateTimeFormat(dateLocales[locale], {
+                dateStyle: 'short',
+                timeStyle: 'short',
+            }),
+        [locale],
+    );
 
     const recentNotifications = useMemo(
         () => notificationCenter?.recent ?? [],
@@ -67,10 +78,12 @@ export default function NotificationMenu() {
             >
                 <Box sx={{ px: 2, py: 1.5 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                        Notifications
+                        {t('notifications.title')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {notificationCenter?.unread_count ?? 0} non lue(s)
+                        {t('notifications.unread', {
+                            count: notificationCenter?.unread_count ?? 0,
+                        })}
                     </Typography>
                 </Box>
 
@@ -133,7 +146,7 @@ export default function NotificationMenu() {
                 ) : (
                     <Box sx={{ px: 2, py: 3 }}>
                         <Typography variant="body2" color="text.secondary">
-                            Aucune notification pour le moment.
+                            {t('notifications.empty')}
                         </Typography>
                     </Box>
                 )}
@@ -147,7 +160,7 @@ export default function NotificationMenu() {
                         fullWidth
                         onClick={() => setAnchorEl(null)}
                     >
-                        Voir toutes les notifications
+                        {t('notifications.viewAll')}
                     </Button>
                 </Box>
             </Menu>
