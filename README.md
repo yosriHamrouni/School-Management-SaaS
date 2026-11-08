@@ -543,6 +543,95 @@ http://127.0.0.1:8000
 
 ---
 
+## 🐳 Docker, CI/CD & Operations
+
+The application ships as one hardened Docker image (Apache + PHP 8.4, non-root) deployed to Render
+by a gated GitHub Actions pipeline. Operations documentation lives in [`docs/`](docs/).
+
+### Run with Docker
+
+```bash
+docker compose up -d --build
+```
+
+Open <http://localhost:8000> (app + PostgreSQL 17, migrations run automatically).
+Optional demo data: `docker compose exec app php artisan db:seed`. Details: [docs/docker-setup.md](docs/docker-setup.md).
+
+### Production architecture
+
+```mermaid
+flowchart LR
+  B[Browser / PWA] -->|HTTPS| R[Render edge - TLS]
+  R --> C[Docker container<br/>Apache + PHP 8.4<br/>Laravel 12 + Inertia/React]
+  C -->|TLS| D[(Managed PostgreSQL)]
+  C -.optional.-> AI[Ollama / Python ML<br/>graceful fallback]
+  GH[GitHub Actions] -->|deploy hook ?ref=sha| R
+  GH -->|smoke tests| C
+```
+
+### CI pipeline
+
+```mermaid
+flowchart LR
+  P[PR / push] --> BE[Backend<br/>Pint · Larastan · Pest on PostgreSQL]
+  P --> FE[Frontend<br/>ESLint · Prettier · tsc · build]
+  P --> DK[Docker<br/>Hadolint · build · boot · smoke · Trivy]
+  P --> SE[Security<br/>Gitleaks · composer/npm audit]
+  BE & FE & DK & SE --> OK{all green}
+```
+
+### CD pipeline / production deployment
+
+```mermaid
+sequenceDiagram
+  participant Dev
+  participant GH as GitHub Actions
+  participant R as Render
+  participant App
+  Dev->>GH: merge to main
+  GH->>GH: backend + frontend + docker + security
+  GH->>R: POST deploy hook ?ref=<sha> (one at a time)
+  R->>R: docker build <sha>, health check /up
+  R->>App: switch traffic (old version kept if it fails)
+  GH->>App: smoke test until /health/ready release == <sha>
+  GH-->>Dev: job summary (verified / rollback instructions)
+```
+
+Render auto-deploy is **off**: production only receives commits that passed CI.
+Setup: [docs/render-deployment.md](docs/render-deployment.md) · pipeline: [docs/ci-cd-pipeline.md](docs/ci-cd-pipeline.md).
+
+### Database backup and recovery
+
+```mermaid
+flowchart LR
+  DB[(Production DB)] -->|pg_dump, read-only| BK[backup.sh<br/>dump + sha256 + row-count manifest]
+  BK --> V[verify-backup.sh<br/>restore in throwaway PG, diff counts]
+  V --> E[GPG encrypt<br/>public key only]
+  E --> A[(Off-site artifact<br/>30 days)]
+  A -. human decision .-> RS[restore.sh<br/>into EMPTY new DB only]
+```
+
+Scripts in `scripts/db/`, daily workflow `db-backup.yml`. Provider comparison and migration steps:
+[docs/database-backups.md](docs/database-backups.md).
+
+### Security, monitoring and recovery
+
+* **Security:** SHA-pinned actions with read-only permissions, Dependabot, Composer/npm audits, Trivy image
+  scanning (fails on fixable CRITICAL), Gitleaks, Hadolint, HTTPS-only cookies and HSTS behind Render's proxy — [docs/security.md](docs/security.md)
+* **Monitoring:** `/up` (liveness, Render health check), `/health/ready` (database readiness, reports the
+  deployed release), `php artisan app:health-check`, post-deploy smoke tests — [docs/monitoring.md](docs/monitoring.md)
+* **Recovery:** application rollback (Render *Rollback* or re-run the deploy workflow with a previous SHA)
+  is separate from database recovery (restore a verified backup into a new database — never automatic) —
+  [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/troubleshooting.md](docs/troubleshooting.md)
+
+| Operations docs | |
+|---|---|
+| [DevOps audit](docs/devops-audit.md) | Findings, readiness, roadmap |
+| [Render outage investigation](docs/render-outage-investigation.md) | Causes, evidence, checklist |
+| [Architecture](docs/architecture.md) | Components, tenancy review |
+
+---
+
 ## 📂 Project Structure
 
 ```text
