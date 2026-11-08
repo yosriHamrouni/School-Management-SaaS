@@ -54,7 +54,7 @@ Status legend used throughout the docs:
 | F6 | High | Apache prefork default `MaxRequestWorkers 150` with mod_php on a 512 MB instance → OOM-kill under modest concurrency | **Fixed**: bounded via `APACHE_MAX_REQUEST_WORKERS` (8–10) |
 | F7 | High | **Uploaded files on the ephemeral filesystem**: every deploy/restart/spin-down loses all assignment submissions | **Not fixed — needs a decision** (S3-compatible storage, see §5) |
 | F8 | High | Test suite **could not run at all**: two test files declared the same global helper (`Cannot redeclare createUserWithRole()`) — CI could never have been green | **Fixed** (helpers moved to `tests/Pest.php`) |
-| F9 | Medium | 6 pre-existing failing tests on SQLite / 5 on PostgreSQL (schema drift: tests insert `grades.establishment_id`, which no migration creates; a 403/302 expectation; notification counts on SQLite) | **Documented, not changed** (business logic) |
+| F9 | Medium | 6 pre-existing failing tests on SQLite / 4 on PostgreSQL: tests inserted `grades.establishment_id/created_by/updated_by` (no migration creates them) and compared JSON numbers as strict floats; assignment update returned a validation redirect instead of 403 for non-owners; SQLite notification scoping compared INTEGER to TEXT | **Fixed**: tests corrected, ownership authorized before validation (+ positive test), SQLite cast. 154/154 on SQLite; PostgreSQL green except F10 |
 | F10 | Medium | **Uncommitted** change in `app/Models/Attendance.php` (`student()` → `StudentProfile`) makes the attendance-history page return **HTTP 500 on PostgreSQL** (`select id, name from student_profiles`); SQLite hides it | **Reported**; your file left untouched |
 | F11 | Medium | 21 of 40 migrations start with `if (Schema::hasTable(...)) return;` → migrations are not a reliable description of the production schema; **a restore must use a dump, never `migrate:fresh`** | Documented |
 | F12 | Medium | Migrations run at every boot with no backup step | Kept opt-in (`RUN_MIGRATIONS`), forward-only, destructive commands blocked by `DB::prohibitDestructiveCommands()`; backup procedure documented |
@@ -80,7 +80,7 @@ Status legend used throughout the docs:
 | Observability | stderr logs | + readiness, release identifier, smoke tests; uptime/Sentry documented, not activated |
 
 Verdict: **ready for a controlled redeploy** once a persistent database exists, with two open risks owned
-by the product owner: uploaded files (F7) and the failing tests (F9/F10).
+by the product owner: uploaded files (F7) and the uncommitted attendance change (F10).
 
 ## 5. Recommended infrastructure improvements (not implemented — need approval or cost)
 
@@ -96,7 +96,7 @@ by the product owner: uploaded files (F7) and the failing tests (F9/F10).
 | Phase | Work | State |
 |---|---|---|
 | 0 | Confirm DB status in Render dashboard; export it if still reachable | **Owner** — [checklist](render-outage-investigation.md#5-owner-checklist-render-dashboard) |
-| 1 | Merge this branch (CI goes green except known test failures — decide F9/F10 first) | Owner decision |
+| 1 | Merge this branch (CI green; keep the F10 change out until fixed) | Owner decision |
 | 2 | Create persistent DB, restore, set `DATABASE_URL`, turn auto-deploy **off**, add deploy hook secret | Owner (≈30 min) |
 | 3 | First CI-driven deploy + smoke test | Automated |
 | 4 | Object storage for uploads | Needs approval |

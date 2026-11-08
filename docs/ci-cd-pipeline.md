@@ -61,6 +61,6 @@ report HIGH+CRITICAL, **fail on fixable CRITICAL**, misconfig report. Logs + rep
 | Each job's commands | **Executed locally** (Docker Desktop) — see the final report |
 | Real GitHub Actions run | **Not yet** — nothing has been pushed |
 
-**Known red:** the backend job will fail until the 5 failing PostgreSQL tests are resolved
-(4 pre-existing, 1 caused by the uncommitted `Attendance.php` change). Because deploys require
-green CI, **production deploys are blocked until then — intentionally.**
+**Known risk:** the uncommitted local change to `app/Models/Attendance.php` (`student()` →
+`StudentProfile`) fails `AttendanceManagementTest` on PostgreSQL. If it is committed as is, the
+backend job turns red and deploys are blocked — intentionally.
