@@ -96,6 +96,18 @@ jobs:
           cp .env.example .env
           php artisan key:generate --ansi
 
+      # tests/Feature/PwaTest.php inspects the production build (manifest,
+      # service worker must not precache HTML/authenticated pages).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Build frontend assets (needed by PwaTest)
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
       - name: Code style (Pint)
         run: vendor/bin/pint --test
 

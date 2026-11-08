@@ -59,7 +59,7 @@ report HIGH+CRITICAL, **fail on fixable CRITICAL**, misconfig report. Logs + rep
 |---|---|
 | actionlint (incl. ShellCheck of `run:` blocks) | **Passed locally** (v1.7.12) |
 | Each job's commands | **Executed locally** (Docker Desktop) — see the final report |
-| Real GitHub Actions run | **Not yet** — nothing has been pushed |
+| Real GitHub Actions run | PR #1, first run: frontend, docker, security green; backend 152/154 — the 2 `PwaTest` failures needed built assets, fixed by building them in the backend job |
 
 **Known risk:** the uncommitted local change to `app/Models/Attendance.php` (`student()` →
 `StudentProfile`) fails `AttendanceManagementTest` on PostgreSQL. If it is committed as is, the
