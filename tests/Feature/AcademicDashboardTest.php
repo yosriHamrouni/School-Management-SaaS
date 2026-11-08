@@ -85,21 +85,15 @@ test('academic dashboard returns tenant scoped metrics for establishment adminis
     ]);
 
     Grade::create([
-        'establishment_id' => $establishment->id,
         'evaluation_id' => $evaluation->id,
         'student_id' => $studentOne->id,
         'grade' => 14,
-        'created_by' => $admin->id,
-        'updated_by' => $admin->id,
     ]);
 
     Grade::create([
-        'establishment_id' => $establishment->id,
         'evaluation_id' => $evaluation->id,
         'student_id' => $studentTwo->id,
         'grade' => 8,
-        'created_by' => $admin->id,
-        'updated_by' => $admin->id,
     ]);
 
     $otherEvaluation = Evaluation::create([
@@ -114,7 +108,6 @@ test('academic dashboard returns tenant scoped metrics for establishment adminis
     ]);
 
     Grade::create([
-        'establishment_id' => $otherEstablishment->id,
         'evaluation_id' => $otherEvaluation->id,
         'student_id' => $otherStudent->id,
         'grade' => 19,
@@ -129,13 +122,13 @@ test('academic dashboard returns tenant scoped metrics for establishment adminis
             ->where('stats.totalClasses', 2)
             ->where('stats.totalStudents', 2)
             ->where('stats.studentsWithGrades', 2)
-            ->where('stats.successRate', 50.0)
+            ->where('stats.successRate', fn ($value) => (float) $value === 50.0)
             ->where('stats.gradedClasses', 1)
             ->has('averagesByClass', 2)
             ->where('averagesByClass.0.className', 'Class A')
-            ->where('averagesByClass.0.average', 11.0)
+            ->where('averagesByClass.0.average', fn ($value) => (float) $value === 11.0)
             ->where('averagesByClass.1.className', 'Class B')
-            ->where('averagesByClass.1.average', 0.0)
+            ->where('averagesByClass.1.average', fn ($value) => (float) $value === 0.0)
             ->where('charts.successBreakdown.values.0', 1)
             ->where('charts.successBreakdown.values.1', 1),
         );
