@@ -95,6 +95,37 @@ test('assignment listing is isolated per establishment', function () {
         );
 });
 
+test('teacher can update an assignment inside the assigned perimeter', function () {
+    $context = assignmentContext();
+
+    $this
+        ->actingAs($context['teacher'])
+        ->post(route('teacher.assignments.store'), [
+            'class_id' => $context['class']->id,
+            'subject_id' => $context['subject']->id,
+            'title' => 'Homework 1',
+            'description' => 'Original',
+            'due_date' => now()->addDays(3)->format('Y-m-d'),
+        ])
+        ->assertSessionHasNoErrors();
+
+    $assignment = Assignment::query()->firstOrFail();
+
+    $this
+        ->actingAs($context['teacher'])
+        ->put(route('teacher.assignments.update', $assignment), [
+            'class_id' => $context['class']->id,
+            'subject_id' => $context['subject']->id,
+            'title' => 'Homework 1 (revised)',
+            'description' => 'Updated',
+            'due_date' => now()->addDays(7)->format('Y-m-d'),
+        ])
+        ->assertRedirect(route('teacher.assignments.index'))
+        ->assertSessionHasNoErrors();
+
+    expect($assignment->fresh()->title)->toBe('Homework 1 (revised)');
+});
+
 test('teacher cannot edit or delete an assignment outside assigned perimeter', function () {
     $context = assignmentContext();
     $otherTeacher = createAssignmentUserWithRole($context['establishment'], 'teacher');
