@@ -43,6 +43,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Release Identifier & HTTPS
+    |--------------------------------------------------------------------------
+    |
+    | "release" identifies the deployed build (Render injects RENDER_GIT_COMMIT
+    | for Git-backed services). It is reported by /health/ready so deployment
+    | smoke tests can verify the expected commit is live.
+    |
+    | "force_https" makes generated URLs use https:// even if a proxy header is
+    | missing. Enable it on Render; keep it off for plain-HTTP local Docker.
+    |
+    */
+
+    // "?:" (not env()'s default) so an empty APP_RELEASE build arg falls through.
+    'release' => env('APP_RELEASE') ?: env('RENDER_GIT_COMMIT'),
+
+    'force_https' => (bool) env('APP_FORCE_HTTPS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |
