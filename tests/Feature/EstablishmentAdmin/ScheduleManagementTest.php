@@ -1,14 +1,9 @@
 <?php
 
-use App\Models\AcademicYear;
 use App\Models\Establishment;
-use App\Models\Level;
-use App\Models\Role;
 use App\Models\Schedule;
-use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\Subject;
-use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('establishment admin can create a valid schedule', function () {
@@ -294,43 +289,4 @@ function scheduleContext(string $suffix = 'default'): array
     ]);
 
     return compact('establishment', 'admin', 'teacher', 'class', 'subject');
-}
-
-function createUserWithRole(Establishment $establishment, string $roleName): User
-{
-    $user = User::factory()->create([
-        'establishment_id' => $establishment->id,
-    ]);
-
-    $role = Role::firstOrCreate(['name' => $roleName]);
-    $user->roles()->syncWithoutDetaching([$role->id]);
-
-    return $user;
-}
-
-function createSchoolClass(Establishment $establishment): SchoolClass
-{
-    $academicYear = AcademicYear::firstOrCreate([
-        'establishment_id' => $establishment->id,
-        'name' => '2025-2026',
-    ], [
-        'establishment_id' => $establishment->id,
-        'name' => '2025-2026',
-        'start_date' => '2025-09-01',
-        'end_date' => '2026-06-30',
-        'status' => 'active',
-        'is_current' => true,
-    ]);
-
-    $level = Level::create([
-        'establishment_id' => $establishment->id,
-        'name' => fake()->unique()->word(),
-    ]);
-
-    return SchoolClass::create([
-        'establishment_id' => $establishment->id,
-        'level_id' => $level->id,
-        'academic_year_id' => $academicYear->id,
-        'name' => fake()->unique()->bothify('Class-##??'),
-    ]);
 }
