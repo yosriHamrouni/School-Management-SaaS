@@ -1,0 +1,56 @@
+# Dependabot: weekly, grouped, low-noise update PRs. Every PR runs the full CI
+# (tests on PostgreSQL, Trivy, audits) before anything can be merged/deployed.
+version: 2
+
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels: [dependencies, php]
+    groups:
+      composer-minor-patch:
+        update-types: [minor, patch]
+    # Major upgrades (e.g. Laravel 13, PhpSpreadsheet 5) need a deliberate
+    # migration; Dependabot still opens *security* PRs for them.
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels: [dependencies, javascript]
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [dependencies, ci]
+    groups:
+      actions:
+        patterns: ['*']
+
+  # Base images in the Dockerfile (php, node, composer) and compose.yaml.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [dependencies, docker]
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [dependencies, docker]
