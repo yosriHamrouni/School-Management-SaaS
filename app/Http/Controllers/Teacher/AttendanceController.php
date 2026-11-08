@@ -19,8 +19,7 @@ class AttendanceController extends Controller
 {
     public function __construct(
         private readonly AttendanceService $attendanceService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

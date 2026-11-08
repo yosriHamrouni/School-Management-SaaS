@@ -26,4 +26,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-/ml/.venv/²
+/ml/.venv/
+/ml/__pycache__/
+/.venv/
+# Docker / backups
+/.env.docker
+/backups/

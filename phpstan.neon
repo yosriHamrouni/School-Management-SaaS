@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+        - bootstrap/app.php
+        - config
+        - routes
+
+    # Level 5 catches wrong argument types, unknown methods/properties and dead
+    # code without demanding full generics annotations. Raise gradually.
+    level: 5
+
+    # Pre-existing findings are recorded in phpstan-baseline.neon so CI fails
+    # only on NEW problems. Shrink the baseline over time; regenerate with:
+    #   vendor/bin/phpstan analyse --generate-baseline
+    reportUnmatchedIgnoredErrors: false
+
+    tmpDir: storage/framework/cache/phpstan

@@ -17,8 +17,7 @@ class ScheduleController extends Controller
 {
     public function __construct(
         private readonly ParentStudentAccessService $parentStudentAccessService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request, ?int $student = null): Response
     {

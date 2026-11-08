@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -154,7 +154,9 @@ function UserFormDialog({
                                 <SelectValue placeholder="Choisir un etablissement" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="none">Aucun etablissement</SelectItem>
+                                <SelectItem value="none">
+                                    Aucun etablissement
+                                </SelectItem>
                                 {establishments.map((establishment) => (
                                     <SelectItem
                                         key={establishment.id}
@@ -172,7 +174,9 @@ function UserFormDialog({
                         <Label>Roles</Label>
                         <div className="grid gap-3 rounded-lg border border-border p-4">
                             {roles.map((role) => {
-                                const checked = form.data.role_ids.includes(role.id);
+                                const checked = form.data.role_ids.includes(
+                                    role.id,
+                                );
 
                                 return (
                                     <label
@@ -186,7 +190,11 @@ function UserFormDialog({
                                                 form.setData(
                                                     'role_ids',
                                                     event.target.checked
-                                                        ? [...form.data.role_ids, role.id]
+                                                        ? [
+                                                              ...form.data
+                                                                  .role_ids,
+                                                              role.id,
+                                                          ]
                                                         : form.data.role_ids.filter(
                                                               (currentRoleId) =>
                                                                   currentRoleId !==
@@ -282,6 +290,7 @@ export default function UsersIndex({
         if (!editingUser) {
             editForm.reset();
             editForm.clearErrors();
+
             return;
         }
 
@@ -389,7 +398,10 @@ export default function UsersIndex({
                             <tbody className="divide-y divide-border">
                                 {users.length > 0 ? (
                                     users.map((user) => (
-                                        <tr key={user.id} className="hover:bg-muted/30">
+                                        <tr
+                                            key={user.id}
+                                            className="hover:bg-muted/30"
+                                        >
                                             <td className="px-4 py-3 text-sm text-foreground">
                                                 {user.name}
                                             </td>
@@ -419,7 +431,9 @@ export default function UsersIndex({
                                                         variant="destructive"
                                                         size="sm"
                                                         onClick={() =>
-                                                            setDeletingUser(user)
+                                                            setDeletingUser(
+                                                                user,
+                                                            )
                                                         }
                                                     >
                                                         Supprimer

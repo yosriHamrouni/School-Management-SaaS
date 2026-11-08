@@ -1,0 +1,8 @@
+failure-threshold: warning
+
+ignored:
+  # Pinning Debian package versions (apt-get install pkg=1.2.3) breaks the build
+  # every time Debian publishes a security update. Instead the *base image* is
+  # pinned to an exact tag and bumped by Dependabot, and Trivy scans OS packages
+  # on every build. See docs/security.md.
+  - DL3008

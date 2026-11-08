@@ -1,7 +1,8 @@
-import { FormEvent, useMemo, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import FlashAlerts from '@/components/ui/flash-alerts';
+import type { FormEvent } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import FlashAlerts from '@/components/ui/flash-alerts';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -79,7 +80,10 @@ export default function EvaluationsIndex({
 
         assignments.forEach((assignment) => {
             if (!seen.has(assignment.class_id)) {
-                seen.set(assignment.class_id, assignment.label.split(' - ')[0] ?? assignment.label);
+                seen.set(
+                    assignment.class_id,
+                    assignment.label.split(' - ')[0] ?? assignment.label,
+                );
             }
         });
 
@@ -88,13 +92,17 @@ export default function EvaluationsIndex({
 
     const subjectOptions = useMemo(() => {
         const filtered = form.class_id
-            ? assignments.filter((assignment) => String(assignment.class_id) === form.class_id)
+            ? assignments.filter(
+                  (assignment) => String(assignment.class_id) === form.class_id,
+              )
             : assignments;
 
         const seen = new Map<number, string>();
 
         filtered.forEach((assignment) => {
-            const subjectName = assignment.label.split(' - ')[1]?.split(' (')[0] ?? assignment.label;
+            const subjectName =
+                assignment.label.split(' - ')[1]?.split(' (')[0] ??
+                assignment.label;
 
             if (!seen.has(assignment.subject_id)) {
                 seen.set(assignment.subject_id, subjectName);
@@ -132,7 +140,8 @@ export default function EvaluationsIndex({
                     <div>
                         <h1 className="text-2xl font-semibold">Evaluations</h1>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Manage assessments and launch grade entry by class and subject.
+                            Manage assessments and launch grade entry by class
+                            and subject.
                         </p>
                     </div>
 
@@ -144,11 +153,17 @@ export default function EvaluationsIndex({
                 <FlashAlerts flash={flash} />
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitSearch} className="grid gap-4 xl:grid-cols-5">
+                    <form
+                        onSubmit={submitSearch}
+                        className="grid gap-4 xl:grid-cols-5"
+                    >
                         <Input
                             value={form.search}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, search: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    search: event.target.value,
+                                }))
                             }
                             placeholder="Search title or type"
                         />
@@ -166,7 +181,10 @@ export default function EvaluationsIndex({
                         >
                             <option value="">All classes</option>
                             {classOptions.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -175,13 +193,19 @@ export default function EvaluationsIndex({
                         <select
                             value={form.subject_id}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, subject_id: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    subject_id: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
                             <option value="">All subjects</option>
                             {subjectOptions.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -190,7 +214,10 @@ export default function EvaluationsIndex({
                         <select
                             value={form.term_id}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, term_id: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    term_id: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
@@ -205,7 +232,10 @@ export default function EvaluationsIndex({
                         <Input
                             value={form.type}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, type: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    type: event.target.value,
+                                }))
                             }
                             placeholder="Type"
                         />
@@ -242,45 +272,99 @@ export default function EvaluationsIndex({
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Title</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Class</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Subject</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Term</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Date</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Type</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Coeff.</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Max</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Title
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Class
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Subject
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Term
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Date
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Type
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Coeff.
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Max
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {evaluations.data.length > 0 ? (
                                     evaluations.data.map((evaluation) => (
-                                        <tr key={evaluation.id} className="hover:bg-muted/30">
-                                            <td className="px-4 py-3 text-sm">{evaluation.title}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.class_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.subject_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.term_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.evaluation_date ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.type}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.coefficient}</td>
-                                            <td className="px-4 py-3 text-sm">{evaluation.max_grade}</td>
+                                        <tr
+                                            key={evaluation.id}
+                                            className="hover:bg-muted/30"
+                                        >
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.title}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.class_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.subject_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.term_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.evaluation_date ??
+                                                    '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.type}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.coefficient}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {evaluation.max_grade}
+                                            </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/evaluations/${evaluation.id}/grades`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/evaluations/${evaluation.id}/grades`}
+                                                        >
                                                             Grades
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/evaluations/${evaluation.id}/edit`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/evaluations/${evaluation.id}/edit`}
+                                                        >
                                                             Edit
                                                         </Link>
                                                     </Button>
                                                     <Button
                                                         variant="destructive"
                                                         size="sm"
-                                                        onClick={() => handleDelete(evaluation.id)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                evaluation.id,
+                                                            )
+                                                        }
                                                     >
                                                         Delete
                                                     </Button>
@@ -290,7 +374,10 @@ export default function EvaluationsIndex({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={9} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                                        <td
+                                            colSpan={9}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
                                             No evaluations found.
                                         </td>
                                     </tr>
@@ -313,10 +400,16 @@ export default function EvaluationsIndex({
                                 <Link
                                     href={link.url}
                                     preserveScroll
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

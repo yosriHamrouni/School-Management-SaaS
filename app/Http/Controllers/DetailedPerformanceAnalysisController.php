@@ -11,8 +11,7 @@ class DetailedPerformanceAnalysisController extends Controller
 {
     public function __construct(
         private readonly DetailedPerformanceAnalysisService $analysisService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

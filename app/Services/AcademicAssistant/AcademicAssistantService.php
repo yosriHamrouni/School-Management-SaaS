@@ -38,7 +38,7 @@ class AcademicAssistantService
         $answer = trim((string) $answer);
 
         if ($answer === '') {
-            $answer = "Je ne peux pas repondre avec les donnees disponibles dans votre perimetre autorise.";
+            $answer = 'Je ne peux pas repondre avec les donnees disponibles dans votre perimetre autorise.';
             $source = 'rule_based_fallback';
         }
 

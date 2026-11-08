@@ -14,7 +14,8 @@ export default function RiskReasonsList({
     variant = 'list',
 }: Props) {
     const items = (reasons ?? []).filter(Boolean);
-    const visibleItems = typeof limit === 'number' ? items.slice(0, limit) : items;
+    const visibleItems =
+        typeof limit === 'number' ? items.slice(0, limit) : items;
 
     if (visibleItems.length === 0) {
         return (
@@ -28,7 +29,12 @@ export default function RiskReasonsList({
         return (
             <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                 {visibleItems.map((reason) => (
-                    <Chip key={reason} label={reason} size="small" variant="outlined" />
+                    <Chip
+                        key={reason}
+                        label={reason}
+                        size="small"
+                        variant="outlined"
+                    />
                 ))}
             </Stack>
         );

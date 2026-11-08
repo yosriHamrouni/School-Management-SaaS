@@ -1,0 +1,80 @@
+# Daily off-site logical backup of the production database.
+#
+#   backup.sh -> verify-backup.sh (restore into a throwaway PG + row-count diff)
+#   -> encrypt with a GPG PUBLIC key -> upload ciphertext as an artifact
+#
+# The runner can encrypt but never decrypt (the private key stays offline with
+# you). Plaintext never leaves the runner and is deleted before upload.
+# Read-only on the database. Skips cleanly until configured:
+#   secret BACKUP_DATABASE_URL     external connection string of the production DB
+#   secret BACKUP_GPG_PUBLIC_KEY   ASCII-armored public key (gpg --armor --export <id>)
+# See docs/database-backups.md.
+
+name: Database backup
+
+on:
+  schedule:
+    - cron: '30 2 * * *' # 02:30 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: production
+    env:
+      DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      GPG_PUBLIC_KEY: ${{ secrets.BACKUP_GPG_PUBLIC_KEY }}
+    steps:
+      - name: Check configuration
+        id: config
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$GPG_PUBLIC_KEY" ]; then
+            echo "::warning::Backup skipped: BACKUP_DATABASE_URL and/or BACKUP_GPG_PUBLIC_KEY are not configured."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.config.outputs.enabled == 'true'
+        with:
+          persist-credentials: false
+
+      - name: Dump (read-only)
+        if: steps.config.outputs.enabled == 'true'
+        run: BACKUP_DIR=backups scripts/db/backup.sh production
+
+      - name: Verify the dump restores (throwaway container)
+        if: steps.config.outputs.enabled == 'true'
+        run: scripts/db/verify-backup.sh "$(find backups -name '*.dump' | sort | tail -1)"
+
+      - name: Encrypt and remove plaintext
+        if: steps.config.outputs.enabled == 'true'
+        run: |
+          GNUPGHOME="$(mktemp -d)"
+          export GNUPGHOME
+          printf '%s\n' "$GPG_PUBLIC_KEY" > "$GNUPGHOME/backup.pub.asc"
+          dump="$(find backups -name '*.dump' | sort | tail -1)"
+          tar -C backups -cf - "$(basename "$dump")" "$(basename "$dump").sha256" "$(basename "${dump%.dump}").manifest" \
+            | gpg --batch --yes --trust-model always --recipient-file "$GNUPGHOME/backup.pub.asc" \
+                  --output "${dump%.dump}.tar.gpg" --encrypt
+          shred -u "$dump" 2>/dev/null || rm -f "$dump"
+          rm -f backups/*.sha256 backups/*.manifest
+          rm -rf "$GNUPGHOME"
+          ls -la backups/
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.config.outputs.enabled == 'true'
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: backups/*.tar.gpg
+          retention-days: 30
+          if-no-files-found: error

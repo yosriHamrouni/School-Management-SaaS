@@ -15,8 +15,7 @@ class ReportController extends Controller
     public function __construct(
         private readonly BulletinService $bulletinService,
         private readonly EvaluationAccessService $accessService,
-    ) {
-    }
+    ) {}
 
     public function showStudent(Request $request, int $student): Response
     {

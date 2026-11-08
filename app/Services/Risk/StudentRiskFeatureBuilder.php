@@ -47,7 +47,6 @@ class StudentRiskFeatureBuilder
     }
 
     /**
-     * @param  mixed  $grades
      * @return array<int, array{subject_key: string|null, value: float, recorded_at: int}>
      */
     private function normalizeGrades(mixed $grades): array

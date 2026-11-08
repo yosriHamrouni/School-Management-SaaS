@@ -1,0 +1,15 @@
+# Gitleaks configuration: default rules + project allowlist.
+# Every allowlisted path must have a justification.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Third-party code committed in early history"
+paths = [
+  # A Python virtualenv (numpy/setuptools test fixtures) was committed before
+  # commit f4c49e28 removed it. Its "keys" are library test seeds, not secrets.
+  '''ml/\.venv/''',
+  '''(^|/)vendor/''',
+  '''(^|/)node_modules/''',
+]

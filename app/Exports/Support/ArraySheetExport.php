@@ -18,8 +18,7 @@ class ArraySheetExport implements FromArray, ShouldAutoSize, WithStyles, WithTit
         private readonly string $title,
         private readonly array $headers,
         private readonly array $rows,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, array<int, string|int|float>>

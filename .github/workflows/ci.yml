@@ -1,0 +1,388 @@
+# Continuous Integration + gated Continuous Deployment.
+#
+#   pull_request  -> backend, frontend, docker, security          (never deploys)
+#   development   -> all checks, then staging deploy if configured
+#   main          -> all checks, then production deploy (Render) + smoke tests
+#
+# Render auto-deploy must be OFF for the service: this workflow is the only
+# thing that deploys, and only after every check below has passed.
+# All third-party actions are pinned to full commit SHAs (see docs/security.md).
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # Cancel superseded PR runs; never cancel a run on main/development, since a
+  # cancelled run could leave a deployment half-verified.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  PHP_VERSION: '8.4'
+  NODE_VERSION: '22'
+  # Images pinned by digest. Trivy: >= 0.69.x line published after the
+  # March 2026 trivy-action compromise (CVE-2026-33634); we use the container
+  # image directly, not aquasecurity/trivy-action.
+  TRIVY_IMAGE: aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+  HADOLINT_IMAGE: hadolint/hadolint:v2.15.1@sha256:32dac94127fd60b7b7e3fbfc65e1383b9b5e25c9bfd7b8536de7a539fe68a12d
+  GITLEAKS_IMAGE: zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+
+jobs:
+  # ---------------------------------------------------------------------------
+  backend:
+    name: Backend (Composer, Pint, Larastan, Pest on PostgreSQL)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci -d testing"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      # Production uses PostgreSQL, so tests do too (SQLite hides some bugs,
+      # e.g. it accepts "select missing_column" as a string literal).
+      TESTING_ALLOW_PGSQL: 'true'
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: '5432'
+      DB_DATABASE: testing
+      DB_USERNAME: ci
+      DB_PASSWORD: ci-only-password
+      DB_URL: ''
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: bcmath, gd, intl, pdo_pgsql, pgsql, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Validate composer.json / composer.lock
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      # tests/Feature/PwaTest.php inspects the production build (manifest,
+      # service worker must not precache HTML/authenticated pages).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Build frontend assets (needed by PwaTest)
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
+      - name: Code style (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Static analysis (Larastan, level 5 + baseline)
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G --error-format=github
+
+      - name: Tests (Pest, PostgreSQL 17)
+        run: |
+          mkdir -p reports
+          vendor/bin/pest --colors=always --log-junit reports/junit.xml
+
+      - name: Test summary
+        if: always()
+        run: |
+          if [ -f reports/junit.xml ]; then
+            python3 - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET
+          root = ET.parse('reports/junit.xml').getroot()
+          s = root if root.tag == 'testsuite' else root.find('testsuite')
+          t, f, e, sk = (int(s.get(k, 0)) for k in ('tests', 'failures', 'errors', 'skipped'))
+          print(f"### Backend tests\n\n| Total | Passed | Failed | Errors | Skipped |\n|---|---|---|---|---|\n| {t} | {t-f-e-sk} | {f} | {e} | {sk} |\n")
+          failed = [c for c in root.iter('testcase') if c.find('failure') is not None or c.find('error') is not None]
+          if failed:
+              print("<details><summary>Failing tests</summary>\n")
+              for c in failed[:50]:
+                  print(f"- `{c.get('class', '')}` > {c.get('name')}")
+              print("\n</details>")
+          EOF
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: backend-test-report
+          path: |
+            reports/
+            storage/logs/*.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  frontend:
+    name: Frontend (ESLint, Prettier, TypeScript, Vite build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Wayfinder generates the typed route helpers (resources/js/routes, actions)
+      # from Laravel's router, so the frontend checks need PHP + vendor.
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: bcmath, gd, intl, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies (lockfile only)
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist
+          npm ci --no-audit --no-fund
+
+      - name: Generate Wayfinder route types
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+          php artisan wayfinder:generate --with-form
+
+      - name: ESLint
+        run: npm run lint:check
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: TypeScript
+        run: npm run types:check
+
+      # No frontend unit-test runner is configured in this project yet
+      # (see docs/ci-cd-pipeline.md). The PWA build is covered by tests/Feature/PwaTest.php.
+
+      - name: Production build
+        run: npm run build
+
+  # ---------------------------------------------------------------------------
+  docker:
+    name: Docker (lint, build, boot, smoke test, Trivy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Lint Dockerfile (Hadolint)
+        run: docker run --rm -i -v "$PWD/.hadolint.yaml:/.config/hadolint.yaml:ro" "$HADOLINT_IMAGE" hadolint --config /.config/hadolint.yaml - < Dockerfile
+
+      - name: Validate Docker Compose configuration
+        run: docker compose config --quiet
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build production image (linux/amd64)
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          target: production
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: school-management:local
+          build-args: APP_RELEASE=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Boot stack (app + PostgreSQL) and wait for health checks
+        run: docker compose up -d --no-build --wait --wait-timeout 180
+
+      - name: Smoke test (local mode)
+        run: SMOKE_WAIT_SECONDS=120 scripts/smoke-test.sh http://localhost:8000 "${{ github.sha }}"
+
+      - name: Smoke test (production mode behind simulated TLS proxy)
+        run: |
+          docker run -d --name app-prod --network school-management_default -p 8001:10000 \
+            -e APP_KEY="base64:$(openssl rand -base64 32)" \
+            -e APP_URL=https://school.example.test \
+            -e DB_CONNECTION=pgsql \
+            -e DATABASE_URL="postgresql://school:school-local-only@db:5432/school_management?sslmode=disable" \
+            -e SESSION_SECURE_COOKIE=true -e APP_FORCE_HTTPS=true \
+            school-management:local
+          SMOKE_WAIT_SECONDS=120 SMOKE_FORWARDED_PROTO=https SMOKE_REQUIRE_HTTPS=true \
+            scripts/smoke-test.sh http://localhost:8001 "${{ github.sha }}"
+
+      - name: Entrypoint refuses unsafe production config
+        run: |
+          set +e
+          docker run --rm -e APP_ENV=production school-management:local true; a=$?
+          docker run --rm -e APP_ENV=production -e APP_KEY=base64:x -e APP_DEBUG=true school-management:local true; b=$?
+          set -e
+          [ "$a" -ne 0 ] && [ "$b" -ne 0 ] || { echo "::error::entrypoint accepted an unsafe configuration"; exit 1; }
+          echo "Missing APP_KEY and APP_DEBUG=true in production are both rejected."
+
+      - name: Container logs
+        if: always()
+        run: |
+          docker compose logs --no-color app > compose-app.log 2>&1 || true
+          docker logs app-prod > prod-app.log 2>&1 || true
+          tail -n 60 compose-app.log prod-app.log || true
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+
+      - name: Trivy - vulnerability report (HIGH, CRITICAL)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$HOME/.cache/trivy:/root/.cache/trivy" -v "$PWD:/src:ro" \
+            "$TRIVY_IMAGE" image --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed \
+            --ignorefile /src/.trivyignore --format table school-management:local | tee trivy-report.txt
+          { echo '### Trivy image scan (HIGH/CRITICAL, fixable)'; echo '```'; cat trivy-report.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Trivy - gate (fail on fixable CRITICAL)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$HOME/.cache/trivy:/root/.cache/trivy" -v "$PWD:/src:ro" \
+            "$TRIVY_IMAGE" image --quiet --scanners vuln --severity CRITICAL --ignore-unfixed \
+            --ignorefile /src/.trivyignore --exit-code 1 school-management:local
+
+      - name: Trivy - Dockerfile / Compose misconfiguration (report only)
+        run: |
+          docker run --rm -v "$HOME/.cache/trivy:/root/.cache/trivy" -v "$PWD:/src:ro" \
+            "$TRIVY_IMAGE" config --quiet --severity HIGH,CRITICAL /src | tee trivy-config.txt
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: docker-reports
+          path: |
+            trivy-report.txt
+            trivy-config.txt
+            compose-app.log
+            prod-app.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Tear down
+        if: always()
+        run: |
+          docker rm -f app-prod || true
+          docker compose down -v || true
+
+  # ---------------------------------------------------------------------------
+  security:
+    name: Security (secrets, Composer audit, npm audit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Secret scan (Gitleaks, commits in this push/PR)
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            range="$PR_BASE..$PR_HEAD"
+          elif [ -n "$BEFORE" ] && ! echo "$BEFORE" | grep -qE '^0+$'; then
+            range="$BEFORE..$SHA"
+          else
+            range="$SHA~1..$SHA"
+          fi
+          echo "Scanning $range"
+          docker run --rm -v "$PWD:/repo" "$GITLEAKS_IMAGE" git /repo \
+            --config /repo/.gitleaks.toml --redact --no-banner --log-opts="$range"
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer audit (production + dev, all severities)
+        run: composer audit --locked --abandoned=report
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: npm audit (runtime dependencies, fail on HIGH+)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit (dev dependencies, report only)
+        run: npm audit --audit-level=high || echo "::warning::Dev-dependency advisories found (build tooling only, not shipped to browsers)."
+
+  # ---------------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+    needs: [backend, frontend, docker, security]
+    uses: ./.github/workflows/deploy-render.yml
+    with:
+      environment: staging
+      ref: ${{ github.sha }}
+    # Hooks are *environment* secrets (GitHub -> Settings -> Environments ->
+    # staging/production -> RENDER_DEPLOY_HOOK_URL), resolved inside the deploy job.
+    secrets: inherit
+
+  deploy-production:
+    name: Deploy to production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, frontend, docker, security]
+    uses: ./.github/workflows/deploy-render.yml
+    with:
+      environment: production
+      ref: ${{ github.sha }}
+    secrets: inherit

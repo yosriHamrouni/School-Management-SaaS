@@ -55,7 +55,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 const selectClassName =
     'border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]';
 
-export default function StudentAssignmentsIndex({ filters, assignments, className }: Props) {
+export default function StudentAssignmentsIndex({
+    filters,
+    assignments,
+    className,
+}: Props) {
     const { flash } = usePage<Props>().props;
     const [form, setForm] = useState(filters);
 
@@ -85,16 +89,29 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                 <FlashAlerts flash={flash} />
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitSearch} className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+                    <form
+                        onSubmit={submitSearch}
+                        className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]"
+                    >
                         <Input
                             value={form.search}
-                            onChange={(event) => setForm((current) => ({ ...current, search: event.target.value }))}
+                            onChange={(event) =>
+                                setForm((current) => ({
+                                    ...current,
+                                    search: event.target.value,
+                                }))
+                            }
                             placeholder="Search title or subject"
                         />
 
                         <select
                             value={form.status}
-                            onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))}
+                            onChange={(event) =>
+                                setForm((current) => ({
+                                    ...current,
+                                    status: event.target.value,
+                                }))
+                            }
                             className={selectClassName}
                         >
                             <option value="">All statuses</option>
@@ -128,21 +145,41 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Assignment</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Subject</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Due date</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Action</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Assignment
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Subject
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Due date
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Status
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {assignments.data.length > 0 ? (
                                     assignments.data.map((assignment) => (
-                                        <tr key={assignment.id} className="hover:bg-muted/30">
+                                        <tr
+                                            key={assignment.id}
+                                            className="hover:bg-muted/30"
+                                        >
                                             <td className="px-4 py-3 text-sm">
-                                                <div className="font-medium">{assignment.title}</div>
+                                                <div className="font-medium">
+                                                    {assignment.title}
+                                                </div>
                                                 <div className="mt-1 text-xs text-muted-foreground">
-                                                    {[assignment.class_name, assignment.academic_year_name].filter(Boolean).join(' / ')}
+                                                    {[
+                                                        assignment.class_name,
+                                                        assignment.academic_year_name,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(' / ')}
                                                 </div>
                                                 {assignment.description ? (
                                                     <div className="mt-2 line-clamp-2 text-xs text-muted-foreground">
@@ -150,9 +187,18 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                                                     </div>
                                                 ) : null}
                                             </td>
-                                            <td className="px-4 py-3 text-sm">{assignment.subject_name ?? '-'}</td>
                                             <td className="px-4 py-3 text-sm">
-                                                <span className={assignment.is_overdue && !assignment.submission ? 'text-red-600' : ''}>
+                                                {assignment.subject_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                <span
+                                                    className={
+                                                        assignment.is_overdue &&
+                                                        !assignment.submission
+                                                            ? 'text-red-600'
+                                                            : ''
+                                                    }
+                                                >
                                                     {assignment.due_date ?? '-'}
                                                 </span>
                                             </td>
@@ -163,27 +209,46 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                                                             Submitted
                                                         </span>
                                                         <div className="text-xs text-muted-foreground">
-                                                            {assignment.submission.submitted_at ?? '-'}
+                                                            {assignment
+                                                                .submission
+                                                                .submitted_at ??
+                                                                '-'}
                                                         </div>
-                                                        {assignment.submission.is_late ? (
-                                                            <div className="text-xs text-amber-600">Submitted after the due date</div>
+                                                        {assignment.submission
+                                                            .is_late ? (
+                                                            <div className="text-xs text-amber-600">
+                                                                Submitted after
+                                                                the due date
+                                                            </div>
                                                         ) : null}
                                                     </div>
                                                 ) : (
                                                     <div className="space-y-1">
                                                         <span className="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                                                            {assignment.is_overdue ? 'Late' : 'Pending'}
+                                                            {assignment.is_overdue
+                                                                ? 'Late'
+                                                                : 'Pending'}
                                                         </span>
                                                         {assignment.is_overdue ? (
-                                                            <div className="text-xs text-red-600">Due date passed</div>
+                                                            <div className="text-xs text-red-600">
+                                                                Due date passed
+                                                            </div>
                                                         ) : null}
                                                     </div>
                                                 )}
                                             </td>
                                             <td className="px-4 py-3 text-right">
-                                                <Button variant="outline" size="sm" asChild>
-                                                    <Link href={`/student/assignments/${assignment.id}`}>
-                                                        {assignment.submission ? 'Update submission' : 'Open'}
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    asChild
+                                                >
+                                                    <Link
+                                                        href={`/student/assignments/${assignment.id}`}
+                                                    >
+                                                        {assignment.submission
+                                                            ? 'Update submission'
+                                                            : 'Open'}
                                                     </Link>
                                                 </Button>
                                             </td>
@@ -191,8 +256,12 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">
-                                            No assignments are available for your class yet.
+                                        <td
+                                            colSpan={5}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
+                                            No assignments are available for
+                                            your class yet.
                                         </td>
                                     </tr>
                                 )}
@@ -211,9 +280,19 @@ export default function StudentAssignmentsIndex({ filters, assignments, classNam
                             asChild={Boolean(link.url)}
                         >
                             {link.url ? (
-                                <Link href={link.url} preserveScroll dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <Link
+                                    href={link.url}
+                                    preserveScroll
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

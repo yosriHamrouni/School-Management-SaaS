@@ -144,7 +144,8 @@ export default function AdminShell({
 
     const roles = useMemo(() => auth.user.roles ?? [], [auth.user.roles]);
     const navigationSections = useMemo(
-        () => visibleSidebarSections(roles, Boolean(auth.user.email_verified_at)),
+        () =>
+            visibleSidebarSections(roles, Boolean(auth.user.email_verified_at)),
         [auth.user.email_verified_at, roles],
     );
     const workspaceLabel = getWorkspaceLabel(roles, t);
@@ -170,7 +171,8 @@ export default function AdminShell({
     }, [auth.user?.id]);
 
     const pageTitle =
-        breadcrumbs[breadcrumbs.length - 1]?.title ?? t('navigation.administration');
+        breadcrumbs[breadcrumbs.length - 1]?.title ??
+        t('navigation.administration');
     const translateNavigationTitle = (title: string) =>
         t(navigationTitleKeys[title] ?? title);
     const translateSectionTitle = (title: string) =>
@@ -199,7 +201,11 @@ export default function AdminShell({
                     <SchoolRoundedIcon />
                 </Avatar>
                 <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }} noWrap>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 700 }}
+                        noWrap
+                    >
                         Academic SaaS
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
@@ -213,7 +219,10 @@ export default function AdminShell({
                     sx={{
                         borderRadius: 3,
                         p: 2,
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                        backgroundColor: alpha(
+                            theme.palette.primary.main,
+                            0.08,
+                        ),
                     }}
                 >
                     <Typography variant="body2" color="text.secondary">
@@ -233,9 +242,14 @@ export default function AdminShell({
                 </Box>
             </Box>
 
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: 2, pb: 2 }}>
+            <Box
+                sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: 2, pb: 2 }}
+            >
                 {navigationSections.map((section, sectionIndex) => (
-                    <Box key={section.title} sx={{ mt: sectionIndex === 0 ? 0 : 2 }}>
+                    <Box
+                        key={section.title}
+                        sx={{ mt: sectionIndex === 0 ? 0 : 2 }}
+                    >
                         <Typography
                             variant="overline"
                             color="text.secondary"
@@ -294,10 +308,14 @@ export default function AdminShell({
                                             {item.icon}
                                         </ListItemIcon>
                                         <ListItemText
-                                            primary={translateNavigationTitle(item.title)}
+                                            primary={translateNavigationTitle(
+                                                item.title,
+                                            )}
                                             primaryTypographyProps={{
                                                 fontSize: 14,
-                                                fontWeight: isActive ? 700 : 500,
+                                                fontWeight: isActive
+                                                    ? 700
+                                                    : 500,
                                                 noWrap: true,
                                             }}
                                         />
@@ -315,7 +333,10 @@ export default function AdminShell({
     );
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', overflowX: 'hidden' }} dir={dir}>
+        <Box
+            sx={{ display: 'flex', minHeight: '100vh', overflowX: 'hidden' }}
+            dir={dir}
+        >
             <AppBar
                 position="fixed"
                 color="inherit"
@@ -353,7 +374,8 @@ export default function AdminShell({
                                 aria-label="breadcrumb"
                             >
                                 {breadcrumbs.map((item, index) => {
-                                    const isLast = index === breadcrumbs.length - 1;
+                                    const isLast =
+                                        index === breadcrumbs.length - 1;
 
                                     return isLast ? (
                                         <Typography
@@ -485,7 +507,10 @@ export default function AdminShell({
                     sx={{
                         px: { xs: 2, sm: 3, md: 4 },
                         py: { xs: 3, md: 4 },
-                        pb: { xs: 'calc(88px + env(safe-area-inset-bottom))', lg: 4 },
+                        pb: {
+                            xs: 'calc(88px + env(safe-area-inset-bottom))',
+                            lg: 4,
+                        },
                         maxWidth: '100%',
                     }}
                 >

@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
@@ -178,7 +179,9 @@ export default function LevelsIndex({ filters, levels }: PageProps) {
                                                         variant="destructive"
                                                         size="sm"
                                                         onClick={() =>
-                                                            handleDelete(level.id)
+                                                            handleDelete(
+                                                                level.id,
+                                                            )
                                                         }
                                                     >
                                                         Delete

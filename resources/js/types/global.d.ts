@@ -1,9 +1,9 @@
 /// <reference types="vite-plugin-pwa/react" />
 
-import type { Auth } from '@/types/auth';
 import type { AxiosStatic } from 'axios';
 import type Echo from 'laravel-echo';
 import type Pusher from 'pusher-js';
+import type { Auth } from '@/types/auth';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {

@@ -12,8 +12,7 @@ class InternalMessageNotification extends Notification
 
     public function __construct(
         private readonly Message $message,
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {

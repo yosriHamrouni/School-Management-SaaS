@@ -36,10 +36,16 @@ export default function LanguageSwitcher({
                     inverse ? 'text-white' : 'text-foreground',
                 )}
                 value={locale}
-                onChange={(event) => setLocale(event.target.value as typeof locale)}
+                onChange={(event) =>
+                    setLocale(event.target.value as typeof locale)
+                }
             >
                 {locales.map((item) => (
-                    <option key={item.code} value={item.code} className="text-slate-950">
+                    <option
+                        key={item.code}
+                        value={item.code}
+                        className="text-slate-950"
+                    >
                         {item.label}
                     </option>
                 ))}

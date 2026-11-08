@@ -1,0 +1,146 @@
+# Deploy a specific commit to Render, then verify it.
+#
+# Called by ci.yml after all checks pass (main -> production, development ->
+# staging). Can also be run manually (Actions -> Deploy to Render -> Run
+# workflow) to redeploy or ROLL BACK to any earlier commit SHA.
+#
+# Required secret : RENDER_DEPLOY_HOOK_URL  (Render -> service -> Settings -> Deploy Hook)
+# Optional secret : RENDER_API_KEY          (enables deploy-status polling)
+# Required variable (per GitHub Environment): RENDER_APP_URL, e.g. https://school-management.onrender.com
+# Optional variable: RENDER_SERVICE_ID      (srv-..., used with RENDER_API_KEY)
+
+name: Deploy to Render
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      ref:
+        type: string
+        required: true
+    secrets:
+      RENDER_DEPLOY_HOOK_URL:
+        required: false
+      RENDER_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [production, staging]
+        default: production
+      ref:
+        description: Full commit SHA to deploy (use an earlier SHA to roll back)
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.ref }} to ${{ inputs.environment }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ vars.RENDER_APP_URL }}
+    # One deployment per environment at a time; queue (never cancel) the next.
+    concurrency:
+      group: render-deploy-${{ inputs.environment }}
+      cancel-in-progress: false
+    env:
+      DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+      APP_URL: ${{ vars.RENDER_APP_URL }}
+      TARGET_ENV: ${{ inputs.environment }}
+      REF: ${{ inputs.ref }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The smoke-test script comes from the deployed commit.
+          ref: ${{ inputs.ref }}
+
+      - name: Check configuration
+        id: config
+        run: |
+          if ! echo "$REF" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::ref must be a full 40-character commit SHA (got '$REF')."
+            exit 1
+          fi
+          if [ -z "$DEPLOY_HOOK" ] || [ -z "$APP_URL" ]; then
+            echo "::warning::Deployment to '$TARGET_ENV' skipped: RENDER_DEPLOY_HOOK_URL secret and/or RENDER_APP_URL variable are not configured. See docs/render-deployment.md."
+            echo "### Deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "\`$TARGET_ENV\` is not configured (missing deploy hook secret or RENDER_APP_URL variable)." >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger Render deploy of ${{ inputs.ref }}
+        id: trigger
+        if: steps.config.outputs.enabled == 'true'
+        run: |
+          # The hook URL contains a secret key. It is masked by GitHub, and is
+          # never echoed; curl's own errors only mention the host.
+          sep='?'; case "$DEPLOY_HOOK" in *\?*) sep='&' ;; esac
+          status="$(curl -sS -X POST -o response.json -w '%{http_code}' --max-time 60 "${DEPLOY_HOOK}${sep}ref=${REF}")" || status=000
+          if [ "$status" != 200 ] && [ "$status" != 201 ] && [ "$status" != 202 ]; then
+            echo "::error::Render deploy hook returned HTTP $status (400: invalid ref, 404: commit not found in the linked repo/branch)."
+            exit 1
+          fi
+          deploy_id="$(python3 -c 'import json; print(json.load(open("response.json")).get("deploy", {}).get("id", ""))' 2>/dev/null || true)"
+          echo "deploy_id=$deploy_id" >> "$GITHUB_OUTPUT"
+          echo "Render accepted the deploy (id: ${deploy_id:-unknown})."
+          rm -f response.json
+
+      - name: Wait for Render deploy status
+        if: steps.config.outputs.enabled == 'true' && env.RENDER_API_KEY != '' && env.RENDER_SERVICE_ID != '' && steps.trigger.outputs.deploy_id != ''
+        env:
+          DEPLOY_ID: ${{ steps.trigger.outputs.deploy_id }}
+        run: |
+          # Docker builds on Render's free tier can take 10+ minutes.
+          deadline=$(( $(date +%s) + 1800 ))
+          while :; do
+            st="$(curl -sS --max-time 30 -H "Authorization: Bearer $RENDER_API_KEY" -H 'Accept: application/json' \
+                  "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys/$DEPLOY_ID" \
+                  | python3 -c 'import json,sys; print(json.load(sys.stdin).get("status",""))' 2>/dev/null || true)"
+            echo "$(date -u +%H:%M:%S) deploy status: ${st:-unknown}"
+            case "$st" in
+              live) exit 0 ;;
+              build_failed|update_failed|canceled|deactivated|pre_deploy_failed)
+                echo "::error::Render deploy ended with status '$st'. Render keeps the previous version serving traffic."
+                exit 1 ;;
+            esac
+            [ "$(date +%s)" -lt "$deadline" ] || { echo "::error::Timed out waiting for the Render deploy."; exit 1; }
+            sleep 20
+          done
+
+      - name: Smoke test (waits until release == ${{ inputs.ref }})
+        if: steps.config.outputs.enabled == 'true'
+        run: SMOKE_WAIT_SECONDS=1800 scripts/smoke-test.sh "$APP_URL" "$REF"
+
+      - name: Deployment summary
+        if: always() && steps.config.outputs.enabled == 'true'
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          {
+            echo "### Deployment to \`$TARGET_ENV\`: $JOB_STATUS"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Commit | \`$REF\` |"
+            echo "| URL | $APP_URL |"
+            if [ "$JOB_STATUS" != "success" ]; then
+              echo
+              echo "**Not verified.** Render keeps serving the previous deploy when a build or health check fails."
+              echo "To roll back explicitly: Render Dashboard -> Events -> previous deploy -> *Rollback*,"
+              echo "or run this workflow manually with the last good SHA. See docs/disaster-recovery.md."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

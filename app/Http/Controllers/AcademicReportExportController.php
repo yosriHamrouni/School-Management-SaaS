@@ -7,18 +7,17 @@ use App\Http\Requests\Reports\ExportAcademicReportRequest;
 use App\Services\AcademicReportExportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class AcademicReportExportController extends Controller
 {
     public function __construct(
         private readonly AcademicReportExportService $reportService,
-    ) {
-    }
+    ) {}
 
     public function index(ExportAcademicReportRequest $request): Response
     {

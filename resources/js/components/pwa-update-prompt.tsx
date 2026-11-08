@@ -17,7 +17,10 @@ export default function PwaUpdatePrompt() {
             message="A new version is available."
             action={
                 <>
-                    <Button color="inherit" onClick={() => setNeedRefresh(false)}>
+                    <Button
+                        color="inherit"
+                        onClick={() => setNeedRefresh(false)}
+                    >
                         Later
                     </Button>
                     <Button

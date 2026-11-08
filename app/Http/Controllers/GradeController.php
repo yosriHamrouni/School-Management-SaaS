@@ -23,8 +23,7 @@ class GradeController extends Controller
         private readonly EvaluationAccessService $accessService,
         private readonly GradeService $gradeService,
         private readonly ActivityLogService $activityLogService,
-    ) {
-    }
+    ) {}
 
     public function edit(Request $request, Evaluation $evaluation): Response
     {

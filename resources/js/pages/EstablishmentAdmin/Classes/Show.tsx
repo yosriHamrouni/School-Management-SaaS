@@ -60,7 +60,7 @@ export default function ClassesShow({ schoolClass }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="grid gap-4 md:grid-cols-3">
                         <div className="rounded-lg border border-border p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Name
                             </p>
                             <p className="mt-2 text-sm text-foreground">
@@ -68,7 +68,7 @@ export default function ClassesShow({ schoolClass }: Props) {
                             </p>
                         </div>
                         <div className="rounded-lg border border-border p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Level
                             </p>
                             <p className="mt-2 text-sm text-foreground">
@@ -76,7 +76,7 @@ export default function ClassesShow({ schoolClass }: Props) {
                             </p>
                         </div>
                         <div className="rounded-lg border border-border p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Academic Year
                             </p>
                             <p className="mt-2 text-sm text-foreground">

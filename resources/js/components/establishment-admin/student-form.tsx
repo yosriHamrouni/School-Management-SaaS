@@ -57,7 +57,9 @@ export default function StudentForm({
                     <Input
                         id="name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         placeholder="Student name"
                     />
                     <InputError message={errors.name} />
@@ -69,7 +71,9 @@ export default function StudentForm({
                         id="email"
                         type="email"
                         value={data.email}
-                        onChange={(event) => setData('email', event.target.value)}
+                        onChange={(event) =>
+                            setData('email', event.target.value)
+                        }
                         placeholder="student@school.test"
                     />
                     <InputError message={errors.email} />
@@ -83,18 +87,24 @@ export default function StudentForm({
                         id="password"
                         type="password"
                         value={data.password}
-                        onChange={(event) => setData('password', event.target.value)}
+                        onChange={(event) =>
+                            setData('password', event.target.value)
+                        }
                     />
                     <InputError message={errors.password} />
                 </div>
 
                 <div className="grid gap-2">
-                    <Label htmlFor="password_confirmation">Password confirmation</Label>
+                    <Label htmlFor="password_confirmation">
+                        Password confirmation
+                    </Label>
                     <Input
                         id="password_confirmation"
                         type="password"
                         value={data.password_confirmation}
-                        onChange={(event) => setData('password_confirmation', event.target.value)}
+                        onChange={(event) =>
+                            setData('password_confirmation', event.target.value)
+                        }
                     />
                 </div>
 
@@ -103,12 +113,17 @@ export default function StudentForm({
                     <select
                         id="class_id"
                         value={data.class_id}
-                        onChange={(event) => setData('class_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('class_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">No class assigned</option>
                         {classes.map((schoolClass) => (
-                            <option key={schoolClass.id} value={String(schoolClass.id)}>
+                            <option
+                                key={schoolClass.id}
+                                value={String(schoolClass.id)}
+                            >
                                 {schoolClass.name}
                             </option>
                         ))}
@@ -121,7 +136,9 @@ export default function StudentForm({
                     <Input
                         id="student_number"
                         value={data.student_number}
-                        onChange={(event) => setData('student_number', event.target.value)}
+                        onChange={(event) =>
+                            setData('student_number', event.target.value)
+                        }
                         placeholder="STU-001"
                     />
                     <InputError message={errors.student_number} />
@@ -132,7 +149,9 @@ export default function StudentForm({
                     <Input
                         id="status"
                         value={data.status}
-                        onChange={(event) => setData('status', event.target.value)}
+                        onChange={(event) =>
+                            setData('status', event.target.value)
+                        }
                         placeholder="active"
                     />
                     <InputError message={errors.status} />
@@ -144,7 +163,9 @@ export default function StudentForm({
                         id="date_of_birth"
                         type="date"
                         value={data.date_of_birth}
-                        onChange={(event) => setData('date_of_birth', event.target.value)}
+                        onChange={(event) =>
+                            setData('date_of_birth', event.target.value)
+                        }
                     />
                     <InputError message={errors.date_of_birth} />
                 </div>
@@ -154,7 +175,9 @@ export default function StudentForm({
                     <Input
                         id="gender"
                         value={data.gender}
-                        onChange={(event) => setData('gender', event.target.value)}
+                        onChange={(event) =>
+                            setData('gender', event.target.value)
+                        }
                         placeholder="female"
                     />
                     <InputError message={errors.gender} />
@@ -166,7 +189,9 @@ export default function StudentForm({
                         id="enrollment_date"
                         type="date"
                         value={data.enrollment_date}
-                        onChange={(event) => setData('enrollment_date', event.target.value)}
+                        onChange={(event) =>
+                            setData('enrollment_date', event.target.value)
+                        }
                     />
                     <InputError message={errors.enrollment_date} />
                 </div>
@@ -176,7 +201,9 @@ export default function StudentForm({
                     <Input
                         id="photo_url"
                         value={data.photo_url}
-                        onChange={(event) => setData('photo_url', event.target.value)}
+                        onChange={(event) =>
+                            setData('photo_url', event.target.value)
+                        }
                         placeholder="https://..."
                     />
                     <InputError message={errors.photo_url} />

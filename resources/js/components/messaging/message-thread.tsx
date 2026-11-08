@@ -24,7 +24,10 @@ export default function MessageThread({ authUserId, messages }: Props) {
                 }}
             >
                 <Stack spacing={1.5} alignItems="center">
-                    <MailOutlineRoundedIcon color="disabled" sx={{ fontSize: 40 }} />
+                    <MailOutlineRoundedIcon
+                        color="disabled"
+                        sx={{ fontSize: 40 }}
+                    />
                     <Typography variant="body2" color="text.secondary">
                         Aucun message dans cette conversation pour le moment.
                     </Typography>
@@ -70,7 +73,9 @@ export default function MessageThread({ authUserId, messages }: Props) {
                                 borderColor: 'divider',
                             }}
                         >
-                            <Typography variant="body1">{message.content}</Typography>
+                            <Typography variant="body1">
+                                {message.content}
+                            </Typography>
                             <Stack
                                 direction="row"
                                 spacing={1}
@@ -79,7 +84,11 @@ export default function MessageThread({ authUserId, messages }: Props) {
                             >
                                 <Typography
                                     variant="caption"
-                                    color={isOwnMessage ? 'inherit' : 'text.secondary'}
+                                    color={
+                                        isOwnMessage
+                                            ? 'inherit'
+                                            : 'text.secondary'
+                                    }
                                 >
                                     {message.created_at
                                         ? dateTimeFormatter.format(
@@ -89,7 +98,11 @@ export default function MessageThread({ authUserId, messages }: Props) {
                                 </Typography>
                                 <Typography
                                     variant="caption"
-                                    color={isOwnMessage ? 'inherit' : 'text.secondary'}
+                                    color={
+                                        isOwnMessage
+                                            ? 'inherit'
+                                            : 'text.secondary'
+                                    }
                                 >
                                     {isOwnMessage
                                         ? message.read_at

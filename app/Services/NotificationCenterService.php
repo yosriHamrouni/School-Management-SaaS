@@ -75,8 +75,11 @@ class NotificationCenterService
             ->where(function ($query) use ($establishmentId) {
                 $query
                     ->whereRaw("json_extract(data, '$.establishment_id') is null")
+                    // json_extract returns an INTEGER for numeric ids; SQLite never
+                    // treats INTEGER 1 and TEXT '1' as equal, so compare as text
+                    // (matches the pgsql branch, where ->> already yields text).
                     ->orWhereRaw(
-                        "json_extract(data, '$.establishment_id') = ?",
+                        "cast(json_extract(data, '$.establishment_id') as text) = ?",
                         [$establishmentId],
                     );
             });

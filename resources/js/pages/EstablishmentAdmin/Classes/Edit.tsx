@@ -50,7 +50,9 @@ export default function ClassesEdit({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Edit Class</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Edit Class
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Update {schoolClass.name}.
                             </p>

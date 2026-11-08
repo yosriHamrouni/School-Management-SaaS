@@ -12,8 +12,7 @@ class AcademicReportExport implements WithMultipleSheets
      */
     public function __construct(
         private readonly array $report,
-    ) {
-    }
+    ) {}
 
     public function sheets(): array
     {

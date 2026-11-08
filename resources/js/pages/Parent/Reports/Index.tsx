@@ -70,6 +70,7 @@ export default function ParentReportsIndex({
     const handleChildChange = (childId: string) => {
         if (!childId) {
             router.get('/parent/reports', {}, { preserveScroll: true });
+
             return;
         }
 
@@ -100,41 +101,62 @@ export default function ParentReportsIndex({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">Child Grades</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Child Grades
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Review grades and term averages only for children linked to your account.
+                                Review grades and term averages only for
+                                children linked to your account.
                             </p>
                         </div>
 
                         <div className="flex flex-col gap-2 sm:flex-row">
                             <select
                                 value={selectedChildId ?? ''}
-                                onChange={(event) => handleChildChange(event.target.value)}
+                                onChange={(event) =>
+                                    handleChildChange(event.target.value)
+                                }
                                 className={selectClassName}
                             >
                                 <option value="">Select a child</option>
                                 {children.map((child) => (
-                                    <option key={child.id} value={String(child.id)}>
-                                        {child.name} {child.student_number ? `- ${child.student_number}` : ''}
+                                    <option
+                                        key={child.id}
+                                        value={String(child.id)}
+                                    >
+                                        {child.name}{' '}
+                                        {child.student_number
+                                            ? `- ${child.student_number}`
+                                            : ''}
                                     </option>
                                 ))}
                             </select>
 
                             <select
                                 value={selectedTermId ?? ''}
-                                onChange={(event) => handleTermChange(event.target.value)}
+                                onChange={(event) =>
+                                    handleTermChange(event.target.value)
+                                }
                                 className={selectClassName}
-                                disabled={!selectedChildId || terms.length === 0}
+                                disabled={
+                                    !selectedChildId || terms.length === 0
+                                }
                             >
                                 {terms.map((term) => (
-                                    <option key={term.id} value={String(term.id)}>
+                                    <option
+                                        key={term.id}
+                                        value={String(term.id)}
+                                    >
                                         {term.name}
                                     </option>
                                 ))}
                             </select>
 
                             {report ? (
-                                <Button variant="outline" onClick={() => window.print()}>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => window.print()}
+                                >
                                     Print bulletin
                                 </Button>
                             ) : null}
@@ -152,12 +174,16 @@ export default function ParentReportsIndex({
                     <>
                         <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                             <div className="flex flex-col gap-1">
-                                <h2 className="text-lg font-semibold">{report.student.name ?? 'Student'}</h2>
+                                <h2 className="text-lg font-semibold">
+                                    {report.student.name ?? 'Student'}
+                                </h2>
                                 <p className="text-sm text-muted-foreground">
-                                    {report.student.class_name ?? 'No class'} · {report.student.student_number ?? '-'}
+                                    {report.student.class_name ?? 'No class'} ·{' '}
+                                    {report.student.student_number ?? '-'}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
-                                    {report.term.name} · General average: {report.general_average ?? '-'}
+                                    {report.term.name} · General average:{' '}
+                                    {report.general_average ?? '-'}
                                 </p>
                             </div>
                         </div>
@@ -168,9 +194,12 @@ export default function ParentReportsIndex({
                                 className="overflow-hidden rounded-xl border border-sidebar-border/70 bg-background"
                             >
                                 <div className="border-b border-border px-6 py-4">
-                                    <h3 className="text-lg font-semibold">{subject.subject_name}</h3>
+                                    <h3 className="text-lg font-semibold">
+                                        {subject.subject_name}
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Subject average: {subject.average ?? '-'}
+                                        Subject average:{' '}
+                                        {subject.average ?? '-'}
                                     </p>
                                 </div>
 
@@ -178,27 +207,63 @@ export default function ParentReportsIndex({
                                     <table className="min-w-full divide-y divide-border">
                                         <thead className="bg-muted/50">
                                             <tr>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Evaluation</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Type</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Date</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Coeff.</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Grade</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Max</th>
-                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Remarks</th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Evaluation
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Type
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Date
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Coeff.
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Grade
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Max
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                    Remarks
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-border">
-                                            {subject.evaluations.map((evaluation) => (
-                                                <tr key={evaluation.id}>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.title}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.type}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.evaluation_date ?? '-'}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.coefficient}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.grade}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.max_grade}</td>
-                                                    <td className="px-4 py-3 text-sm">{evaluation.remarks ?? '-'}</td>
-                                                </tr>
-                                            ))}
+                                            {subject.evaluations.map(
+                                                (evaluation) => (
+                                                    <tr key={evaluation.id}>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {evaluation.title}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {evaluation.type}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {evaluation.evaluation_date ??
+                                                                '-'}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {
+                                                                evaluation.coefficient
+                                                            }
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {evaluation.grade}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {
+                                                                evaluation.max_grade
+                                                            }
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {evaluation.remarks ??
+                                                                '-'}
+                                                        </td>
+                                                    </tr>
+                                                ),
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -212,7 +277,10 @@ export default function ParentReportsIndex({
                 ) : null}
 
                 <div className="flex justify-end">
-                    <Link href="/parent/schedules" className="text-sm text-primary underline-offset-4 hover:underline">
+                    <Link
+                        href="/parent/schedules"
+                        className="text-sm text-primary underline-offset-4 hover:underline"
+                    >
                         Open child schedule
                     </Link>
                 </div>

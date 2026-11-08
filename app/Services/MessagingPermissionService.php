@@ -6,6 +6,7 @@ use App\Models\ClassSubject;
 use App\Models\StudentProfile;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MessagingPermissionService
 {
@@ -121,7 +122,7 @@ class MessagingPermissionService
         $studentIds = $studentProfiles->pluck('user_id')->filter()->unique()->values();
         $parentIds = $studentProfiles->isEmpty()
             ? collect()
-            : \Illuminate\Support\Facades\DB::table('student_parent')
+            : DB::table('student_parent')
                 ->whereIn('student_id', $studentProfiles->pluck('id'))
                 ->pluck('parent_id')
                 ->filter()

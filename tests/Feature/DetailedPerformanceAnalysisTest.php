@@ -2,12 +2,13 @@
 
 use App\Models\AcademicYear;
 use App\Models\ClassSubject;
-use App\Models\Evaluation;
 use App\Models\Establishment;
+use App\Models\Evaluation;
 use App\Models\Grade;
 use App\Models\Level;
 use App\Models\Role;
 use App\Models\SchoolClass;
+use App\Models\StudentProfile;
 use App\Models\Subject;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -140,12 +141,9 @@ test('detailed performance analysis returns tenant scoped subject class and teac
         [$otherEvaluation->id, $otherStudent->id, 19],
     ] as [$evaluationId, $studentId, $grade]) {
         Grade::create([
-            'establishment_id' => $studentId === $otherStudent->id ? $otherEstablishment->id : $establishment->id,
             'evaluation_id' => $evaluationId,
             'student_id' => $studentId,
             'grade' => $grade,
-            'created_by' => $admin->id,
-            'updated_by' => $admin->id,
         ]);
     }
 
@@ -161,16 +159,16 @@ test('detailed performance analysis returns tenant scoped subject class and teac
             ->where('stats.successRate', 66.7)
             ->has('subjectPerformance', 2)
             ->where('subjectPerformance.0.name', 'English')
-            ->where('subjectPerformance.0.average', 8.0)
+            ->where('subjectPerformance.0.average', fn ($value) => (float) $value === 8.0)
             ->where('subjectPerformance.1.name', 'Mathematics')
-            ->where('subjectPerformance.1.average', 12.0)
+            ->where('subjectPerformance.1.average', fn ($value) => (float) $value === 12.0)
             ->has('classComparison', 2)
             ->where('teacherPerformance.0.name', 'Teacher Alpha')
-            ->where('teacherPerformance.0.average', 12.0)
-            ->where('teacherPerformance.0.successRate', 100.0)
+            ->where('teacherPerformance.0.average', fn ($value) => (float) $value === 12.0)
+            ->where('teacherPerformance.0.successRate', fn ($value) => (float) $value === 100.0)
             ->where('teacherPerformance.1.name', 'Teacher Beta')
-            ->where('teacherPerformance.1.average', 8.0)
-            ->where('teacherPerformance.1.successRate', 0.0),
+            ->where('teacherPerformance.1.average', fn ($value) => (float) $value === 8.0)
+            ->where('teacherPerformance.1.successRate', fn ($value) => (float) $value === 0.0),
         );
 });
 
@@ -228,7 +226,7 @@ function createPerformanceStudent(Establishment $establishment, string $email): 
         Role::firstOrCreate(['name' => 'student'])->id,
     ]);
 
-    \App\Models\StudentProfile::create([
+    StudentProfile::create([
         'user_id' => $student->id,
         'establishment_id' => $establishment->id,
         'student_number' => fake()->unique()->bothify('PERF-###'),

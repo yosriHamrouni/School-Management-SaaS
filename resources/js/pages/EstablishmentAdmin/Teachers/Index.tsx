@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
@@ -44,7 +45,11 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
 
     const submitSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        router.get('/establishment-admin/teachers', { search }, { preserveState: true, replace: true });
+        router.get(
+            '/establishment-admin/teachers',
+            { search },
+            { preserveState: true, replace: true },
+        );
     };
 
     const handleDelete = (id: number) => {
@@ -89,7 +94,10 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
                 ) : null}
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitSearch} className="flex flex-col gap-3 md:flex-row">
+                    <form
+                        onSubmit={submitSearch}
+                        className="flex flex-col gap-3 md:flex-row"
+                    >
                         <Input
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
@@ -103,7 +111,11 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
                                 variant="outline"
                                 onClick={() => {
                                     setSearch('');
-                                    router.get('/establishment-admin/teachers', {}, { preserveState: true, replace: true });
+                                    router.get(
+                                        '/establishment-admin/teachers',
+                                        {},
+                                        { preserveState: true, replace: true },
+                                    );
                                 }}
                             >
                                 Reset
@@ -117,28 +129,69 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Assignments</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Name
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Email
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Assignments
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {teachers.data.length > 0 ? (
                                     teachers.data.map((teacher) => (
-                                        <tr key={teacher.id} className="hover:bg-muted/30">
-                                            <td className="px-4 py-3 text-sm">{teacher.name}</td>
-                                            <td className="px-4 py-3 text-sm">{teacher.email}</td>
-                                            <td className="px-4 py-3 text-sm">{teacher.assignments_count}</td>
+                                        <tr
+                                            key={teacher.id}
+                                            className="hover:bg-muted/30"
+                                        >
+                                            <td className="px-4 py-3 text-sm">
+                                                {teacher.name}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {teacher.email}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {teacher.assignments_count}
+                                            </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/establishment-admin/teachers/${teacher.id}`}>View</Link>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/establishment-admin/teachers/${teacher.id}`}
+                                                        >
+                                                            View
+                                                        </Link>
                                                     </Button>
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/establishment-admin/teachers/${teacher.id}/edit`}>Edit</Link>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/establishment-admin/teachers/${teacher.id}/edit`}
+                                                        >
+                                                            Edit
+                                                        </Link>
                                                     </Button>
-                                                    <Button variant="destructive" size="sm" onClick={() => handleDelete(teacher.id)}>
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                teacher.id,
+                                                            )
+                                                        }
+                                                    >
                                                         Delete
                                                     </Button>
                                                 </div>
@@ -147,7 +200,10 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                                        <td
+                                            colSpan={4}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
                                             No teachers found.
                                         </td>
                                     </tr>
@@ -167,9 +223,19 @@ export default function TeachersIndex({ filters, teachers }: PageProps) {
                             asChild={Boolean(link.url)}
                         >
                             {link.url ? (
-                                <Link href={link.url} preserveScroll dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <Link
+                                    href={link.url}
+                                    preserveScroll
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

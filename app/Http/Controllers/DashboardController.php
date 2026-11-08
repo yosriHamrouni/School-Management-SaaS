@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Establishment;
 use App\Models\Invoice;
 use App\Models\Payment;
-use App\Models\SchoolClass;
 use App\Models\Schedule;
+use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\StudentRiskPrediction;
 use App\Models\User;
@@ -27,8 +27,7 @@ class DashboardController extends Controller
         NotificationCenterService $notificationCenter,
         MessagingService $messagingService,
         ParentDashboardService $parentDashboardService,
-    ): Response
-    {
+    ): Response {
         $user = $request->user();
         $roles = $user->roles->pluck('name');
         $establishmentId = $user->establishment_id;

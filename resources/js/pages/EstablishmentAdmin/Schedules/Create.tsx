@@ -48,14 +48,19 @@ export default function SchedulesCreate(props: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Create Schedule</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Create Schedule
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Plan a new teaching session for your establishment.
+                                Plan a new teaching session for your
+                                establishment.
                             </p>
                         </div>
 
                         <Button variant="outline" asChild>
-                            <Link href="/establishment-admin/schedules">Back to list</Link>
+                            <Link href="/establishment-admin/schedules">
+                                Back to list
+                            </Link>
                         </Button>
                     </div>
                 </div>

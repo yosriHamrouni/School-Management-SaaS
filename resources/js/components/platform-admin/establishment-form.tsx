@@ -53,9 +53,13 @@ export default function EstablishmentForm({
             <Stack spacing={4}>
                 <Box>
                     <Typography variant="h6">Establishment details</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Capture the core identity, contact details and operational
-                        status for this tenant.
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 1 }}
+                    >
+                        Capture the core identity, contact details and
+                        operational status for this tenant.
                     </Typography>
                 </Box>
 
@@ -63,13 +67,18 @@ export default function EstablishmentForm({
                     sx={{
                         display: 'grid',
                         gap: 3,
-                        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            md: 'repeat(2, 1fr)',
+                        },
                     }}
                 >
                     <TextField
                         label="Name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         error={Boolean(errors.name)}
                         helperText={errors.name}
                         placeholder="Establishment name"
@@ -79,7 +88,9 @@ export default function EstablishmentForm({
                     <TextField
                         label="Code"
                         value={data.code}
-                        onChange={(event) => setData('code', event.target.value)}
+                        onChange={(event) =>
+                            setData('code', event.target.value)
+                        }
                         error={Boolean(errors.code)}
                         helperText={errors.code}
                         placeholder="EST-001"
@@ -89,7 +100,9 @@ export default function EstablishmentForm({
                     <TextField
                         label="Type"
                         value={data.type}
-                        onChange={(event) => setData('type', event.target.value)}
+                        onChange={(event) =>
+                            setData('type', event.target.value)
+                        }
                         error={Boolean(errors.type)}
                         helperText={errors.type}
                         placeholder="School"
@@ -99,7 +112,9 @@ export default function EstablishmentForm({
                     <TextField
                         label="City"
                         value={data.city}
-                        onChange={(event) => setData('city', event.target.value)}
+                        onChange={(event) =>
+                            setData('city', event.target.value)
+                        }
                         error={Boolean(errors.city)}
                         helperText={errors.city}
                         placeholder="Tunis"
@@ -109,7 +124,9 @@ export default function EstablishmentForm({
                     <TextField
                         label="Phone"
                         value={data.phone}
-                        onChange={(event) => setData('phone', event.target.value)}
+                        onChange={(event) =>
+                            setData('phone', event.target.value)
+                        }
                         error={Boolean(errors.phone)}
                         helperText={errors.phone}
                         placeholder="+216 00 000 000"
@@ -120,7 +137,9 @@ export default function EstablishmentForm({
                         label="Email"
                         type="email"
                         value={data.email}
-                        onChange={(event) => setData('email', event.target.value)}
+                        onChange={(event) =>
+                            setData('email', event.target.value)
+                        }
                         error={Boolean(errors.email)}
                         helperText={errors.email}
                         placeholder="contact@establishment.test"
@@ -143,7 +162,9 @@ export default function EstablishmentForm({
                     <TextField
                         label="Address"
                         value={data.address}
-                        onChange={(event) => setData('address', event.target.value)}
+                        onChange={(event) =>
+                            setData('address', event.target.value)
+                        }
                         error={Boolean(errors.address)}
                         helperText={errors.address}
                         placeholder="Full address"
@@ -181,7 +202,11 @@ export default function EstablishmentForm({
                 </Box>
 
                 <Stack direction="row" justifyContent="flex-end">
-                    <Button type="submit" variant="contained" disabled={processing}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={processing}
+                    >
                         {submitLabel}
                     </Button>
                 </Stack>

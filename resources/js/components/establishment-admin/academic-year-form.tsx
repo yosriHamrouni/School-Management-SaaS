@@ -43,7 +43,9 @@ export default function AcademicYearForm({
                     <Input
                         id="name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         placeholder="2025 / 2026"
                     />
                     <InputError message={errors.name} />
@@ -86,7 +88,7 @@ export default function AcademicYearForm({
                                 event.target.value as 'active' | 'inactive',
                             )
                         }
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
+                        className="h-9 rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>

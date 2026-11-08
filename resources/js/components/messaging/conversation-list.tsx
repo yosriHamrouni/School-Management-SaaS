@@ -53,7 +53,8 @@ export default function ConversationList({
                             component={Link}
                             href={`/messaging/${conversation.participant.id}`}
                             selected={
-                                conversation.participant.id === selectedParticipantId
+                                conversation.participant.id ===
+                                selectedParticipantId
                             }
                             sx={{ alignItems: 'flex-start', py: 1.75 }}
                         >
@@ -83,10 +84,13 @@ export default function ConversationList({
                                                 variant="caption"
                                                 color="text.secondary"
                                             >
-                                                {conversation.last_message.created_at
+                                                {conversation.last_message
+                                                    .created_at
                                                     ? dateTimeFormatter.format(
                                                           new Date(
-                                                              conversation.last_message.created_at,
+                                                              conversation
+                                                                  .last_message
+                                                                  .created_at,
                                                           ),
                                                       )
                                                     : ''}

@@ -102,7 +102,12 @@ export default function DetailedPerformanceIndex({
                     title="Analyse de performance detaillee"
                     description="Analysez les resultats par matiere, comparez les classes et identifiez les indicateurs de performance enseignant a partir des evaluations et notes existantes."
                     actions={
-                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            useFlexGap
+                            flexWrap="wrap"
+                        >
                             <Chip
                                 color="primary"
                                 variant="outlined"
@@ -171,10 +176,14 @@ export default function DetailedPerformanceIndex({
                                 <Typography variant="h6">
                                     Aucune performance detaillee disponible
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Les indicateurs resteront vides tant qu'aucune note
-                                    n'a ete saisie pour les classes, matieres et
-                                    enseignants de cet etablissement.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Les indicateurs resteront vides tant
+                                    qu'aucune note n'a ete saisie pour les
+                                    classes, matieres et enseignants de cet
+                                    etablissement.
                                 </Typography>
                             </Stack>
                         </CardContent>
@@ -194,9 +203,12 @@ export default function DetailedPerformanceIndex({
                                 <Typography variant="h5">
                                     Moyenne par matiere
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Vue globale des matieres, avec moyenne et volume de
-                                    notes utilisees dans le calcul.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Vue globale des matieres, avec moyenne et
+                                    volume de notes utilisees dans le calcul.
                                 </Typography>
                             </Stack>
 
@@ -215,9 +227,13 @@ export default function DetailedPerformanceIndex({
                                 <Typography variant="h5">
                                     Tableau des matieres
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Les matieres sans note restent visibles avec une
-                                    moyenne a 0.00 pour garder une lecture complete.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Les matieres sans note restent visibles avec
+                                    une moyenne a 0.00 pour garder une lecture
+                                    complete.
                                 </Typography>
                             </Stack>
 
@@ -226,14 +242,20 @@ export default function DetailedPerformanceIndex({
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Matiere</TableCell>
-                                            <TableCell align="right">Moyenne</TableCell>
-                                            <TableCell align="right">Notes</TableCell>
+                                            <TableCell align="right">
+                                                Moyenne
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                Notes
+                                            </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {subjectPerformance.map((item) => (
                                             <TableRow key={item.id}>
-                                                <TableCell>{item.name}</TableCell>
+                                                <TableCell>
+                                                    {item.name}
+                                                </TableCell>
                                                 <TableCell align="right">
                                                     {item.average.toFixed(2)}/20
                                                 </TableCell>
@@ -257,8 +279,8 @@ export default function DetailedPerformanceIndex({
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Lecture comparative des classes par matiere pour
-                                identifier rapidement les zones fortes et les classes a
-                                accompagner.
+                                identifier rapidement les zones fortes et les
+                                classes a accompagner.
                             </Typography>
                         </Stack>
 
@@ -279,9 +301,9 @@ export default function DetailedPerformanceIndex({
                                 Indicateurs de performance enseignant
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Les indicateurs sont derives des resultats des eleves
-                                dans les couples classe-matiere assures par chaque
-                                enseignant.
+                                Les indicateurs sont derives des resultats des
+                                eleves dans les couples classe-matiere assures
+                                par chaque enseignant.
                             </Typography>
                         </Stack>
 
@@ -290,17 +312,29 @@ export default function DetailedPerformanceIndex({
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Enseignant</TableCell>
-                                        <TableCell align="right">Classes</TableCell>
-                                        <TableCell align="right">Matieres</TableCell>
-                                        <TableCell align="right">Moyenne</TableCell>
-                                        <TableCell align="right">Reussite</TableCell>
-                                        <TableCell align="right">Notes</TableCell>
+                                        <TableCell align="right">
+                                            Classes
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Matieres
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Moyenne
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Reussite
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Notes
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {teacherPerformance.map((teacher) => (
                                         <TableRow key={teacher.id}>
-                                            <TableCell>{teacher.name}</TableCell>
+                                            <TableCell>
+                                                {teacher.name}
+                                            </TableCell>
                                             <TableCell align="right">
                                                 {teacher.classesCount}
                                             </TableCell>
@@ -314,7 +348,8 @@ export default function DetailedPerformanceIndex({
                                                 <Chip
                                                     size="small"
                                                     color={
-                                                        teacher.successRate >= 50
+                                                        teacher.successRate >=
+                                                        50
                                                             ? 'success'
                                                             : 'warning'
                                                     }
@@ -339,8 +374,8 @@ export default function DetailedPerformanceIndex({
                                 Synthese par classe
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Resume utile pour la demo avec moyenne generale et
-                                detail par matiere pour chaque classe.
+                                Resume utile pour la demo avec moyenne generale
+                                et detail par matiere pour chaque classe.
                             </Typography>
                         </Stack>
 
@@ -371,7 +406,8 @@ export default function DetailedPerformanceIndex({
                                             variant="body2"
                                             color="text.secondary"
                                         >
-                                            {item.gradesCount} note(s) exploitee(s)
+                                            {item.gradesCount} note(s)
+                                            exploitee(s)
                                         </Typography>
 
                                         <Stack
@@ -381,15 +417,18 @@ export default function DetailedPerformanceIndex({
                                             flexWrap="wrap"
                                             sx={{ mt: 2 }}
                                         >
-                                            {item.subjectBreakdown.length > 0 ? (
-                                                item.subjectBreakdown.map((subject) => (
-                                                    <Chip
-                                                        key={`${item.className}-${subject.subjectId}`}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        label={`${subject.subjectName}: ${subject.average.toFixed(1)}`}
-                                                    />
-                                                ))
+                                            {item.subjectBreakdown.length >
+                                            0 ? (
+                                                item.subjectBreakdown.map(
+                                                    (subject) => (
+                                                        <Chip
+                                                            key={`${item.className}-${subject.subjectId}`}
+                                                            size="small"
+                                                            variant="outlined"
+                                                            label={`${subject.subjectName}: ${subject.average.toFixed(1)}`}
+                                                        />
+                                                    ),
+                                                )
                                             ) : (
                                                 <Chip
                                                     size="small"

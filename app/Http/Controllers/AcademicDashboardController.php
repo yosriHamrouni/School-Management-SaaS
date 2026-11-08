@@ -11,8 +11,7 @@ class AcademicDashboardController extends Controller
 {
     public function __construct(
         private readonly AcademicDashboardService $dashboardService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

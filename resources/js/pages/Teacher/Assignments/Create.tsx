@@ -44,13 +44,18 @@ export default function TeacherAssignmentsCreate({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Create Assignment</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Create Assignment
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Publish a new assignment for one of your assigned classes and subjects.
+                                Publish a new assignment for one of your
+                                assigned classes and subjects.
                             </p>
                         </div>
                         <Button variant="outline" asChild>
-                            <Link href="/teacher/assignments">Back to list</Link>
+                            <Link href="/teacher/assignments">
+                                Back to list
+                            </Link>
                         </Button>
                     </div>
                 </div>

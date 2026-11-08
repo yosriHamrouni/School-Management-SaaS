@@ -14,12 +14,19 @@ abstract class TestCase extends BaseTestCase
         $app = parent::createApplication();
         $config = $app->make('config');
 
-        if (
-            $config->get('database.default') !== 'sqlite'
-            || $config->get('database.connections.sqlite.database') !== ':memory:'
-        ) {
+        // RefreshDatabase wipes the database it runs against. Only allow an
+        // in-memory SQLite DB, or - when explicitly opted in (CI) - a
+        // PostgreSQL database whose name marks it as disposable.
+        $isMemorySqlite = $config->get('database.default') === 'sqlite'
+            && $config->get('database.connections.sqlite.database') === ':memory:';
+
+        $isDisposablePgsql = filter_var(getenv('TESTING_ALLOW_PGSQL'), FILTER_VALIDATE_BOOL)
+            && $config->get('database.default') === 'pgsql'
+            && preg_match('/(_test|testing)$/', (string) $config->get('database.connections.pgsql.database')) === 1;
+
+        if (! $isMemorySqlite && ! $isDisposablePgsql) {
             throw new RuntimeException(
-                'Tests aborted: the database must be SQLite in memory.',
+                'Tests aborted: the database must be SQLite in memory, or a PostgreSQL database named *_test/*testing with TESTING_ALLOW_PGSQL=true.',
             );
         }
 

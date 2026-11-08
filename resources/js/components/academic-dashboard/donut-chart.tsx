@@ -32,18 +32,17 @@ export default function AcademicDonutChart({
         );
     }
 
-    let cumulative = 0;
     const segments = values.map((value, index) => {
-        const percentage = value / total;
-        const start = cumulative;
-        cumulative += percentage;
+        const start =
+            values.slice(0, index).reduce((sum, current) => sum + current, 0) /
+            total;
 
         return {
             label: labels[index] ?? `Serie ${index + 1}`,
             value,
             color: COLORS[index % COLORS.length],
             start,
-            end: cumulative,
+            end: start + value / total,
         };
     });
 
@@ -87,7 +86,11 @@ export default function AcademicDonutChart({
                         spacing={2}
                         alignItems="center"
                     >
-                        <Stack direction="row" spacing={1.25} alignItems="center">
+                        <Stack
+                            direction="row"
+                            spacing={1.25}
+                            alignItems="center"
+                        >
                             <Box
                                 sx={{
                                     width: 12,
@@ -97,7 +100,10 @@ export default function AcademicDonutChart({
                                     flexShrink: 0,
                                 }}
                             />
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 600 }}
+                            >
                                 {segment.label}
                             </Typography>
                         </Stack>

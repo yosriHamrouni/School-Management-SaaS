@@ -87,7 +87,9 @@ export default function EstablishmentsIndex({
 }: PageProps) {
     const { flash } = usePage<PageProps>().props;
     const [search, setSearch] = useState(filters.search ?? '');
-    const [deleteTarget, setDeleteTarget] = useState<EstablishmentRow | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<EstablishmentRow | null>(
+        null,
+    );
 
     const activeCount = useMemo(
         () => establishments.data.filter((item) => item.is_active).length,
@@ -190,7 +192,9 @@ export default function EstablishmentsIndex({
                         >
                             <TextField
                                 value={search}
-                                onChange={(event) => setSearch(event.target.value)}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
                                 placeholder="Search by name or code"
                                 fullWidth
                                 InputProps={{
@@ -233,119 +237,134 @@ export default function EstablishmentsIndex({
                                         <TableCell>Type</TableCell>
                                         <TableCell>City</TableCell>
                                         <TableCell>Status</TableCell>
-                                        <TableCell align="right">Actions</TableCell>
+                                        <TableCell align="right">
+                                            Actions
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {establishments.data.length > 0 ? (
-                                        establishments.data.map((establishment) => (
-                                            <TableRow
-                                                key={establishment.id}
-                                                hover
-                                                sx={{
-                                                    '&:last-child td': {
-                                                        borderBottom: 0,
-                                                    },
-                                                }}
-                                            >
-                                                <TableCell>
-                                                    <Stack spacing={0.5}>
-                                                        <Typography
-                                                            variant="subtitle2"
-                                                            sx={{ fontWeight: 700 }}
-                                                        >
-                                                            {establishment.name}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body2"
-                                                            color="text.secondary"
-                                                        >
-                                                            {establishment.email ??
-                                                                'No email'}
-                                                        </Typography>
-                                                    </Stack>
-                                                </TableCell>
-                                                <TableCell>{establishment.code}</TableCell>
-                                                <TableCell>{establishment.type}</TableCell>
-                                                <TableCell>
-                                                    {establishment.city ?? '-'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Chip
-                                                        label={
-                                                            establishment.is_active
-                                                                ? 'Active'
-                                                                : 'Inactive'
-                                                        }
-                                                        color={
-                                                            establishment.is_active
-                                                                ? 'success'
-                                                                : 'default'
-                                                        }
-                                                        size="small"
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <Stack
-                                                        direction="row"
-                                                        spacing={1}
-                                                        justifyContent="flex-end"
-                                                        flexWrap="wrap"
-                                                        useFlexGap
-                                                    >
-                                                        <Button
-                                                            component={Link}
-                                                            href={`/platform-admin/establishments/${establishment.id}`}
-                                                            variant="outlined"
-                                                            size="small"
-                                                            startIcon={
-                                                                <VisibilityRoundedIcon />
+                                        establishments.data.map(
+                                            (establishment) => (
+                                                <TableRow
+                                                    key={establishment.id}
+                                                    hover
+                                                    sx={{
+                                                        '&:last-child td': {
+                                                            borderBottom: 0,
+                                                        },
+                                                    }}
+                                                >
+                                                    <TableCell>
+                                                        <Stack spacing={0.5}>
+                                                            <Typography
+                                                                variant="subtitle2"
+                                                                sx={{
+                                                                    fontWeight: 700,
+                                                                }}
+                                                            >
+                                                                {
+                                                                    establishment.name
+                                                                }
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body2"
+                                                                color="text.secondary"
+                                                            >
+                                                                {establishment.email ??
+                                                                    'No email'}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {establishment.code}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {establishment.type}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {establishment.city ??
+                                                            '-'}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Chip
+                                                            label={
+                                                                establishment.is_active
+                                                                    ? 'Active'
+                                                                    : 'Inactive'
                                                             }
-                                                        >
-                                                            View
-                                                        </Button>
-                                                        <Button
-                                                            component={Link}
-                                                            href={`/platform-admin/establishments/${establishment.id}/edit`}
-                                                            variant="outlined"
-                                                            size="small"
-                                                            startIcon={<EditRoundedIcon />}
-                                                        >
-                                                            Edit
-                                                        </Button>
-                                                        <Button
-                                                            variant="text"
-                                                            size="small"
-                                                            color="secondary"
-                                                            onClick={() =>
-                                                                handleToggleStatus(
-                                                                    establishment.id,
-                                                                )
+                                                            color={
+                                                                establishment.is_active
+                                                                    ? 'success'
+                                                                    : 'default'
                                                             }
-                                                        >
-                                                            {establishment.is_active
-                                                                ? 'Disable'
-                                                                : 'Activate'}
-                                                        </Button>
-                                                        <Button
-                                                            variant="text"
                                                             size="small"
-                                                            color="error"
-                                                            startIcon={
-                                                                <DeleteOutlineRoundedIcon />
-                                                            }
-                                                            onClick={() =>
-                                                                setDeleteTarget(
-                                                                    establishment,
-                                                                )
-                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Stack
+                                                            direction="row"
+                                                            spacing={1}
+                                                            justifyContent="flex-end"
+                                                            flexWrap="wrap"
+                                                            useFlexGap
                                                         >
-                                                            Delete
-                                                        </Button>
-                                                    </Stack>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
+                                                            <Button
+                                                                component={Link}
+                                                                href={`/platform-admin/establishments/${establishment.id}`}
+                                                                variant="outlined"
+                                                                size="small"
+                                                                startIcon={
+                                                                    <VisibilityRoundedIcon />
+                                                                }
+                                                            >
+                                                                View
+                                                            </Button>
+                                                            <Button
+                                                                component={Link}
+                                                                href={`/platform-admin/establishments/${establishment.id}/edit`}
+                                                                variant="outlined"
+                                                                size="small"
+                                                                startIcon={
+                                                                    <EditRoundedIcon />
+                                                                }
+                                                            >
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                variant="text"
+                                                                size="small"
+                                                                color="secondary"
+                                                                onClick={() =>
+                                                                    handleToggleStatus(
+                                                                        establishment.id,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {establishment.is_active
+                                                                    ? 'Disable'
+                                                                    : 'Activate'}
+                                                            </Button>
+                                                            <Button
+                                                                variant="text"
+                                                                size="small"
+                                                                color="error"
+                                                                startIcon={
+                                                                    <DeleteOutlineRoundedIcon />
+                                                                }
+                                                                onClick={() =>
+                                                                    setDeleteTarget(
+                                                                        establishment,
+                                                                    )
+                                                                }
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        </Stack>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={6}>
@@ -363,8 +382,9 @@ export default function EstablishmentsIndex({
                                                         color="text.secondary"
                                                         sx={{ mt: 1 }}
                                                     >
-                                                        Adjust the search filter or
-                                                        create the first tenant.
+                                                        Adjust the search filter
+                                                        or create the first
+                                                        tenant.
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
@@ -394,7 +414,9 @@ export default function EstablishmentsIndex({
                                     return;
                                 }
 
-                                router.visit(link.url, { preserveScroll: true });
+                                router.visit(link.url, {
+                                    preserveScroll: true,
+                                });
                             }}
                         >
                             <span
@@ -422,7 +444,9 @@ export default function EstablishmentsIndex({
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDeleteTarget(null)}>Cancel</Button>
+                    <Button onClick={() => setDeleteTarget(null)}>
+                        Cancel
+                    </Button>
                     <Button
                         color="error"
                         variant="contained"

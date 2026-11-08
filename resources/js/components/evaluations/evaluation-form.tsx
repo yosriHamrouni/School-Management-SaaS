@@ -1,4 +1,5 @@
-import { useMemo, type FormEvent } from 'react';
+import { useMemo } from 'react';
+import type { FormEvent } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +58,10 @@ export default function EvaluationForm({
 
         assignments.forEach((assignment) => {
             if (!seen.has(assignment.class_id)) {
-                seen.set(assignment.class_id, assignment.label.split(' - ')[0] ?? assignment.label);
+                seen.set(
+                    assignment.class_id,
+                    assignment.label.split(' - ')[0] ?? assignment.label,
+                );
             }
         });
 
@@ -66,14 +70,17 @@ export default function EvaluationForm({
 
     const subjectOptions = useMemo(() => {
         const relevantAssignments = data.class_id
-            ? assignments.filter((assignment) => String(assignment.class_id) === data.class_id)
+            ? assignments.filter(
+                  (assignment) => String(assignment.class_id) === data.class_id,
+              )
             : assignments;
 
         const seen = new Map<number, string>();
 
         relevantAssignments.forEach((assignment) => {
             const labelParts = assignment.label.split(' - ');
-            const subjectName = labelParts[1]?.split(' (')[0] ?? assignment.label;
+            const subjectName =
+                labelParts[1]?.split(' (')[0] ?? assignment.label;
 
             if (!seen.has(assignment.subject_id)) {
                 seen.set(assignment.subject_id, subjectName);
@@ -91,7 +98,9 @@ export default function EvaluationForm({
                     <Input
                         id="title"
                         value={data.title}
-                        onChange={(event) => setData('title', event.target.value)}
+                        onChange={(event) =>
+                            setData('title', event.target.value)
+                        }
                         placeholder="Quiz 1"
                     />
                     <InputError message={errors.title} />
@@ -123,7 +132,9 @@ export default function EvaluationForm({
                     <select
                         id="subject_id"
                         value={data.subject_id}
-                        onChange={(event) => setData('subject_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('subject_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a subject</option>
@@ -141,7 +152,9 @@ export default function EvaluationForm({
                     <select
                         id="term_id"
                         value={data.term_id}
-                        onChange={(event) => setData('term_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('term_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a term</option>
@@ -159,7 +172,9 @@ export default function EvaluationForm({
                     <Input
                         id="type"
                         value={data.type}
-                        onChange={(event) => setData('type', event.target.value)}
+                        onChange={(event) =>
+                            setData('type', event.target.value)
+                        }
                         placeholder="exam"
                     />
                     <InputError message={errors.type} />
@@ -173,7 +188,9 @@ export default function EvaluationForm({
                         step="0.01"
                         min="0"
                         value={data.coefficient}
-                        onChange={(event) => setData('coefficient', event.target.value)}
+                        onChange={(event) =>
+                            setData('coefficient', event.target.value)
+                        }
                     />
                     <InputError message={errors.coefficient} />
                 </div>
@@ -186,7 +203,9 @@ export default function EvaluationForm({
                         step="0.01"
                         min="0"
                         value={data.max_grade}
-                        onChange={(event) => setData('max_grade', event.target.value)}
+                        onChange={(event) =>
+                            setData('max_grade', event.target.value)
+                        }
                     />
                     <InputError message={errors.max_grade} />
                 </div>
@@ -197,7 +216,9 @@ export default function EvaluationForm({
                         id="evaluation_date"
                         type="date"
                         value={data.evaluation_date}
-                        onChange={(event) => setData('evaluation_date', event.target.value)}
+                        onChange={(event) =>
+                            setData('evaluation_date', event.target.value)
+                        }
                     />
                     <InputError message={errors.evaluation_date} />
                 </div>
@@ -207,8 +228,10 @@ export default function EvaluationForm({
                     <textarea
                         id="description"
                         value={data.description}
-                        onChange={(event) => setData('description', event.target.value)}
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 min-h-28 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                        onChange={(event) =>
+                            setData('description', event.target.value)
+                        }
+                        className="min-h-28 rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                         placeholder="Optional instructions or grading notes"
                     />
                     <InputError message={errors.description} />

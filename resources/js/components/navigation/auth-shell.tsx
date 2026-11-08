@@ -1,5 +1,12 @@
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
-import { Box, Card, CardContent, Container, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Container,
+    Stack,
+    Typography,
+} from '@mui/material';
 import type { PropsWithChildren } from 'react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useTranslation } from '@/i18n';
@@ -26,7 +33,9 @@ export default function AuthShell({
             }}
         >
             <Container maxWidth="lg">
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <Box
+                    sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}
+                >
                     <LanguageSwitcher />
                 </Box>
                 <Box
@@ -58,7 +67,11 @@ export default function AuthShell({
                             }}
                         >
                             <Stack spacing={2}>
-                                <Stack direction="row" spacing={1.5} alignItems="center">
+                                <Stack
+                                    direction="row"
+                                    spacing={1.5}
+                                    alignItems="center"
+                                >
                                     <Box
                                         sx={{
                                             width: 48,
@@ -85,12 +98,19 @@ export default function AuthShell({
                                 </Stack>
 
                                 <Box sx={{ pt: 6 }}>
-                                    <Typography variant="h3" sx={{ maxWidth: 440 }}>
+                                    <Typography
+                                        variant="h3"
+                                        sx={{ maxWidth: 440 }}
+                                    >
                                         {t('auth.brand.headline')}
                                     </Typography>
                                     <Typography
                                         variant="body1"
-                                        sx={{ mt: 2, maxWidth: 460, opacity: 0.88 }}
+                                        sx={{
+                                            mt: 2,
+                                            maxWidth: 460,
+                                            opacity: 0.88,
+                                        }}
                                     >
                                         {t('auth.brand.description')}
                                     </Typography>
@@ -122,12 +142,17 @@ export default function AuthShell({
                             sx={{
                                 width: '100%',
                                 p: { xs: 3, sm: 4.5, md: 5 },
-                                '&:last-child': { pb: { xs: 3, sm: 4.5, md: 5 } },
+                                '&:last-child': {
+                                    pb: { xs: 3, sm: 4.5, md: 5 },
+                                },
                             }}
                         >
                             <Stack spacing={1.5} sx={{ mb: 4 }}>
                                 <Typography variant="h4">{title}</Typography>
-                                <Typography variant="body1" color="text.secondary">
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                >
                                     {description}
                                 </Typography>
                             </Stack>

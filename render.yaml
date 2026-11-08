@@ -1,0 +1,87 @@
+# Render Blueprint - School Management SaaS (infrastructure as code).
+#
+# READ BEFORE APPLYING (docs/render-deployment.md):
+#   * The service already exists. Applying a Blueprint adopts the service with the
+#     SAME NAME and overwrites the settings below. Check the name matches first,
+#     or simply mirror these settings by hand in the dashboard.
+#   * No database is declared on purpose: declaring one would CREATE a new (empty)
+#     Free database that expires after 30 days. Point DATABASE_URL at your
+#     persistent database instead (docs/database-backups.md).
+#   * Secrets use `sync: false`: Render asks for them once and never stores them in git.
+
+services:
+  - type: web
+    name: school-management
+    runtime: docker
+    plan: free # upgrade to "starter" to remove cold starts (see docs/render-deployment.md)
+    region: frankfurt # must match the database region to keep latency low
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Deploys come ONLY from GitHub Actions after CI passes (deploy hook + ?ref=<sha>).
+    autoDeployTrigger: off
+    # Liveness: does not touch the database, so a DB outage does not trigger
+    # pointless restarts. Readiness (/health/ready) is checked by smoke tests
+    # and external uptime monitoring instead.
+    healthCheckPath: /up
+    envVars:
+      # --- Application -----------------------------------------------------
+      - key: APP_NAME
+        value: School Management Platform
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY # php artisan key:generate --show  (keep the SAME key forever)
+        sync: false
+      - key: APP_URL # e.g. https://school-management.onrender.com
+        sync: false
+      - key: APP_FORCE_HTTPS
+        value: "true"
+      - key: APP_LOCALE
+        value: fr
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+
+      # --- Database ----------------------------------------------------------
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL # external managed PostgreSQL (Neon / paid Render)
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      # Forward-only migrations at boot. Destructive commands are blocked in
+      # production by DB::prohibitDestructiveCommands(). Take a backup first
+      # for releases that contain migrations (docs/database-backups.md).
+      - key: RUN_MIGRATIONS
+        value: "true"
+
+      # --- Sessions / cache / queue -------------------------------------------
+      - key: SESSION_DRIVER
+        value: database # survives restarts and redeploys (the filesystem does not)
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_DOMAIN
+        value: ""
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync # no queued jobs exist; avoids a paid background worker
+      - key: BROADCAST_CONNECTION
+        value: "null" # Reverb is not deployed; realtime is disabled in the build
+
+      # --- Features that need infrastructure not present on Render --------
+      - key: RISK_ML_ENABLED
+        value: "false" # no Python runtime in the image; rule-based fallback is used
+      - key: ACADEMIC_ASSISTANT_PROVIDER
+        value: rule_based # no Ollama server; avoids 15 s timeouts per request
+
+      # --- Memory budget (Free = 512 MB) ------------------------------------
+      - key: APACHE_MAX_REQUEST_WORKERS
+        value: "8"
+
+      # --- Mail ----------------------------------------------------------------
+      - key: MAIL_MAILER
+        value: log # set real SMTP credentials before relying on password resets

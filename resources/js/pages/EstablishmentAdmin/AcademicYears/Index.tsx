@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
@@ -77,7 +78,9 @@ export default function AcademicYearsIndex({
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">Academic Years</h1>
+                        <h1 className="text-2xl font-semibold">
+                            Academic Years
+                        </h1>
                         <p className="mt-2 text-sm text-muted-foreground">
                             Manage the academic years for your establishment.
                         </p>

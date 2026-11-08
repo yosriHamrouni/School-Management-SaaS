@@ -1,0 +1,83 @@
+# Local environment that mirrors production (same image as Render).
+#
+#   docker compose up -d --build        # build + start app and PostgreSQL
+#   docker compose logs -f app          # follow logs
+#   docker compose exec app php artisan db:seed   # optional demo data
+#   docker compose down                 # stop (data is kept in volumes)
+#
+# App:        http://localhost:8000   (override with APP_PORT=xxxx)
+# PostgreSQL: 127.0.0.1:54329         (user/db: school / school_management)
+#
+# Optional overrides: create .env.docker (git-ignored) with extra variables,
+# e.g. APP_KEY=base64:... to keep sessions across restarts.
+#
+# NOTE: values below are LOCAL-ONLY development credentials.
+
+name: school-management
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+      args:
+        APP_RELEASE: local
+    image: school-management:local
+    platform: linux/amd64
+    ports:
+      - "${APP_PORT:-8000}:10000"
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      APP_NAME: "School Management (local)"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: "http://localhost:${APP_PORT:-8000}"
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_DATABASE: school_management
+      DB_USERNAME: school
+      DB_PASSWORD: school-local-only
+      DB_SSLMODE: disable
+      SESSION_DRIVER: database
+      SESSION_SECURE_COOKIE: "false"
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+      BROADCAST_CONNECTION: log
+      FILESYSTEM_DISK: local
+      MAIL_MAILER: log
+      ACADEMIC_ASSISTANT_PROVIDER: rule_based
+      RISK_ML_ENABLED: "false"
+      RUN_MIGRATIONS: "true"
+    volumes:
+      # Uploaded files survive container rebuilds locally.
+      - app-storage:/var/www/html/storage/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: school_management
+      POSTGRES_USER: school
+      POSTGRES_PASSWORD: school-local-only
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U school -d school_management"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  app-storage:

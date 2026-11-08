@@ -13,7 +13,10 @@ declare module '@mui/material/styles' {
 
 export const drawerWidth = 280;
 
-export function createAppTheme(mode: PaletteMode, direction: 'ltr' | 'rtl' = 'ltr') {
+export function createAppTheme(
+    mode: PaletteMode,
+    direction: 'ltr' | 'rtl' = 'ltr',
+) {
     const isDark = mode === 'dark';
 
     return createTheme({
@@ -55,9 +58,7 @@ export function createAppTheme(mode: PaletteMode, direction: 'ltr' | 'rtl' = 'lt
                 primary: isDark ? '#e2e8f0' : '#0f172a',
                 secondary: isDark ? '#94a3b8' : '#475569',
             },
-            divider: isDark
-                ? alpha('#cbd5e1', 0.12)
-                : alpha('#0f172a', 0.08),
+            divider: isDark ? alpha('#cbd5e1', 0.12) : alpha('#0f172a', 0.08),
         },
         shape: {
             borderRadius: 16,

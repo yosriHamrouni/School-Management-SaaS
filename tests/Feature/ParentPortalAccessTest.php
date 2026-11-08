@@ -4,6 +4,7 @@ use App\Models\AcademicYear;
 use App\Models\Establishment;
 use App\Models\Evaluation;
 use App\Models\Grade;
+use App\Models\Level;
 use App\Models\Role;
 use App\Models\Schedule;
 use App\Models\SchoolClass;
@@ -179,7 +180,7 @@ function createParentPortalSchoolClass(Establishment $establishment, string $nam
     return SchoolClass::create([
         'establishment_id' => $establishment->id,
         'academic_year_id' => $academicYear->id,
-        'level_id' => \App\Models\Level::create([
+        'level_id' => Level::create([
             'establishment_id' => $establishment->id,
             'name' => fake()->unique()->word(),
         ])->id,

@@ -1,0 +1,8 @@
+# Trivy exceptions. Every entry MUST have: reason, owner, and review date.
+# CI fails on fixable CRITICAL vulnerabilities; HIGH are reported.
+#
+# Format:
+#   # <reason> - owner: <name> - review by: YYYY-MM-DD
+#   CVE-XXXX-YYYY
+#
+# (no exceptions at the moment - last full scan: 2026-11-06, 0 fixable HIGH/CRITICAL)

@@ -10,6 +10,9 @@ use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\Subject;
 use App\Models\User;
+use App\Notifications\AcademicEventNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('teacher can create an assignment for an assigned class subject and notify class students', function () {
@@ -40,12 +43,12 @@ test('teacher can create an assignment for an assigned class subject and notify 
     $this->assertDatabaseHas('notifications', [
         'notifiable_type' => User::class,
         'notifiable_id' => $context['student']->id,
-        'type' => \App\Notifications\AcademicEventNotification::class,
+        'type' => AcademicEventNotification::class,
     ]);
     $this->assertDatabaseHas('notifications', [
         'notifiable_type' => User::class,
         'notifiable_id' => $context['second_student']->id,
-        'type' => \App\Notifications\AcademicEventNotification::class,
+        'type' => AcademicEventNotification::class,
     ]);
 });
 
@@ -90,6 +93,37 @@ test('assignment listing is isolated per establishment', function () {
             ->component('Teacher/Assignments/Index')
             ->where('assignments.data', []),
         );
+});
+
+test('teacher can update an assignment inside the assigned perimeter', function () {
+    $context = assignmentContext();
+
+    $this
+        ->actingAs($context['teacher'])
+        ->post(route('teacher.assignments.store'), [
+            'class_id' => $context['class']->id,
+            'subject_id' => $context['subject']->id,
+            'title' => 'Homework 1',
+            'description' => 'Original',
+            'due_date' => now()->addDays(3)->format('Y-m-d'),
+        ])
+        ->assertSessionHasNoErrors();
+
+    $assignment = Assignment::query()->firstOrFail();
+
+    $this
+        ->actingAs($context['teacher'])
+        ->put(route('teacher.assignments.update', $assignment), [
+            'class_id' => $context['class']->id,
+            'subject_id' => $context['subject']->id,
+            'title' => 'Homework 1 (revised)',
+            'description' => 'Updated',
+            'due_date' => now()->addDays(7)->format('Y-m-d'),
+        ])
+        ->assertRedirect(route('teacher.assignments.index'))
+        ->assertSessionHasNoErrors();
+
+    expect($assignment->fresh()->title)->toBe('Homework 1 (revised)');
 });
 
 test('teacher cannot edit or delete an assignment outside assigned perimeter', function () {
@@ -253,15 +287,15 @@ function createAssignmentStudent(
         'updated_at' => now(),
     ];
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'academic_year_id')) {
+    if (Schema::hasColumn('class_students', 'academic_year_id')) {
         $payload['academic_year_id'] = $academicYearId;
     }
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'establishment_id')) {
+    if (Schema::hasColumn('class_students', 'establishment_id')) {
         $payload['establishment_id'] = $establishment->id;
     }
 
-    \Illuminate\Support\Facades\DB::table('class_students')->insert($payload);
+    DB::table('class_students')->insert($payload);
 
     return $student;
 }

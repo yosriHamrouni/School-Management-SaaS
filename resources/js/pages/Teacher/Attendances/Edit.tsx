@@ -59,7 +59,9 @@ function statusLabel(status: string) {
     return 'Late';
 }
 
-function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function statusBadgeVariant(
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     if (status === 'present') {
         return 'default';
     }
@@ -83,7 +85,10 @@ export default function TeacherAttendancesEdit({
         { title: schedule.class_name ?? 'Session', href: '#' },
     ];
 
-    const form = useForm<{ schedule_id: number; students: AttendanceFormRow[] }>({
+    const form = useForm<{
+        schedule_id: number;
+        students: AttendanceFormRow[];
+    }>({
         schedule_id: schedule.id,
         students: students.map((student) => ({
             student_id: student.student_id,
@@ -92,13 +97,16 @@ export default function TeacherAttendancesEdit({
         })),
     });
 
-    const flaggedStudents = students.filter((student) => student.has_repeated_absences);
+    const flaggedStudents = students.filter(
+        (student) => student.has_repeated_absences,
+    );
 
     const summary = useMemo(
         () =>
             form.data.students.reduce(
                 (totals, row) => ({
-                    present: totals.present + (row.status === 'present' ? 1 : 0),
+                    present:
+                        totals.present + (row.status === 'present' ? 1 : 0),
                     absent: totals.absent + (row.status === 'absent' ? 1 : 0),
                     late: totals.late + (row.status === 'late' ? 1 : 0),
                 }),
@@ -135,18 +143,27 @@ export default function TeacherAttendancesEdit({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">Record Attendance</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Record Attendance
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                {schedule.class_name ?? '-'} | {schedule.subject_name ?? '-'} | {schedule.day_of_week} {schedule.start_time} - {schedule.end_time}
+                                {schedule.class_name ?? '-'} |{' '}
+                                {schedule.subject_name ?? '-'} |{' '}
+                                {schedule.day_of_week} {schedule.start_time} -{' '}
+                                {schedule.end_time}
                             </p>
                         </div>
 
                         <div className="flex gap-2">
                             <Button variant="outline" asChild>
-                                <Link href="/teacher/attendances">Back to sessions</Link>
+                                <Link href="/teacher/attendances">
+                                    Back to sessions
+                                </Link>
                             </Button>
                             <Button variant="outline" asChild>
-                                <Link href="/teacher/attendances/history">Open history</Link>
+                                <Link href="/teacher/attendances/history">
+                                    Open history
+                                </Link>
                             </Button>
                         </div>
                     </div>
@@ -158,7 +175,9 @@ export default function TeacherAttendancesEdit({
                     <Alert className="border-amber-200 bg-amber-50 text-amber-900">
                         <AlertTitle>Repeated absences detected</AlertTitle>
                         <AlertDescription>
-                            {flaggedStudents.length} student(s) have reached the threshold of {repeatedAbsenceThreshold} absences or more in your sessions.
+                            {flaggedStudents.length} student(s) have reached the
+                            threshold of {repeatedAbsenceThreshold} absences or
+                            more in your sessions.
                         </AlertDescription>
                     </Alert>
                 ) : null}
@@ -166,15 +185,21 @@ export default function TeacherAttendancesEdit({
                 <div className="grid gap-4 md:grid-cols-3">
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Present</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.present}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.present}
+                        </p>
                     </div>
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Absent</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.absent}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.absent}
+                        </p>
                     </div>
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Late</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.late}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.late}
+                        </p>
                     </div>
                 </div>
 
@@ -187,9 +212,14 @@ export default function TeacherAttendancesEdit({
                     >
                         <div className="flex items-center justify-between border-b border-border px-4 py-4">
                             <p className="text-sm text-muted-foreground">
-                                Existing records are preloaded. Saving updates the attendance for this session.
+                                Existing records are preloaded. Saving updates
+                                the attendance for this session.
                             </p>
-                            <Button type="button" variant="outline" onClick={markAllAsPresent}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={markAllAsPresent}
+                            >
                                 Mark all present
                             </Button>
                         </div>
@@ -198,49 +228,91 @@ export default function TeacherAttendancesEdit({
                             <table className="min-w-full divide-y divide-border">
                                 <thead className="bg-muted/50">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Student</th>
-                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Student #</th>
-                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
-                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Justification</th>
-                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Alert</th>
+                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                            Student
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                            Student #
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                            Status
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                            Justification
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                            Alert
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {students.map((student, index) => {
-                                        const currentRow = form.data.students[index];
+                                        const currentRow =
+                                            form.data.students[index];
                                         const showJustification =
-                                            currentRow?.status === 'absent' || currentRow?.status === 'late';
+                                            currentRow?.status === 'absent' ||
+                                            currentRow?.status === 'late';
 
                                         return (
-                                            <tr key={student.student_id} className="align-top hover:bg-muted/30">
+                                            <tr
+                                                key={student.student_id}
+                                                className="align-top hover:bg-muted/30"
+                                            >
                                                 <td className="px-4 py-3 text-sm">
-                                                    <div className="font-medium">{student.name}</div>
+                                                    <div className="font-medium">
+                                                        {student.name}
+                                                    </div>
                                                     {student.recorded_at ? (
                                                         <div className="mt-1 text-xs text-muted-foreground">
-                                                            Last saved: {new Date(student.recorded_at).toLocaleString()}
+                                                            Last saved:{' '}
+                                                            {new Date(
+                                                                student.recorded_at,
+                                                            ).toLocaleString()}
                                                         </div>
                                                     ) : null}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm">{student.student_number ?? '-'}</td>
+                                                <td className="px-4 py-3 text-sm">
+                                                    {student.student_number ??
+                                                        '-'}
+                                                </td>
                                                 <td className="px-4 py-3">
                                                     <select
-                                                        value={currentRow?.status ?? 'present'}
+                                                        value={
+                                                            currentRow?.status ??
+                                                            'present'
+                                                        }
                                                         onChange={(event) =>
                                                             updateRow(index, {
-                                                                status: event.target.value,
+                                                                status: event
+                                                                    .target
+                                                                    .value,
                                                                 justification:
-                                                                    event.target.value === 'present'
+                                                                    event.target
+                                                                        .value ===
+                                                                    'present'
                                                                         ? ''
-                                                                        : currentRow?.justification ?? '',
+                                                                        : (currentRow?.justification ??
+                                                                          ''),
                                                             })
                                                         }
-                                                        className={selectClassName}
+                                                        className={
+                                                            selectClassName
+                                                        }
                                                     >
-                                                        {statusOptions.map((status) => (
-                                                            <option key={status} value={status}>
-                                                                {statusLabel(status)}
-                                                            </option>
-                                                        ))}
+                                                        {statusOptions.map(
+                                                            (status) => (
+                                                                <option
+                                                                    key={status}
+                                                                    value={
+                                                                        status
+                                                                    }
+                                                                >
+                                                                    {statusLabel(
+                                                                        status,
+                                                                    )}
+                                                                </option>
+                                                            ),
+                                                        )}
                                                     </select>
                                                     <InputError
                                                         message={
@@ -255,11 +327,22 @@ export default function TeacherAttendancesEdit({
                                                     {showJustification ? (
                                                         <>
                                                             <Input
-                                                                value={currentRow?.justification ?? ''}
-                                                                onChange={(event) =>
-                                                                    updateRow(index, {
-                                                                        justification: event.target.value,
-                                                                    })
+                                                                value={
+                                                                    currentRow?.justification ??
+                                                                    ''
+                                                                }
+                                                                onChange={(
+                                                                    event,
+                                                                ) =>
+                                                                    updateRow(
+                                                                        index,
+                                                                        {
+                                                                            justification:
+                                                                                event
+                                                                                    .target
+                                                                                    .value,
+                                                                        },
+                                                                    )
                                                                 }
                                                                 placeholder="Optional justification"
                                                             />
@@ -274,22 +357,41 @@ export default function TeacherAttendancesEdit({
                                                         </>
                                                     ) : (
                                                         <span className="text-sm text-muted-foreground">
-                                                            Not required for present students
+                                                            Not required for
+                                                            present students
                                                         </span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm">
                                                     <div className="flex flex-col gap-2">
-                                                        <Badge variant={statusBadgeVariant(currentRow?.status ?? 'present')}>
-                                                            {statusLabel(currentRow?.status ?? 'present')}
+                                                        <Badge
+                                                            variant={statusBadgeVariant(
+                                                                currentRow?.status ??
+                                                                    'present',
+                                                            )}
+                                                        >
+                                                            {statusLabel(
+                                                                currentRow?.status ??
+                                                                    'present',
+                                                            )}
                                                         </Badge>
                                                         {student.has_repeated_absences ? (
-                                                            <Badge variant="outline" className="border-amber-500 text-amber-700">
-                                                                {student.absence_count} absences
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="border-amber-500 text-amber-700"
+                                                            >
+                                                                {
+                                                                    student.absence_count
+                                                                }{' '}
+                                                                absences
                                                             </Badge>
                                                         ) : (
                                                             <span className="text-muted-foreground">
-                                                                {student.absence_count} tracked absence(s)
+                                                                {
+                                                                    student.absence_count
+                                                                }{' '}
+                                                                tracked
+                                                                absence(s)
                                                             </span>
                                                         )}
                                                     </div>

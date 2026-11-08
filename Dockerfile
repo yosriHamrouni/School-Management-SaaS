@@ -1,103 +1,127 @@
-FROM php:8.4-apache-bookworm AS php-base
+# syntax=docker/dockerfile:1.7
+#
+# School Management SaaS - production image (Laravel 12 + Inertia/React)
+#
+# Stages:
+#   php-base    PHP 8.4 + Apache + required extensions + hardened config
+#   vendor      Composer production dependencies (no dev packages)
+#   assets      Vite/React production build (needs PHP for Wayfinder route generation)
+#   production  Final runtime image, runs as www-data (non-root)
+#
+# Build:   docker build --platform linux/amd64 -t school-management:local .
+# Run:     docker run --rm -p 8080:10000 --env-file .env.docker school-management:local
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    APACHE_DOCUMENT_ROOT=/var/www/html/public
+ARG PHP_IMAGE=php:8.4.27-apache-bookworm
+ARG NODE_IMAGE=node:22.21-bookworm-slim
+ARG COMPOSER_IMAGE=composer:2.11
+
+FROM ${COMPOSER_IMAGE} AS composer-bin
+FROM ${NODE_IMAGE} AS node-bin
+
+# ---------------------------------------------------------------------------
+FROM ${PHP_IMAGE} AS php-base
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# install-php-extensions pulls build dependencies, compiles, then removes them,
+# keeping only the runtime shared libraries (smaller, fewer CVEs than -dev pkgs).
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends curl unzip; \
+    install-php-extensions bcmath gd intl pcntl pdo_pgsql pgsql sockets zip; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/*; \
+    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+    a2enmod rewrite headers expires remoteip; \
+    a2disconf other-vhosts-access-log
+
+COPY docker/php/production.ini "$PHP_INI_DIR/conf.d/zz-production.ini"
+COPY docker/apache/ports.conf /etc/apache2/ports.conf
+COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/apache/zz-app.conf /etc/apache2/conf-available/zz-app.conf
+RUN a2enconf zz-app
 
 WORKDIR /var/www/html
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libcurl4-openssl-dev \
-        libfreetype6-dev \
-        libicu-dev \
-        libjpeg62-turbo-dev \
-        libonig-dev \
-        libpng-dev \
-        libpq-dev \
-        libxml2-dev \
-        libzip-dev \
-        unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" \
-        bcmath \
-        curl \
-        gd \
-        intl \
-        mbstring \
-        pcntl \
-        pdo_pgsql \
-        pgsql \
-        sockets \
-        zip \
-    && a2enmod rewrite headers expires \
-    && rm -rf /var/lib/apt/lists/*
+# ---------------------------------------------------------------------------
+FROM php-base AS vendor
 
-FROM php-base AS composer-dependencies
+COPY --from=composer-bin /usr/bin/composer /usr/bin/composer
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY . .
-
+# Dependency layer: only re-run when composer.json / composer.lock change.
+COPY composer.json composer.lock ./
 RUN composer install \
         --no-dev \
-        --prefer-dist \
-        --optimize-autoloader \
-        --no-interaction \
-        --no-progress \
         --no-scripts \
+        --no-autoloader \
+        --prefer-dist \
+        --no-interaction \
+        --no-progress
+
+COPY . .
+RUN composer dump-autoload --optimize --no-dev --no-scripts \
     && php artisan package:discover --ansi
 
-FROM node:22-bookworm-slim AS node-runtime
+# ---------------------------------------------------------------------------
+FROM php-base AS assets
 
-FROM php-base AS frontend-build
+# Node is copied in (instead of using a Node base image) because the Wayfinder
+# Vite plugin runs `php artisan wayfinder:generate` during the build.
+COPY --from=node-bin /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-bin /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
-WORKDIR /var/www/html
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
 
-# Keep Artisan and Wayfinder on the same PHP 8.4 runtime as Composer and
-# production, while importing Node.js/npm from the official Node 22 image.
-COPY --from=node-runtime /usr/local/ /usr/local/
-
-RUN php -v \
-    && node --version \
-    && npm --version
+COPY --from=vendor /var/www/html ./
 
 ARG VITE_APP_NAME="School Management Platform"
 ENV VITE_APP_NAME=${VITE_APP_NAME}
+RUN npm run build
 
-COPY . .
-COPY --from=composer-dependencies /var/www/html/vendor ./vendor
-
-RUN npm ci --no-audit --no-fund \
-    && npm run build
-
+# ---------------------------------------------------------------------------
 FROM php-base AS production
 
+ARG APP_RELEASE=""
 ENV APP_ENV=production \
     APP_DEBUG=false \
+    APP_RELEASE=${APP_RELEASE} \
     LOG_CHANNEL=stderr \
     PORT=10000 \
-    RUN_MIGRATIONS=true \
-    RISK_ML_ENABLED=false
+    RUN_MIGRATIONS=false \
+    RISK_ML_ENABLED=false \
+    APACHE_MAX_REQUEST_WORKERS=10 \
+    APACHE_START_SERVERS=2
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY . .
-COPY --from=composer-dependencies /var/www/html/vendor ./vendor
-COPY --from=frontend-build /var/www/html/public/build ./public/build
-COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY docker/entrypoint.sh /usr/local/bin/render-entrypoint
+COPY --from=vendor --chown=www-data:www-data /var/www/html /var/www/html
+COPY --from=assets --chown=www-data:www-data /var/www/html/public/build /var/www/html/public/build
+COPY --chmod=0755 docker/entrypoint.sh /usr/local/bin/app-entrypoint
 
-RUN mkdir -p \
-        storage/app/private \
-        storage/app/public \
-        storage/framework/cache/data \
-        storage/framework/sessions \
-        storage/framework/views \
-        storage/logs \
-        bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R ug+rwX storage bootstrap/cache \
-    && chmod +x /usr/local/bin/render-entrypoint
+# Route/view/event caches do not depend on runtime secrets, so build them once
+# here instead of on every cold start. Config is cached at boot (needs env).
+RUN set -eux; \
+    mkdir -p storage/app/private storage/app/public storage/framework/cache/data \
+             storage/framework/sessions storage/framework/views storage/logs bootstrap/cache; \
+    php artisan storage:link --no-interaction; \
+    php artisan route:cache --no-interaction; \
+    php artisan view:cache --no-interaction; \
+    php artisan event:cache --no-interaction; \
+    rm -f bootstrap/cache/config.php; \
+    chown -R www-data:www-data storage bootstrap/cache public/storage; \
+    chmod -R u=rwX,g=rX,o= storage bootstrap/cache
+
+# Apache only needs root to bind ports < 1024. Render uses PORT=10000.
+# Numeric UID/GID (33 = www-data) so runAsNonRoot policies can verify it.
+USER 33:33
 
 EXPOSE 10000
 
-ENTRYPOINT ["render-entrypoint"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD ["sh", "-c", "curl -fsS \"http://127.0.0.1:${PORT}/up\" > /dev/null || exit 1"]
+
+ENTRYPOINT ["app-entrypoint"]
 CMD ["apache2-foreground"]

@@ -93,8 +93,9 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
 
     const hasDateError = Boolean(
         form.startDate &&
-            form.endDate &&
-            new Date(`${form.endDate}T00:00:00`) < new Date(`${form.startDate}T00:00:00`),
+        form.endDate &&
+        new Date(`${form.endDate}T00:00:00`) <
+            new Date(`${form.startDate}T00:00:00`),
     );
 
     const canSubmit = Boolean(form.startDate && form.endDate) && !hasDateError;
@@ -134,7 +135,12 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                     title="Exports de rapports academiques"
                     description="Selectionnez une periode, controlez l'apercu du rapport et telechargez un export PDF ou Excel strictement limite a l'etablissement connecte."
                     actions={
-                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            useFlexGap
+                            flexWrap="wrap"
+                        >
                             <Chip
                                 color="primary"
                                 variant="outlined"
@@ -167,7 +173,10 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                         }))
                                     }
                                     InputLabelProps={{ shrink: true }}
-                                    error={Boolean(errors.start_date) || hasDateError}
+                                    error={
+                                        Boolean(errors.start_date) ||
+                                        hasDateError
+                                    }
                                     helperText={
                                         errors.start_date ??
                                         (hasDateError
@@ -187,7 +196,9 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                         }))
                                     }
                                     InputLabelProps={{ shrink: true }}
-                                    error={Boolean(errors.end_date) || hasDateError}
+                                    error={
+                                        Boolean(errors.end_date) || hasDateError
+                                    }
                                     helperText={errors.end_date ?? ' '}
                                     fullWidth
                                 />
@@ -199,11 +210,19 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                 justifyContent="space-between"
                                 alignItems={{ xs: 'stretch', md: 'center' }}
                             >
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
                                     Periode en cours: {report.meta.period.label}
                                 </Typography>
 
-                                <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                                <Stack
+                                    direction="row"
+                                    spacing={1.5}
+                                    useFlexGap
+                                    flexWrap="wrap"
+                                >
                                     <Button
                                         type="submit"
                                         variant="outlined"
@@ -233,12 +252,19 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                 </Stack>
                             </Stack>
 
-                            {flash.error ? <Alert severity="warning">{flash.error}</Alert> : null}
-                            {flash.success ? <Alert severity="success">{flash.success}</Alert> : null}
+                            {flash.error ? (
+                                <Alert severity="warning">{flash.error}</Alert>
+                            ) : null}
+                            {flash.success ? (
+                                <Alert severity="success">
+                                    {flash.success}
+                                </Alert>
+                            ) : null}
 
                             {!report.meta.hasAcademicData ? (
                                 <Alert severity="info">
-                                    Aucune donnee academique n'est disponible sur la periode selectionnee.
+                                    Aucune donnee academique n'est disponible
+                                    sur la periode selectionnee.
                                 </Alert>
                             ) : null}
                         </Stack>
@@ -281,7 +307,11 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                         value={`${report.stats.successRate.toFixed(1)}%`}
                         caption="Part des notes au-dessus du seuil de validation."
                         icon={<DownloadRoundedIcon />}
-                        color={report.stats.successRate >= 50 ? 'success' : 'warning'}
+                        color={
+                            report.stats.successRate >= 50
+                                ? 'success'
+                                : 'warning'
+                        }
                     />
                 </Box>
 
@@ -289,15 +319,24 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                     sx={{
                         display: 'grid',
                         gap: 3,
-                        gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, minmax(0, 1fr))' },
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            xl: 'repeat(2, minmax(0, 1fr))',
+                        },
                     }}
                 >
                     <Card>
                         <CardContent>
                             <Stack spacing={1}>
-                                <Typography variant="h5">Moyenne par classe</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Vue synthetique exploitee dans les exports pour comparer les classes.
+                                <Typography variant="h5">
+                                    Moyenne par classe
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Vue synthetique exploitee dans les exports
+                                    pour comparer les classes.
                                 </Typography>
                             </Stack>
 
@@ -306,14 +345,20 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Classe</TableCell>
-                                            <TableCell align="right">Moyenne</TableCell>
-                                            <TableCell align="right">Notes</TableCell>
+                                            <TableCell align="right">
+                                                Moyenne
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                Notes
+                                            </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {report.classAverages.map((row) => (
                                             <TableRow key={row.id}>
-                                                <TableCell>{row.className}</TableCell>
+                                                <TableCell>
+                                                    {row.className}
+                                                </TableCell>
                                                 <TableCell align="right">
                                                     {row.average.toFixed(2)}/20
                                                 </TableCell>
@@ -331,9 +376,15 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                     <Card>
                         <CardContent>
                             <Stack spacing={1}>
-                                <Typography variant="h5">Moyenne par matiere</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Resume reutilisable dans le PDF et la feuille Excel dediee aux matieres.
+                                <Typography variant="h5">
+                                    Moyenne par matiere
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Resume reutilisable dans le PDF et la
+                                    feuille Excel dediee aux matieres.
                                 </Typography>
                             </Stack>
 
@@ -342,14 +393,20 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Matiere</TableCell>
-                                            <TableCell align="right">Moyenne</TableCell>
-                                            <TableCell align="right">Notes</TableCell>
+                                            <TableCell align="right">
+                                                Moyenne
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                Notes
+                                            </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {report.subjectAverages.map((row) => (
                                             <TableRow key={row.id}>
-                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>
+                                                    {row.name}
+                                                </TableCell>
                                                 <TableCell align="right">
                                                     {row.average.toFixed(2)}/20
                                                 </TableCell>
@@ -368,9 +425,13 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                 <Card>
                     <CardContent>
                         <Stack spacing={1}>
-                            <Typography variant="h5">Indicateurs de performance enseignant</Typography>
+                            <Typography variant="h5">
+                                Indicateurs de performance enseignant
+                            </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Les exports reprennent les affectations classe-matiere et les resultats reels des evaluations de la periode.
+                                Les exports reprennent les affectations
+                                classe-matiere et les resultats reels des
+                                evaluations de la periode.
                             </Typography>
                         </Stack>
 
@@ -379,26 +440,42 @@ export default function ReportExportIndex({ filters, report }: PageProps) {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Enseignant</TableCell>
-                                        <TableCell align="right">Classes</TableCell>
-                                        <TableCell align="right">Matieres</TableCell>
-                                        <TableCell align="right">Moyenne</TableCell>
-                                        <TableCell align="right">Reussite</TableCell>
-                                        <TableCell align="right">Notes</TableCell>
+                                        <TableCell align="right">
+                                            Classes
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Matieres
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Moyenne
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Reussite
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            Notes
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {report.teacherPerformance.map((row) => (
                                         <TableRow key={row.id}>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell align="right">{row.classesCount}</TableCell>
-                                            <TableCell align="right">{row.subjectsCount}</TableCell>
+                                            <TableCell align="right">
+                                                {row.classesCount}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {row.subjectsCount}
+                                            </TableCell>
                                             <TableCell align="right">
                                                 {row.average.toFixed(2)}/20
                                             </TableCell>
                                             <TableCell align="right">
                                                 {row.successRate.toFixed(1)}%
                                             </TableCell>
-                                            <TableCell align="right">{row.gradesCount}</TableCell>
+                                            <TableCell align="right">
+                                                {row.gradesCount}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

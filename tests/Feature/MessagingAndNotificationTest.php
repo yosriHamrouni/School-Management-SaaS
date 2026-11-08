@@ -12,6 +12,7 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Notifications\AcademicEventNotification;
 use App\Notifications\InternalMessageNotification;
+use App\Services\MessagingService;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -61,7 +62,7 @@ test('teacher cannot send a message to a student outside the authorized perimete
 
 test('conversation messages and notifications can be marked as read by the recipient only', function () {
     $context = messagingContext();
-    $conversationKey = app(\App\Services\MessagingService::class)
+    $conversationKey = app(MessagingService::class)
         ->buildConversationKey($context['teacher']->id, $context['student']->id);
 
     $message = $context['teacher']->sentMessages()->create([
@@ -105,7 +106,7 @@ test('notifications page only exposes the authenticated user notifications and u
     $message = $context['teacher']->sentMessages()->create([
         'establishment_id' => $context['establishment']->id,
         'receiver_id' => $context['student']->id,
-        'conversation_key' => app(\App\Services\MessagingService::class)
+        'conversation_key' => app(MessagingService::class)
             ->buildConversationKey($context['teacher']->id, $context['student']->id),
         'content' => 'Notification visible uniquement pour le bon utilisateur.',
     ])->load('sender:id,name');
@@ -114,7 +115,7 @@ test('notifications page only exposes the authenticated user notifications and u
     $otherMessage = $otherContext['teacher']->sentMessages()->create([
         'establishment_id' => $otherContext['establishment']->id,
         'receiver_id' => $otherContext['student']->id,
-        'conversation_key' => app(\App\Services\MessagingService::class)
+        'conversation_key' => app(MessagingService::class)
             ->buildConversationKey($otherContext['teacher']->id, $otherContext['student']->id),
         'content' => 'Autre notification.',
     ])->load('sender:id,name');

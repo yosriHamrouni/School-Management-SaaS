@@ -16,8 +16,8 @@ import {
     Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import AuthLayout from '@/layouts/auth-layout';
 import { useTranslation } from '@/i18n';
+import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';

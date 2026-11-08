@@ -17,8 +17,7 @@ class EvaluationController extends Controller
     public function __construct(
         private readonly EvaluationAccessService $accessService,
         private readonly ActivityLogService $activityLogService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

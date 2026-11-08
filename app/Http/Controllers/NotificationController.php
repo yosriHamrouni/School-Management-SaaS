@@ -13,8 +13,7 @@ class NotificationController extends Controller
 {
     public function __construct(
         private readonly NotificationCenterService $notificationCenter,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

@@ -1,10 +1,26 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, BookOpenText, Bot, Building2, CalendarClock, CalendarRange, CheckSquare, FileText, FolderGit2, GraduationCap, LayoutGrid, MessageSquare, School, UserRoundCheck, UserRoundPen, Users } from 'lucide-react';
+import {
+    BookOpen,
+    BookOpenText,
+    Bot,
+    Building2,
+    CalendarClock,
+    CalendarRange,
+    CheckSquare,
+    FileText,
+    FolderGit2,
+    GraduationCap,
+    LayoutGrid,
+    MessageSquare,
+    School,
+    UserRoundCheck,
+    UserRoundPen,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { useTranslation } from '@/i18n';
 import {
     Sidebar,
     SidebarContent,
@@ -14,17 +30,18 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useTranslation } from '@/i18n';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 const footerNavItems: NavItem[] = [
-        {
-            title: 'Repository',
+    {
+        title: 'Repository',
         href: 'https://github.com/laravel/react-starter-kit',
         icon: FolderGit2,
     },
-        {
-            title: 'Documentation',
+    {
+        title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
     },

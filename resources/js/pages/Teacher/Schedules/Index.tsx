@@ -27,9 +27,18 @@ export default function TeacherSchedulesIndex({ calendarFeedUrl }: Props) {
     const [events, setEvents] = useState<ScheduleCalendarEvent[]>([]);
     const [classFilter, setClassFilter] = useState('');
     const [subjectFilter, setSubjectFilter] = useState('');
-    const summaries = useMemo(() => buildScheduleSummaries(events, 'teacher'), [events]);
-    const classOptions = useMemo(() => uniqueEventOptions(events, 'class_name'), [events]);
-    const subjectOptions = useMemo(() => uniqueEventOptions(events, 'subject_name'), [events]);
+    const summaries = useMemo(
+        () => buildScheduleSummaries(events, 'teacher'),
+        [events],
+    );
+    const classOptions = useMemo(
+        () => uniqueEventOptions(events, 'class_name'),
+        [events],
+    );
+    const subjectOptions = useMemo(
+        () => uniqueEventOptions(events, 'subject_name'),
+        [events],
+    );
     const legend = useMemo(() => legendItems(events, 'class_name'), [events]);
 
     return (
@@ -48,9 +57,12 @@ export default function TeacherSchedulesIndex({ calendarFeedUrl }: Props) {
                 <div className="rounded-lg border border-sidebar-border/70 bg-card p-4 shadow-sm">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h2 className="text-lg font-semibold">Focus filters</h2>
+                            <h2 className="text-lg font-semibold">
+                                Focus filters
+                            </h2>
                             <p className="text-sm text-muted-foreground">
-                                Narrow the calendar by class or subject using the sessions already loaded.
+                                Narrow the calendar by class or subject using
+                                the sessions already loaded.
                             </p>
                         </div>
 
@@ -108,7 +120,10 @@ export default function TeacherSchedulesIndex({ calendarFeedUrl }: Props) {
     );
 }
 
-function uniqueEventOptions(events: ScheduleCalendarEvent[], key: 'class_name' | 'subject_name'): string[] {
+function uniqueEventOptions(
+    events: ScheduleCalendarEvent[],
+    key: 'class_name' | 'subject_name',
+): string[] {
     return Array.from(
         new Set(
             events

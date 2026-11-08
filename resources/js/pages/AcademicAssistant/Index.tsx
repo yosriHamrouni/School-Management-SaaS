@@ -1,5 +1,4 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import axios from 'axios';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
@@ -16,7 +15,9 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 

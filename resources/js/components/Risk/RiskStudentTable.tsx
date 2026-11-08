@@ -2,7 +2,6 @@ import { Link } from '@inertiajs/react';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import {
     Alert,
-    Box,
     Button,
     Card,
     CardContent,
@@ -19,7 +18,12 @@ import {
 } from '@mui/material';
 import RiskBadge from '@/components/Risk/RiskBadge';
 import RiskReasonsList from '@/components/Risk/RiskReasonsList';
-import type { PaginationLink, RiskFilters, RiskListItem, RiskListResponse } from '@/utils/risk';
+import type {
+    PaginationLink,
+    RiskFilters,
+    RiskListItem,
+    RiskListResponse,
+} from '@/utils/risk';
 import { formatRiskDate, formatRiskScore } from '@/utils/risk';
 
 type Props = {
@@ -38,7 +42,10 @@ function PaginationButtons({
     links: PaginationLink[];
     onNavigatePage: (page: string) => void;
 }) {
-    const numberedLinks = links.filter((link) => link.label !== '&laquo; Previous' && link.label !== 'Next &raquo;');
+    const numberedLinks = links.filter(
+        (link) =>
+            link.label !== '&laquo; Previous' && link.label !== 'Next &raquo;',
+    );
 
     return (
         <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -83,7 +90,11 @@ export default function RiskStudentTable({
                 <CardContent>
                     <Stack spacing={2}>
                         {Array.from({ length: 5 }).map((_, index) => (
-                            <Skeleton key={index} variant="rounded" height={64} />
+                            <Skeleton
+                                key={index}
+                                variant="rounded"
+                                height={64}
+                            />
                         ))}
                     </Stack>
                 </CardContent>
@@ -114,9 +125,16 @@ export default function RiskStudentTable({
                 {loading ? <LinearProgress /> : null}
                 <CardContent sx={{ py: 8 }}>
                     <Stack spacing={1.5} alignItems="center" textAlign="center">
-                        <Typography variant="h6">Aucune donnee disponible</Typography>
-                        <Typography variant="body2" color="text.secondary" maxWidth={520}>
-                            Aucun eleve ne correspond aux filtres actuels pour l annee selectionnee.
+                        <Typography variant="h6">
+                            Aucune donnee disponible
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            maxWidth={520}
+                        >
+                            Aucun eleve ne correspond aux filtres actuels pour l
+                            annee selectionnee.
                         </Typography>
                     </Stack>
                 </CardContent>
@@ -149,7 +167,11 @@ export default function RiskStudentTable({
                         </TableHead>
                         <TableBody>
                             {items.map((item) => (
-                                <RiskStudentRow key={item.student_id} item={item} filters={filters} />
+                                <RiskStudentRow
+                                    key={item.student_id}
+                                    item={item}
+                                    filters={filters}
+                                />
                             ))}
                         </TableBody>
                     </Table>
@@ -163,10 +185,14 @@ export default function RiskStudentTable({
                     sx={{ mt: 3 }}
                 >
                     <Typography variant="body2" color="text.secondary">
-                        {response?.meta.from ?? 0} - {response?.meta.to ?? 0} sur {response?.meta.total ?? 0} eleve(s)
+                        {response?.meta.from ?? 0} - {response?.meta.to ?? 0}{' '}
+                        sur {response?.meta.total ?? 0} eleve(s)
                     </Typography>
 
-                    <PaginationButtons links={response?.meta.links ?? []} onNavigatePage={onNavigatePage} />
+                    <PaginationButtons
+                        links={response?.meta.links ?? []}
+                        onNavigatePage={onNavigatePage}
+                    />
                 </Stack>
             </CardContent>
         </Card>
@@ -199,7 +225,9 @@ function RiskStudentRow({
                 <RiskBadge level={item.risk?.level} />
             </TableCell>
             <TableCell>
-                <Typography variant="subtitle2">{formatRiskScore(item.risk?.score)}</Typography>
+                <Typography variant="subtitle2">
+                    {formatRiskScore(item.risk?.score)}
+                </Typography>
             </TableCell>
             <TableCell sx={{ minWidth: 280 }}>
                 <RiskReasonsList

@@ -3,14 +3,7 @@ import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
-import {
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
 import AcademicBarChart from '@/components/academic-dashboard/bar-chart';
 import AcademicDonutChart from '@/components/academic-dashboard/donut-chart';
 import PageHeader from '@/components/ui/page-header';
@@ -71,7 +64,12 @@ export default function AcademicDashboardIndex({
                     title="Tableau de bord academique"
                     description="Suivez les performances de l'etablissement a partir des notes deja saisies, avec une vue claire sur les classes, la reussite globale et les tendances utiles a la demonstration."
                     actions={
-                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            useFlexGap
+                            flexWrap="wrap"
+                        >
                             <Chip
                                 color="primary"
                                 variant="outlined"
@@ -140,10 +138,14 @@ export default function AcademicDashboardIndex({
                                 <Typography variant="h6">
                                     Aucune donnee academique disponible
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Les cartes restent disponibles, mais aucun calcul
-                                    de moyenne ou de reussite ne peut etre produit tant
-                                    qu'aucune note n'a ete saisie pour cet etablissement.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Les cartes restent disponibles, mais aucun
+                                    calcul de moyenne ou de reussite ne peut
+                                    etre produit tant qu'aucune note n'a ete
+                                    saisie pour cet etablissement.
                                 </Typography>
                             </Stack>
                         </CardContent>
@@ -163,10 +165,13 @@ export default function AcademicDashboardIndex({
                                 <Typography variant="h5">
                                     Moyenne par classe
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Vue comparee des moyennes calculees a partir des
-                                    notes existantes, sans inclure les classes vides dans
-                                    le graphique.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Vue comparee des moyennes calculees a partir
+                                    des notes existantes, sans inclure les
+                                    classes vides dans le graphique.
                                 </Typography>
                             </Stack>
 
@@ -185,9 +190,13 @@ export default function AcademicDashboardIndex({
                                 <Typography variant="h5">
                                     Repartition de la reussite
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Lecture rapide du nombre d'eleves en situation de
-                                    reussite par rapport au seuil de validation.
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Lecture rapide du nombre d'eleves en
+                                    situation de reussite par rapport au seuil
+                                    de validation.
                                 </Typography>
                             </Stack>
 
@@ -209,9 +218,10 @@ export default function AcademicDashboardIndex({
                                 Detail des classes
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Les classes sans note sont conservees dans la vue pour
-                                ne pas casser le tableau de bord, avec une moyenne
-                                affichee a 0.00 et un compteur de notes a 0.
+                                Les classes sans note sont conservees dans la
+                                vue pour ne pas casser le tableau de bord, avec
+                                une moyenne affichee a 0.00 et un compteur de
+                                notes a 0.
                             </Typography>
                         </Stack>
 
@@ -242,7 +252,8 @@ export default function AcademicDashboardIndex({
                                             variant="body2"
                                             color="text.secondary"
                                         >
-                                            {item.gradeCount} note(s) prise(s) en compte
+                                            {item.gradeCount} note(s) prise(s)
+                                            en compte
                                         </Typography>
                                     </CardContent>
                                 </Card>

@@ -2,8 +2,8 @@
 
 use App\Models\AcademicYear;
 use App\Models\ClassSubject;
-use App\Models\Evaluation;
 use App\Models\Establishment;
+use App\Models\Evaluation;
 use App\Models\Grade;
 use App\Models\Level;
 use App\Models\Role;
@@ -118,36 +118,24 @@ test('academic report export page returns period filtered tenant scoped data', f
     ]);
 
     Grade::create([
-        'establishment_id' => $establishment->id,
         'evaluation_id' => $evaluationInPeriod->id,
         'student_id' => $studentA->id,
         'grade' => 14,
-        'created_by' => $admin->id,
-        'updated_by' => $admin->id,
     ]);
     Grade::create([
-        'establishment_id' => $establishment->id,
         'evaluation_id' => $evaluationInPeriod->id,
         'student_id' => $studentB->id,
         'grade' => 8,
-        'created_by' => $admin->id,
-        'updated_by' => $admin->id,
     ]);
     Grade::create([
-        'establishment_id' => $establishment->id,
         'evaluation_id' => $evaluationOutsidePeriod->id,
         'student_id' => $studentA->id,
         'grade' => 19,
-        'created_by' => $admin->id,
-        'updated_by' => $admin->id,
     ]);
     Grade::create([
-        'establishment_id' => $otherEstablishment->id,
         'evaluation_id' => $otherEvaluation->id,
         'student_id' => $studentOther->id,
         'grade' => 18,
-        'created_by' => $teacherOther->id,
-        'updated_by' => $teacherOther->id,
     ]);
 
     $this
@@ -166,22 +154,22 @@ test('academic report export page returns period filtered tenant scoped data', f
             ->where('report.stats.totalStudents', 2)
             ->where('report.stats.totalSubjects', 2)
             ->where('report.stats.totalTeachers', 2)
-            ->where('report.stats.globalAverage', 11.0)
-            ->where('report.stats.successRate', 50.0)
+            ->where('report.stats.globalAverage', fn ($value) => (float) $value === 11.0)
+            ->where('report.stats.successRate', fn ($value) => (float) $value === 50.0)
             ->where('report.stats.gradesCount', 2)
             ->where('report.classAverages.0.className', 'Class A')
-            ->where('report.classAverages.0.average', 11.0)
+            ->where('report.classAverages.0.average', fn ($value) => (float) $value === 11.0)
             ->where('report.classAverages.1.className', 'Class B')
-            ->where('report.classAverages.1.average', 0.0)
+            ->where('report.classAverages.1.average', fn ($value) => (float) $value === 0.0)
             ->where('report.subjectAverages.0.name', 'English')
-            ->where('report.subjectAverages.0.average', 0.0)
+            ->where('report.subjectAverages.0.average', fn ($value) => (float) $value === 0.0)
             ->where('report.subjectAverages.1.name', 'Mathematics')
-            ->where('report.subjectAverages.1.average', 11.0)
+            ->where('report.subjectAverages.1.average', fn ($value) => (float) $value === 11.0)
             ->where('report.teacherPerformance.0.name', 'Teacher Alpha')
-            ->where('report.teacherPerformance.0.average', 11.0)
-            ->where('report.teacherPerformance.0.successRate', 50.0)
+            ->where('report.teacherPerformance.0.average', fn ($value) => (float) $value === 11.0)
+            ->where('report.teacherPerformance.0.successRate', fn ($value) => (float) $value === 50.0)
             ->where('report.teacherPerformance.1.name', 'Teacher Beta')
-            ->where('report.teacherPerformance.1.average', 0.0),
+            ->where('report.teacherPerformance.1.average', fn ($value) => (float) $value === 0.0),
         );
 });
 

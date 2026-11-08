@@ -81,7 +81,9 @@ function statusLabel(status: string) {
     return 'Late';
 }
 
-function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function statusBadgeVariant(
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     if (status === 'present') {
         return 'default';
     }
@@ -136,14 +138,19 @@ export default function TeacherAttendancesHistory({
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">Attendance History</h1>
+                        <h1 className="text-2xl font-semibold">
+                            Attendance History
+                        </h1>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Review saved attendance records by class, student, status and date.
+                            Review saved attendance records by class, student,
+                            status and date.
                         </p>
                     </div>
 
                     <Button variant="outline" asChild>
-                        <Link href="/teacher/attendances">Back to sessions</Link>
+                        <Link href="/teacher/attendances">
+                            Back to sessions
+                        </Link>
                     </Button>
                 </div>
 
@@ -151,35 +158,54 @@ export default function TeacherAttendancesHistory({
 
                 <div className="grid gap-4 md:grid-cols-4">
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                        <p className="text-sm text-muted-foreground">Total records</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.total}</p>
+                        <p className="text-sm text-muted-foreground">
+                            Total records
+                        </p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.total}
+                        </p>
                     </div>
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Present</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.present}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.present}
+                        </p>
                     </div>
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Absent</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.absent}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.absent}
+                        </p>
                     </div>
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
                         <p className="text-sm text-muted-foreground">Late</p>
-                        <p className="mt-2 text-2xl font-semibold">{summary.late}</p>
+                        <p className="mt-2 text-2xl font-semibold">
+                            {summary.late}
+                        </p>
                     </div>
                 </div>
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitFilters} className="grid gap-4 xl:grid-cols-5">
+                    <form
+                        onSubmit={submitFilters}
+                        className="grid gap-4 xl:grid-cols-5"
+                    >
                         <select
                             value={form.class_id}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, class_id: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    class_id: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
                             <option value="">All classes</option>
                             {classes.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -188,7 +214,10 @@ export default function TeacherAttendancesHistory({
                         <select
                             value={form.status}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, status: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    status: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
@@ -203,7 +232,10 @@ export default function TeacherAttendancesHistory({
                         <Input
                             value={form.student}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, student: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    student: event.target.value,
+                                }))
                             }
                             placeholder="Student name"
                         />
@@ -212,7 +244,10 @@ export default function TeacherAttendancesHistory({
                             type="date"
                             value={form.date_from}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, date_from: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    date_from: event.target.value,
+                                }))
                             }
                         />
 
@@ -220,13 +255,20 @@ export default function TeacherAttendancesHistory({
                             type="date"
                             value={form.date_to}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, date_to: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    date_to: event.target.value,
+                                }))
                             }
                         />
 
                         <div className="flex gap-2 xl:col-span-5">
                             <Button type="submit">Apply filters</Button>
-                            <Button type="button" variant="outline" onClick={resetFilters}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={resetFilters}
+                            >
                                 Reset
                             </Button>
                         </div>
@@ -238,42 +280,88 @@ export default function TeacherAttendancesHistory({
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Student</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Class</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Session</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Justification</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Recorded at</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Alert</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Student
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Class
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Session
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Status
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Justification
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Recorded at
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Alert
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {attendances.data.length > 0 ? (
                                     attendances.data.map((attendance) => (
-                                        <tr key={attendance.id} className="hover:bg-muted/30">
-                                            <td className="px-4 py-3 text-sm font-medium">{attendance.student_name ?? '-'}</td>
+                                        <tr
+                                            key={attendance.id}
+                                            className="hover:bg-muted/30"
+                                        >
+                                            <td className="px-4 py-3 text-sm font-medium">
+                                                {attendance.student_name ?? '-'}
+                                            </td>
                                             <td className="px-4 py-3 text-sm">
-                                                <div>{attendance.class_name ?? '-'}</div>
+                                                <div>
+                                                    {attendance.class_name ??
+                                                        '-'}
+                                                </div>
                                                 <div className="mt-1 text-xs text-muted-foreground">
-                                                    {attendance.subject_name ?? '-'}
+                                                    {attendance.subject_name ??
+                                                        '-'}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-sm">{attendance.session_label}</td>
                                             <td className="px-4 py-3 text-sm">
-                                                <Badge variant={statusBadgeVariant(attendance.status)}>
-                                                    {statusLabel(attendance.status)}
+                                                {attendance.session_label}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                <Badge
+                                                    variant={statusBadgeVariant(
+                                                        attendance.status,
+                                                    )}
+                                                >
+                                                    {statusLabel(
+                                                        attendance.status,
+                                                    )}
                                                 </Badge>
                                             </td>
-                                            <td className="px-4 py-3 text-sm">{attendance.justification ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{attendance.recorded_at ?? '-'}</td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {attendance.justification ??
+                                                    '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {attendance.recorded_at ?? '-'}
+                                            </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {attendance.has_repeated_absences ? (
-                                                    <Badge variant="outline" className="border-amber-500 text-amber-700">
-                                                        Threshold {repeatedAbsenceThreshold}+ reached
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="border-amber-500 text-amber-700"
+                                                    >
+                                                        Threshold{' '}
+                                                        {
+                                                            repeatedAbsenceThreshold
+                                                        }
+                                                        + reached
                                                     </Badge>
                                                 ) : (
                                                     <span className="text-muted-foreground">
-                                                        {attendance.absence_count} absence(s)
+                                                        {
+                                                            attendance.absence_count
+                                                        }{' '}
+                                                        absence(s)
                                                     </span>
                                                 )}
                                             </td>
@@ -281,8 +369,12 @@ export default function TeacherAttendancesHistory({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-6 text-center text-sm text-muted-foreground">
-                                            No attendance records match the current filters.
+                                        <td
+                                            colSpan={7}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
+                                            No attendance records match the
+                                            current filters.
                                         </td>
                                     </tr>
                                 )}
@@ -304,10 +396,16 @@ export default function TeacherAttendancesHistory({
                                 <Link
                                     href={link.url}
                                     preserveScroll
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

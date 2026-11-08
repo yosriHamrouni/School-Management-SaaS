@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
-import ScheduleCalendar from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleCalendar';
 import AppLayout from '@/layouts/app-layout';
+import ScheduleCalendar from '@/pages/EstablishmentAdmin/Schedules/Partials/ScheduleCalendar';
 import type { BreadcrumbItem } from '@/types';
 
 type ChildOption = {
@@ -34,10 +34,15 @@ export default function ParentSchedulesIndex({
     const handleChildChange = (childId: string) => {
         if (!childId) {
             router.get('/parent/schedules', {}, { preserveScroll: true });
+
             return;
         }
 
-        router.get(`/parent/schedules/${childId}`, {}, { preserveScroll: true });
+        router.get(
+            `/parent/schedules/${childId}`,
+            {},
+            { preserveScroll: true },
+        );
     };
 
     return (
@@ -48,21 +53,29 @@ export default function ParentSchedulesIndex({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">Child Schedule</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Child Schedule
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Review the weekly timetable only for children linked to your account.
+                                Review the weekly timetable only for children
+                                linked to your account.
                             </p>
                         </div>
 
                         <select
                             value={selectedChildId ?? ''}
-                            onChange={(event) => handleChildChange(event.target.value)}
+                            onChange={(event) =>
+                                handleChildChange(event.target.value)
+                            }
                             className={selectClassName}
                         >
                             <option value="">Select a child</option>
                             {children.map((child) => (
                                 <option key={child.id} value={String(child.id)}>
-                                    {child.name} {child.student_number ? `- ${child.student_number}` : ''}
+                                    {child.name}{' '}
+                                    {child.student_number
+                                        ? `- ${child.student_number}`
+                                        : ''}
                                 </option>
                             ))}
                         </select>
@@ -77,7 +90,9 @@ export default function ParentSchedulesIndex({
 
                 {selectedChild ? (
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
-                        <h2 className="text-lg font-semibold">{selectedChild.name ?? 'Student'}</h2>
+                        <h2 className="text-lg font-semibold">
+                            {selectedChild.name ?? 'Student'}
+                        </h2>
                         <p className="mt-2 text-sm text-muted-foreground">
                             {selectedChild.class_name
                                 ? `Read-only weekly timetable for ${selectedChild.class_name}.`
@@ -86,7 +101,9 @@ export default function ParentSchedulesIndex({
                     </div>
                 ) : null}
 
-                {calendarFeedUrl ? <ScheduleCalendar feedUrl={calendarFeedUrl} readOnly /> : null}
+                {calendarFeedUrl ? (
+                    <ScheduleCalendar feedUrl={calendarFeedUrl} readOnly />
+                ) : null}
             </div>
         </AppLayout>
     );

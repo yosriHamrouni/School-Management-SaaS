@@ -457,10 +457,7 @@ export default function FeeTypesIndex({
                                     </SelectTrigger>
                                     <SelectContent>
                                         {options.types.map((type) => (
-                                            <SelectItem
-                                                key={type}
-                                                value={type}
-                                            >
+                                            <SelectItem key={type} value={type}>
                                                 {typeLabels[type]}
                                             </SelectItem>
                                         ))}
@@ -490,11 +487,7 @@ export default function FeeTypesIndex({
                                                     key={frequency}
                                                     value={frequency}
                                                 >
-                                                    {
-                                                        frequencyLabels[
-                                                            frequency
-                                                        ]
-                                                    }
+                                                    {frequencyLabels[frequency]}
                                                 </SelectItem>
                                             ),
                                         )}
@@ -530,7 +523,7 @@ export default function FeeTypesIndex({
                                         event.target.value,
                                     )
                                 }
-                                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 min-h-24 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+                                className="min-h-24 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             />
                             <InputError message={form.errors.description} />
                         </div>
