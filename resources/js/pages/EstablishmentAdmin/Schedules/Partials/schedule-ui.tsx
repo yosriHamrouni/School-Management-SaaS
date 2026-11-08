@@ -1,5 +1,12 @@
 import type { EventInput } from '@fullcalendar/core';
-import { BookOpen, CalendarDays, Clock, GraduationCap, Layers, Users } from 'lucide-react';
+import {
+    BookOpen,
+    CalendarDays,
+    Clock,
+    GraduationCap,
+    Layers,
+    Users,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -52,7 +59,15 @@ const colorPalette = [
     { background: '#f5f3ff', border: '#7c3aed', text: '#4c1d95' },
 ];
 
-const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const dayOrder = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+];
 
 export function SchedulePageHeader({
     title,
@@ -66,7 +81,10 @@ export function SchedulePageHeader({
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
+                        <Badge
+                            variant="outline"
+                            className="border-primary/20 bg-primary/5 text-primary"
+                        >
                             {eyebrow}
                         </Badge>
                         {meta}
@@ -95,8 +113,12 @@ export function ScheduleSummaryCards({ items }: ScheduleSummaryCardsProps) {
                 >
                     <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                            <p className="text-sm font-medium text-muted-foreground">{item.label}</p>
-                            <p className="mt-2 truncate text-2xl font-semibold text-foreground">{item.value}</p>
+                            <p className="text-sm font-medium text-muted-foreground">
+                                {item.label}
+                            </p>
+                            <p className="mt-2 truncate text-2xl font-semibold text-foreground">
+                                {item.value}
+                            </p>
                         </div>
                         <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary">
                             {item.icon ?? <CalendarDays className="size-5" />}
@@ -135,19 +157,25 @@ export function buildScheduleSummaries(
             {
                 label: 'Subjects',
                 value: String(uniqueSubjects.length),
-                caption: uniqueSubjects.slice(0, 2).join(', ') || 'No subject yet',
+                caption:
+                    uniqueSubjects.slice(0, 2).join(', ') || 'No subject yet',
                 icon: <BookOpen className="size-5" />,
             },
             {
                 label: 'Next lesson',
                 value: nextEvent ? eventTimeRange(nextEvent) : '-',
-                caption: nextEvent ? eventPrimaryLabel(nextEvent, 'student') : 'No upcoming lesson',
+                caption: nextEvent
+                    ? eventPrimaryLabel(nextEvent, 'student')
+                    : 'No upcoming lesson',
                 icon: <Clock className="size-5" />,
             },
             {
                 label: 'Busiest day',
                 value: busiestDay.day,
-                caption: busiestDay.count > 0 ? `${busiestDay.count} course(s)` : 'No sessions this week',
+                caption:
+                    busiestDay.count > 0
+                        ? `${busiestDay.count} course(s)`
+                        : 'No sessions this week',
                 icon: <Layers className="size-5" />,
             },
         ];
@@ -170,7 +198,9 @@ export function buildScheduleSummaries(
             {
                 label: 'Next class',
                 value: nextEvent ? eventTimeRange(nextEvent) : '-',
-                caption: nextEvent ? eventPrimaryLabel(nextEvent, 'teacher') : 'No upcoming class',
+                caption: nextEvent
+                    ? eventPrimaryLabel(nextEvent, 'teacher')
+                    : 'No upcoming class',
                 icon: <Clock className="size-5" />,
             },
             {
@@ -192,19 +222,22 @@ export function buildScheduleSummaries(
         {
             label: 'Classes',
             value: String(uniqueClasses.length),
-            caption: uniqueClasses.slice(0, 2).join(', ') || 'No class selected',
+            caption:
+                uniqueClasses.slice(0, 2).join(', ') || 'No class selected',
             icon: <GraduationCap className="size-5" />,
         },
         {
             label: 'Teachers scheduled',
             value: String(uniqueTeachers.length),
-            caption: uniqueTeachers.slice(0, 2).join(', ') || 'No teacher selected',
+            caption:
+                uniqueTeachers.slice(0, 2).join(', ') || 'No teacher selected',
             icon: <Users className="size-5" />,
         },
         {
             label: 'Subjects',
             value: String(uniqueSubjects.length),
-            caption: uniqueSubjects.slice(0, 2).join(', ') || 'No subject selected',
+            caption:
+                uniqueSubjects.slice(0, 2).join(', ') || 'No subject selected',
             icon: <BookOpen className="size-5" />,
         },
     ];
@@ -217,10 +250,18 @@ export function colorizeScheduleEvents(
     const colorMap = new Map<string, (typeof colorPalette)[number]>();
 
     return events.map((event) => {
-        const key = String(event.extendedProps?.[keyName] ?? event.title ?? event.id ?? 'schedule');
+        const key = String(
+            event.extendedProps?.[keyName] ??
+                event.title ??
+                event.id ??
+                'schedule',
+        );
 
         if (!colorMap.has(key)) {
-            colorMap.set(key, colorPalette[colorMap.size % colorPalette.length]);
+            colorMap.set(
+                key,
+                colorPalette[colorMap.size % colorPalette.length],
+            );
         }
 
         const color = colorMap.get(key) ?? colorPalette[0];
@@ -234,7 +275,10 @@ export function colorizeScheduleEvents(
     });
 }
 
-export function eventPrimaryLabel(event: ScheduleCalendarEvent, audience: ScheduleAudience): string {
+export function eventPrimaryLabel(
+    event: ScheduleCalendarEvent,
+    audience: ScheduleAudience,
+): string {
     const props = event.extendedProps ?? {};
     const subject = props.subject_name ?? event.title ?? 'Schedule';
 
@@ -246,7 +290,9 @@ export function eventPrimaryLabel(event: ScheduleCalendarEvent, audience: Schedu
         return [subject, props.class_name].filter(Boolean).join(' - ');
     }
 
-    return [subject, props.class_name, props.teacher_name].filter(Boolean).join(' - ');
+    return [subject, props.class_name, props.teacher_name]
+        .filter(Boolean)
+        .join(' - ');
 }
 
 export function eventTimeRange(event: ScheduleCalendarEvent): string {
@@ -263,24 +309,32 @@ export function eventTimeRange(event: ScheduleCalendarEvent): string {
     return '-';
 }
 
-export function eventSecondaryLine(event: ScheduleCalendarEvent, audience: ScheduleAudience): string {
+export function eventSecondaryLine(
+    event: ScheduleCalendarEvent,
+    audience: ScheduleAudience,
+): string {
     const props = event.extendedProps ?? {};
     const details =
         audience === 'student'
             ? [props.teacher_name, props.room_name]
             : audience === 'teacher'
-                ? [props.class_name, props.room_name]
-                : [props.class_name, props.teacher_name, props.room_name];
+              ? [props.class_name, props.room_name]
+              : [props.class_name, props.teacher_name, props.room_name];
 
     return details.filter(Boolean).join(' - ');
 }
 
-export function legendItems(events: ScheduleCalendarEvent[], keyName: keyof ScheduleEventProps) {
+export function legendItems(
+    events: ScheduleCalendarEvent[],
+    keyName: keyof ScheduleEventProps,
+) {
     const seen = new Set<string>();
 
     return colorizeScheduleEvents(events, keyName)
         .map((event) => ({
-            label: String(event.extendedProps?.[keyName] ?? event.title ?? 'Schedule'),
+            label: String(
+                event.extendedProps?.[keyName] ?? event.title ?? 'Schedule',
+            ),
             color: String(event.borderColor ?? '#2563eb'),
         }))
         .filter((item) => {
@@ -295,14 +349,24 @@ export function legendItems(events: ScheduleCalendarEvent[], keyName: keyof Sche
         .slice(0, 8);
 }
 
-export function EmptyScheduleState({ title, description }: { title: string; description: string }) {
+export function EmptyScheduleState({
+    title,
+    description,
+}: {
+    title: string;
+    description: string;
+}) {
     return (
         <div className="rounded-lg border border-dashed border-sidebar-border/80 bg-muted/20 px-4 py-8 text-center">
             <div className="mx-auto flex size-11 items-center justify-center rounded-md bg-background text-muted-foreground">
                 <CalendarDays className="size-5" />
             </div>
-            <h3 className="mt-3 text-sm font-semibold text-foreground">{title}</h3>
-            <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
+            <h3 className="mt-3 text-sm font-semibold text-foreground">
+                {title}
+            </h3>
+            <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+                {description}
+            </p>
         </div>
     );
 }
@@ -325,7 +389,7 @@ export function FilterSelect({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             className={cn(
-                'border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-[3px]',
+                'h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
                 className,
             )}
         >
@@ -339,36 +403,56 @@ export function FilterSelect({
     );
 }
 
-function uniqueValues(events: ScheduleCalendarEvent[], key: keyof ScheduleEventProps): string[] {
+function uniqueValues(
+    events: ScheduleCalendarEvent[],
+    key: keyof ScheduleEventProps,
+): string[] {
     return Array.from(
         new Set(
             events
                 .map((event) => event.extendedProps?.[key])
-                .filter((value): value is string | number => value !== null && value !== undefined && value !== ''),
+                .filter(
+                    (value): value is string | number =>
+                        value !== null && value !== undefined && value !== '',
+                ),
         ),
     ).map(String);
 }
 
-function getNextEvent(events: ScheduleCalendarEvent[]): ScheduleCalendarEvent | null {
+function getNextEvent(
+    events: ScheduleCalendarEvent[],
+): ScheduleCalendarEvent | null {
     const now = Date.now();
 
     return (
         events
             .filter((event) => {
-                const start = event.start instanceof Date ? event.start.getTime() : Date.parse(String(event.start ?? ''));
+                const start =
+                    event.start instanceof Date
+                        ? event.start.getTime()
+                        : Date.parse(String(event.start ?? ''));
 
                 return Number.isFinite(start) && start >= now;
             })
             .sort((first, second) => {
-                const firstStart = first.start instanceof Date ? first.start.getTime() : Date.parse(String(first.start ?? ''));
-                const secondStart = second.start instanceof Date ? second.start.getTime() : Date.parse(String(second.start ?? ''));
+                const firstStart =
+                    first.start instanceof Date
+                        ? first.start.getTime()
+                        : Date.parse(String(first.start ?? ''));
+                const secondStart =
+                    second.start instanceof Date
+                        ? second.start.getTime()
+                        : Date.parse(String(second.start ?? ''));
 
                 return firstStart - secondStart;
             })[0] ?? null
     );
 }
 
-function getBusiestDay(events: ScheduleCalendarEvent[]): { day: string; count: number } {
+function getBusiestDay(events: ScheduleCalendarEvent[]): {
+    day: string;
+    count: number;
+} {
     const counts = new Map<string, number>();
 
     events.forEach((event) => {
@@ -379,22 +463,27 @@ function getBusiestDay(events: ScheduleCalendarEvent[]): { day: string; count: n
         }
     });
 
-    const [day, count] =
-        Array.from(counts.entries()).sort((first, second) => {
-            if (second[1] !== first[1]) {
-                return second[1] - first[1];
-            }
+    const [day, count] = Array.from(counts.entries()).sort((first, second) => {
+        if (second[1] !== first[1]) {
+            return second[1] - first[1];
+        }
 
-            return dayOrder.indexOf(first[0]) - dayOrder.indexOf(second[0]);
-        })[0] ?? ['-', 0];
+        return dayOrder.indexOf(first[0]) - dayOrder.indexOf(second[0]);
+    })[0] ?? ['-', 0];
 
     return { day, count };
 }
 
 function sumEventHours(events: ScheduleCalendarEvent[]): number {
     return events.reduce((total, event) => {
-        const start = event.start instanceof Date ? event.start.getTime() : Date.parse(String(event.start ?? ''));
-        const end = event.end instanceof Date ? event.end.getTime() : Date.parse(String(event.end ?? ''));
+        const start =
+            event.start instanceof Date
+                ? event.start.getTime()
+                : Date.parse(String(event.start ?? ''));
+        const end =
+            event.end instanceof Date
+                ? event.end.getTime()
+                : Date.parse(String(event.end ?? ''));
 
         if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
             return total;

@@ -38,11 +38,17 @@ type SubmissionFormData = {
     attachment: File | null;
 };
 
-export default function StudentAssignmentsShow({ assignment, submission }: Props) {
+export default function StudentAssignmentsShow({
+    assignment,
+    submission,
+}: Props) {
     const { flash } = usePage<Props>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Assignments', href: '/student/assignments' },
-        { title: assignment.title, href: `/student/assignments/${assignment.id}` },
+        {
+            title: assignment.title,
+            href: `/student/assignments/${assignment.id}`,
+        },
     ];
     const form = useForm<SubmissionFormData>({
         submission_text: submission?.submission_text ?? '',
@@ -64,7 +70,9 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-start md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">{assignment.title}</h1>
+                        <h1 className="text-2xl font-semibold">
+                            {assignment.title}
+                        </h1>
                         <div className="mt-2 flex flex-wrap gap-2 text-sm text-muted-foreground">
                             <span>{assignment.subject_name ?? '-'}</span>
                             <span>/</span>
@@ -75,7 +83,9 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
                     </div>
 
                     <Button variant="outline" asChild>
-                        <Link href="/student/assignments">Back to assignments</Link>
+                        <Link href="/student/assignments">
+                            Back to assignments
+                        </Link>
                     </Button>
                 </div>
 
@@ -84,8 +94,9 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
                 <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_380px]">
                     <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                         <h2 className="text-lg font-semibold">Instructions</h2>
-                        <p className="mt-4 whitespace-pre-wrap text-sm text-muted-foreground">
-                            {assignment.description || 'No additional instructions were provided for this assignment.'}
+                        <p className="mt-4 text-sm whitespace-pre-wrap text-muted-foreground">
+                            {assignment.description ||
+                                'No additional instructions were provided for this assignment.'}
                         </p>
                     </div>
 
@@ -93,21 +104,37 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
                         <h2 className="text-lg font-semibold">Submission</h2>
                         <div className="mt-4 space-y-3 text-sm">
                             <div>
-                                <div className="text-muted-foreground">Due date</div>
-                                <div className={assignment.is_overdue && !submission ? 'font-medium text-red-600' : 'font-medium'}>
+                                <div className="text-muted-foreground">
+                                    Due date
+                                </div>
+                                <div
+                                    className={
+                                        assignment.is_overdue && !submission
+                                            ? 'font-medium text-red-600'
+                                            : 'font-medium'
+                                    }
+                                >
                                     {assignment.due_date ?? '-'}
                                 </div>
                             </div>
 
                             {submission ? (
                                 <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
-                                    <div className="font-medium">Current submission</div>
-                                    <div className="mt-2 text-sm">{submission.attachment_original_name}</div>
+                                    <div className="font-medium">
+                                        Current submission
+                                    </div>
+                                    <div className="mt-2 text-sm">
+                                        {submission.attachment_original_name}
+                                    </div>
                                     <div className="mt-1 text-xs">
-                                        Submitted on {submission.submitted_at ?? '-'}
+                                        Submitted on{' '}
+                                        {submission.submitted_at ?? '-'}
                                     </div>
                                     {submission.is_late ? (
-                                        <div className="mt-1 text-xs text-amber-700">This submission was made after the due date.</div>
+                                        <div className="mt-1 text-xs text-amber-700">
+                                            This submission was made after the
+                                            due date.
+                                        </div>
                                     ) : null}
                                     <div className="mt-3">
                                         <a
@@ -127,17 +154,29 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
                             )}
                         </div>
 
-                        <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="mt-6 grid gap-4"
+                        >
                             <div className="grid gap-2">
-                                <Label htmlFor="submission_text">Comment (optional)</Label>
+                                <Label htmlFor="submission_text">
+                                    Comment (optional)
+                                </Label>
                                 <textarea
                                     id="submission_text"
                                     value={form.data.submission_text}
-                                    onChange={(event) => form.setData('submission_text', event.target.value)}
-                                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 min-h-28 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'submission_text',
+                                            event.target.value,
+                                        )
+                                    }
+                                    className="min-h-28 rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                                     placeholder="Add a note for this submission"
                                 />
-                                <InputError message={form.errors.submission_text} />
+                                <InputError
+                                    message={form.errors.submission_text}
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -146,17 +185,28 @@ export default function StudentAssignmentsShow({ assignment, submission }: Props
                                     id="attachment"
                                     type="file"
                                     accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip,.txt"
-                                    onChange={(event) => form.setData('attachment', event.target.files?.[0] ?? null)}
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'attachment',
+                                            event.target.files?.[0] ?? null,
+                                        )
+                                    }
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Accepted formats: PDF, DOC, DOCX, PNG, JPG, ZIP, TXT. Max 10 MB.
+                                    Accepted formats: PDF, DOC, DOCX, PNG, JPG,
+                                    ZIP, TXT. Max 10 MB.
                                 </p>
                                 <InputError message={form.errors.attachment} />
                             </div>
 
                             <div className="flex justify-end">
-                                <Button type="submit" disabled={form.processing}>
-                                    {submission ? 'Replace submission' : 'Submit assignment'}
+                                <Button
+                                    type="submit"
+                                    disabled={form.processing}
+                                >
+                                    {submission
+                                        ? 'Replace submission'
+                                        : 'Submit assignment'}
                                 </Button>
                             </div>
                         </form>

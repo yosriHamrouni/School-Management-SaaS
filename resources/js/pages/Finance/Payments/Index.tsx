@@ -174,7 +174,9 @@ export default function PaymentsIndex({
 }: PageProps) {
     const { flash } = usePage<PageProps>().props;
     const [filterData, setFilterData] = useState(filters);
-    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(
+        null,
+    );
     const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
 
     const form = useForm<PaymentFormData>({
@@ -204,7 +206,11 @@ export default function PaymentsIndex({
         };
 
         setFilterData(emptyFilters);
-        router.get('/finance/payments', {}, { preserveState: true, replace: true });
+        router.get(
+            '/finance/payments',
+            {},
+            { preserveState: true, replace: true },
+        );
     };
 
     const openPaymentDialog = (invoice: Invoice) => {
@@ -282,7 +288,9 @@ export default function PaymentsIndex({
                                 <SelectValue placeholder="Statut" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Tous les statuts</SelectItem>
+                                <SelectItem value="all">
+                                    Tous les statuts
+                                </SelectItem>
                                 {options.invoiceStatuses.map((status) => (
                                     <SelectItem key={status} value={status}>
                                         {invoiceStatusLabels[status]}
@@ -304,7 +312,9 @@ export default function PaymentsIndex({
                                 <SelectValue placeholder="Eleve" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Tous les eleves</SelectItem>
+                                <SelectItem value="all">
+                                    Tous les eleves
+                                </SelectItem>
                                 {options.students.map((student) => (
                                     <SelectItem
                                         key={student.id}
@@ -330,7 +340,9 @@ export default function PaymentsIndex({
                                 <SelectValue placeholder="Annee scolaire" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Toutes les annees</SelectItem>
+                                <SelectItem value="all">
+                                    Toutes les annees
+                                </SelectItem>
                                 {options.academicYears.map((academicYear) => (
                                     <SelectItem
                                         key={academicYear.id}
@@ -431,7 +443,9 @@ export default function PaymentsIndex({
                                                 {formatAmount(invoice.amount)}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
-                                                {formatAmount(invoice.total_paid)}
+                                                {formatAmount(
+                                                    invoice.total_paid,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {formatAmount(
@@ -531,7 +545,10 @@ export default function PaymentsIndex({
                 </div>
             </div>
 
-            <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+            <Dialog
+                open={paymentDialogOpen}
+                onOpenChange={setPaymentDialogOpen}
+            >
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>Enregistrer un paiement</DialogTitle>
@@ -544,7 +561,10 @@ export default function PaymentsIndex({
 
                     {selectedInvoice ? (
                         <div className="grid gap-5">
-                            <form onSubmit={submitPayment} className="grid gap-4">
+                            <form
+                                onSubmit={submitPayment}
+                                className="grid gap-4"
+                            >
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label htmlFor="amount">Montant</Label>
@@ -561,7 +581,9 @@ export default function PaymentsIndex({
                                                 )
                                             }
                                         />
-                                        <InputError message={form.errors.amount} />
+                                        <InputError
+                                            message={form.errors.amount}
+                                        />
                                     </div>
 
                                     <div className="grid gap-2">
@@ -617,7 +639,9 @@ export default function PaymentsIndex({
                                                 )}
                                             </SelectContent>
                                         </Select>
-                                        <InputError message={form.errors.method} />
+                                        <InputError
+                                            message={form.errors.method}
+                                        />
                                     </div>
 
                                     <div className="grid gap-2">
@@ -651,7 +675,9 @@ export default function PaymentsIndex({
                                                 )}
                                             </SelectContent>
                                         </Select>
-                                        <InputError message={form.errors.status} />
+                                        <InputError
+                                            message={form.errors.status}
+                                        />
                                     </div>
                                 </div>
 
@@ -670,7 +696,9 @@ export default function PaymentsIndex({
                                         }
                                     />
                                     <InputError
-                                        message={form.errors.transaction_reference}
+                                        message={
+                                            form.errors.transaction_reference
+                                        }
                                     />
                                 </div>
 

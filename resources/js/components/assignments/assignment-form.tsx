@@ -50,8 +50,11 @@ export default function AssignmentForm({
         const seen = new Map<number, string>();
 
         assignmentOptions.forEach((assignment) => {
-            if (! seen.has(assignment.class_id)) {
-                seen.set(assignment.class_id, assignment.label.split(' - ')[0] ?? assignment.label);
+            if (!seen.has(assignment.class_id)) {
+                seen.set(
+                    assignment.class_id,
+                    assignment.label.split(' - ')[0] ?? assignment.label,
+                );
             }
         });
 
@@ -60,15 +63,18 @@ export default function AssignmentForm({
 
     const subjectOptions = useMemo(() => {
         const relevantAssignments = data.class_id
-            ? assignmentOptions.filter((assignment) => String(assignment.class_id) === data.class_id)
+            ? assignmentOptions.filter(
+                  (assignment) => String(assignment.class_id) === data.class_id,
+              )
             : assignmentOptions;
 
         const seen = new Map<number, string>();
 
         relevantAssignments.forEach((assignment) => {
-            const subjectName = assignment.label.split(' - ')[1] ?? assignment.label;
+            const subjectName =
+                assignment.label.split(' - ')[1] ?? assignment.label;
 
-            if (! seen.has(assignment.subject_id)) {
+            if (!seen.has(assignment.subject_id)) {
                 seen.set(assignment.subject_id, subjectName);
             }
         });
@@ -80,11 +86,15 @@ export default function AssignmentForm({
         <form onSubmit={onSubmit} className="grid gap-6">
             {activeAcademicYear ? (
                 <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-                    Active academic year: <span className="font-medium text-foreground">{activeAcademicYear.name}</span>
+                    Active academic year:{' '}
+                    <span className="font-medium text-foreground">
+                        {activeAcademicYear.name}
+                    </span>
                 </div>
             ) : (
                 <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    No active academic year is configured for your establishment.
+                    No active academic year is configured for your
+                    establishment.
                 </div>
             )}
 
@@ -115,7 +125,9 @@ export default function AssignmentForm({
                     <select
                         id="subject_id"
                         value={data.subject_id}
-                        onChange={(event) => setData('subject_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('subject_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a subject</option>
@@ -133,7 +145,9 @@ export default function AssignmentForm({
                     <Input
                         id="title"
                         value={data.title}
-                        onChange={(event) => setData('title', event.target.value)}
+                        onChange={(event) =>
+                            setData('title', event.target.value)
+                        }
                         placeholder="Homework 1"
                     />
                     <InputError message={errors.title} />
@@ -144,8 +158,10 @@ export default function AssignmentForm({
                     <textarea
                         id="description"
                         value={data.description}
-                        onChange={(event) => setData('description', event.target.value)}
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 min-h-32 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                        onChange={(event) =>
+                            setData('description', event.target.value)
+                        }
+                        className="min-h-32 rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                         placeholder="Assignment instructions for the class"
                     />
                     <InputError message={errors.description} />
@@ -157,14 +173,19 @@ export default function AssignmentForm({
                         id="due_date"
                         type="date"
                         value={data.due_date}
-                        onChange={(event) => setData('due_date', event.target.value)}
+                        onChange={(event) =>
+                            setData('due_date', event.target.value)
+                        }
                     />
                     <InputError message={errors.due_date} />
                 </div>
             </div>
 
             <div className="flex justify-end">
-                <Button type="submit" disabled={processing || ! activeAcademicYear}>
+                <Button
+                    type="submit"
+                    disabled={processing || !activeAcademicYear}
+                >
                     {submitLabel}
                 </Button>
             </div>

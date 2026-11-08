@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\Message;
 use App\Models\User;
 use App\Services\MessagingPermissionService;
 

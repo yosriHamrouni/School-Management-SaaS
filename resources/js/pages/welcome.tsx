@@ -1,7 +1,3 @@
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/i18n';
-import { dashboard, login, register } from '@/routes';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
     ArrowRight,
@@ -19,6 +15,10 @@ import {
     Sparkles,
     UsersRound,
 } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/i18n';
+import { dashboard, login, register } from '@/routes';
 
 type WelcomeProps = {
     canRegister?: boolean;
@@ -176,7 +176,9 @@ export default function Welcome({ canRegister = true }: WelcomeProps) {
                                         variant="ghost"
                                         className="rounded-full text-cyan-700 hover:bg-cyan-50"
                                     >
-                                        <Link href={login()}>{t('landing.login')}</Link>
+                                        <Link href={login()}>
+                                            {t('landing.login')}
+                                        </Link>
                                     </Button>
                                     {canRegister ? (
                                         <Button
@@ -233,7 +235,9 @@ export default function Welcome({ canRegister = true }: WelcomeProps) {
                                     size="lg"
                                     className="h-14 rounded-full bg-white px-8 text-base font-bold text-cyan-700 shadow-xl shadow-cyan-700/10 hover:bg-cyan-50"
                                 >
-                                    <a href="#espaces">{t('landing.viewSpaces')}</a>
+                                    <a href="#espaces">
+                                        {t('landing.viewSpaces')}
+                                    </a>
                                 </Button>
                             </div>
                         </div>

@@ -21,8 +21,7 @@ class TeacherAccessController extends Controller
 {
     public function __construct(
         private readonly StatefulGuard $guard,
-    ) {
-    }
+    ) {}
 
     public function create(Request $request): Response
     {

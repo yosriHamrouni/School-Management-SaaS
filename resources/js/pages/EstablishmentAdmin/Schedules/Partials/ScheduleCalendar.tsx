@@ -1,4 +1,10 @@
-import type { DateSelectArg, EventClickArg, EventContentArg, EventInput, EventSourceFuncArg } from '@fullcalendar/core';
+import type {
+    DateSelectArg,
+    EventClickArg,
+    EventContentArg,
+    EventInput,
+    EventSourceFuncArg,
+} from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -78,15 +84,26 @@ export default function ScheduleCalendar({
     const [eventCount, setEventCount] = useState(0);
     const [zoomLevel, setZoomLevel] = useState(1);
 
-    const normalizedFilters = useMemo(() => ({
-        search: filters?.search ?? '',
-        class_id: filters?.class_id ?? '',
-        subject_id: filters?.subject_id ?? '',
-        teacher_id: filters?.teacher_id ?? '',
-        day_of_week: filters?.day_of_week ?? '',
-    }), [filters?.class_id, filters?.day_of_week, filters?.search, filters?.subject_id, filters?.teacher_id]);
+    const normalizedFilters = useMemo(
+        () => ({
+            search: filters?.search ?? '',
+            class_id: filters?.class_id ?? '',
+            subject_id: filters?.subject_id ?? '',
+            teacher_id: filters?.teacher_id ?? '',
+            day_of_week: filters?.day_of_week ?? '',
+        }),
+        [
+            filters?.class_id,
+            filters?.day_of_week,
+            filters?.search,
+            filters?.subject_id,
+            filters?.teacher_id,
+        ],
+    );
 
-    const clientFilterKey = clientFilters.map((filter) => `${filter.field}:${filter.value}`).join('|');
+    const clientFilterKey = clientFilters
+        .map((filter) => `${filter.field}:${filter.value}`)
+        .join('|');
     const normalizedClientFilters = useMemo(
         () => clientFilters.filter((filter) => filter.value !== ''),
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,43 +130,64 @@ export default function ScheduleCalendar({
                     }
                 });
 
-                const response = await fetch(`${feedUrl}?${params.toString()}`, {
-                    headers: {
-                        Accept: 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
+                const response = await fetch(
+                    `${feedUrl}?${params.toString()}`,
+                    {
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        credentials: 'same-origin',
                     },
-                    credentials: 'same-origin',
-                });
+                );
 
                 if (!response.ok) {
                     throw new Error('Unable to load calendar events.');
                 }
 
-                const payload = (await response.json()) as ScheduleCalendarEvent[];
+                const payload =
+                    (await response.json()) as ScheduleCalendarEvent[];
                 const filteredPayload = normalizedClientFilters.reduce(
                     (currentEvents, filter) =>
                         currentEvents.filter(
-                            (event) => String(event.extendedProps?.[filter.field] ?? '') === filter.value,
+                            (event) =>
+                                String(
+                                    event.extendedProps?.[filter.field] ?? '',
+                                ) === filter.value,
                         ),
                     payload,
                 );
-                const colorizedPayload = colorizeScheduleEvents(filteredPayload, colorBy);
+                const colorizedPayload = colorizeScheduleEvents(
+                    filteredPayload,
+                    colorBy,
+                );
 
                 setHasLoaded(true);
                 setEventCount(colorizedPayload.length);
                 onEventsLoaded?.(colorizedPayload);
                 successCallback(colorizedPayload);
             } catch (error) {
-                const message = error instanceof Error ? error.message : 'Unable to load calendar events.';
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : 'Unable to load calendar events.';
 
                 setHasLoaded(true);
                 setEventCount(0);
                 setLoadError(message);
                 onEventsLoaded?.([]);
-                failureCallback(error instanceof Error ? error : new Error(message));
+                failureCallback(
+                    error instanceof Error ? error : new Error(message),
+                );
             }
         },
-        [colorBy, feedUrl, normalizedClientFilters, normalizedFilters, onEventsLoaded],
+        [
+            colorBy,
+            feedUrl,
+            normalizedClientFilters,
+            normalizedFilters,
+            onEventsLoaded,
+        ],
     );
 
     useEffect(() => {
@@ -160,7 +198,9 @@ export default function ScheduleCalendar({
                 return;
             }
 
-            calendarApi.changeView(window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek');
+            calendarApi.changeView(
+                window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
+            );
         };
 
         handleResize();
@@ -185,8 +225,14 @@ export default function ScheduleCalendar({
         [zoomLevel],
     );
 
-    const decreaseZoom = () => setZoomLevel((current) => Math.max(0.75, Number((current - 0.1).toFixed(2))));
-    const increaseZoom = () => setZoomLevel((current) => Math.min(1.35, Number((current + 0.1).toFixed(2))));
+    const decreaseZoom = () =>
+        setZoomLevel((current) =>
+            Math.max(0.75, Number((current - 0.1).toFixed(2))),
+        );
+    const increaseZoom = () =>
+        setZoomLevel((current) =>
+            Math.min(1.35, Number((current + 0.1).toFixed(2))),
+        );
     const resetZoom = () => setZoomLevel(1);
 
     return (
@@ -194,13 +240,19 @@ export default function ScheduleCalendar({
             <div className="flex flex-col gap-2 border-b border-border px-4 py-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold">{title}</h2>
-                    <p className="text-sm text-muted-foreground">{description}</p>
+                    <p className="text-sm text-muted-foreground">
+                        {description}
+                    </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                         {loading ? <Spinner className="size-4" /> : null}
-                        <span>{loading ? 'Loading timetable' : `${eventCount} session(s)`}</span>
+                        <span>
+                            {loading
+                                ? 'Loading timetable'
+                                : `${eventCount} session(s)`}
+                        </span>
                     </div>
 
                     <div className="flex items-center rounded-md border border-border bg-background p-1">
@@ -253,11 +305,18 @@ export default function ScheduleCalendar({
                 </div>
             </div>
 
-            <div className="schedule-calendar relative p-3 md:p-4" style={calendarStyle}>
+            <div
+                className="schedule-calendar relative p-3 md:p-4"
+                style={calendarStyle}
+            >
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[timeGridPlugin, interactionPlugin]}
-                    initialView={typeof window !== 'undefined' && window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek'}
+                    initialView={
+                        typeof window !== 'undefined' && window.innerWidth < 768
+                            ? 'timeGridDay'
+                            : 'timeGridWeek'
+                    }
                     headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
@@ -283,13 +342,19 @@ export default function ScheduleCalendar({
                     events={loadEvents}
                     select={onSelectSlot}
                     eventClick={onEventSelect}
-                    eventContent={(eventInfo) => renderScheduleEvent(eventInfo, audience)}
+                    eventContent={(eventInfo) =>
+                        renderScheduleEvent(eventInfo, audience)
+                    }
                     eventTimeFormat={{
                         hour: '2-digit',
                         minute: '2-digit',
                         hour12: false,
                     }}
-                    dayHeaderFormat={{ weekday: 'long', day: 'numeric', month: 'short' }}
+                    dayHeaderFormat={{
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'short',
+                    }}
                 />
             </div>
 
@@ -301,14 +366,20 @@ export default function ScheduleCalendar({
 
             {!loadError && hasLoaded && eventCount === 0 ? (
                 <div className="px-4 pb-4">
-                    <EmptyScheduleState title={emptyTitle} description={emptyDescription} />
+                    <EmptyScheduleState
+                        title={emptyTitle}
+                        description={emptyDescription}
+                    />
                 </div>
             ) : null}
         </div>
     );
 }
 
-function renderScheduleEvent(eventInfo: EventContentArg, audience: ScheduleAudience) {
+function renderScheduleEvent(
+    eventInfo: EventContentArg,
+    audience: ScheduleAudience,
+) {
     const event: ScheduleCalendarEvent = {
         id: eventInfo.event.id,
         title: eventInfo.event.title,
@@ -320,10 +391,16 @@ function renderScheduleEvent(eventInfo: EventContentArg, audience: ScheduleAudie
 
     return (
         <div className="min-w-0 px-1 py-0.5">
-            <div className="truncate text-[11px] font-semibold leading-4">{eventTimeRange(event)}</div>
-            <div className="truncate text-xs font-semibold leading-4">{eventPrimaryLabel(event, audience)}</div>
+            <div className="truncate text-[11px] leading-4 font-semibold">
+                {eventTimeRange(event)}
+            </div>
+            <div className="truncate text-xs leading-4 font-semibold">
+                {eventPrimaryLabel(event, audience)}
+            </div>
             {secondaryLine ? (
-                <div className="truncate text-[11px] leading-4 opacity-80">{secondaryLine}</div>
+                <div className="truncate text-[11px] leading-4 opacity-80">
+                    {secondaryLine}
+                </div>
             ) : null}
         </div>
     );

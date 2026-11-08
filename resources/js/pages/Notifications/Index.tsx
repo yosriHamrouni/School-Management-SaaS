@@ -1,13 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
-import {
-    Box,
-    Button,
-    Chip,
-    Paper,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Chip, Paper, Stack, Typography } from '@mui/material';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 

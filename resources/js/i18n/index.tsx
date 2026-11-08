@@ -33,12 +33,6 @@ const dictionaries: Record<Locale, TranslationDictionary> = {
     fr,
 };
 
-const encodedLocales: Array<{ code: Locale; label: string }> = [
-    { code: 'fr', label: 'Français' },
-    { code: 'en', label: 'English' },
-    { code: 'ar', label: 'العربية' },
-];
-
 export const locales: Array<{ code: Locale; label: string }> = [
     { code: 'fr', label: 'Français' },
     { code: 'en', label: 'English' },
@@ -62,16 +56,21 @@ function getStoredLocale() {
 }
 
 function resolvePath(dictionary: TranslationDictionary, key: string) {
-    return key.split('.').reduce<TranslationValue | undefined>((value, part) => {
-        if (!value || typeof value === 'string') {
-            return undefined;
-        }
+    return key
+        .split('.')
+        .reduce<TranslationValue | undefined>((value, part) => {
+            if (!value || typeof value === 'string') {
+                return undefined;
+            }
 
-        return value[part];
-    }, dictionary);
+            return value[part];
+        }, dictionary);
 }
 
-function interpolate(value: string, replacements: Record<string, string | number>) {
+function interpolate(
+    value: string,
+    replacements: Record<string, string | number>,
+) {
     return Object.entries(replacements).reduce(
         (text, [key, replacement]) =>
             text.replace(new RegExp(`:${key}\\b`, 'g'), String(replacement)),
@@ -95,14 +94,6 @@ export function I18nProvider({
         document.body.dir = dir;
         window.localStorage.setItem(storageKey, locale);
     }, [dir, locale]);
-
-    useEffect(() => {
-        if (!serverLocale || getStoredLocale()) {
-            return;
-        }
-
-        setLocaleState(serverLocale);
-    }, [serverLocale]);
 
     const setLocale = useCallback((nextLocale: Locale) => {
         setLocaleState(nextLocale);
@@ -147,7 +138,9 @@ export function I18nProvider({
         [dir, locale, setLocale, t],
     );
 
-    return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+    return (
+        <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+    );
 }
 
 export function useTranslation() {

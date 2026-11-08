@@ -113,26 +113,38 @@ const featureDescriptions: Record<string, string> = {
     average_trend: 'Evolution recente de la moyenne de l eleve.',
 };
 
-export function cleanRiskFilters(filters: Partial<RiskFilters>): Record<string, string> {
-    return Object.entries(filters).reduce<Record<string, string>>((carry, [key, value]) => {
-        if (value === undefined || value === null || value === '') {
+export function cleanRiskFilters(
+    filters: Partial<RiskFilters>,
+): Record<string, string> {
+    return Object.entries(filters).reduce<Record<string, string>>(
+        (carry, [key, value]) => {
+            if (value === undefined || value === null || value === '') {
+                return carry;
+            }
+
+            carry[key] = String(value);
+
             return carry;
-        }
-
-        carry[key] = String(value);
-
-        return carry;
-    }, {});
+        },
+        {},
+    );
 }
 
 export function buildRiskStudentsApiUrl(filters: Partial<RiskFilters>): string {
     const params = new URLSearchParams(cleanRiskFilters(filters));
 
-    return params.size > 0 ? `/risk/students?${params.toString()}` : '/risk/students';
+    return params.size > 0
+        ? `/risk/students?${params.toString()}`
+        : '/risk/students';
 }
 
-export function buildRiskStudentDetailsApiUrl(studentId: number, schoolYearId: string): string {
-    const params = new URLSearchParams(cleanRiskFilters({ school_year_id: schoolYearId }));
+export function buildRiskStudentDetailsApiUrl(
+    studentId: number,
+    schoolYearId: string,
+): string {
+    const params = new URLSearchParams(
+        cleanRiskFilters({ school_year_id: schoolYearId }),
+    );
 
     return params.size > 0
         ? `/risk/students/${studentId}?${params.toString()}`
@@ -141,11 +153,14 @@ export function buildRiskStudentDetailsApiUrl(studentId: number, schoolYearId: s
 
 export function getRiskLevelLabel(level: string | null | undefined): string {
     return (
-        riskLevelOptions.find((option) => option.value === level)?.label ?? 'Inconnu'
+        riskLevelOptions.find((option) => option.value === level)?.label ??
+        'Inconnu'
     );
 }
 
-export function getRiskBadgeColor(level: string | null | undefined): 'success' | 'warning' | 'error' | 'default' {
+export function getRiskBadgeColor(
+    level: string | null | undefined,
+): 'success' | 'warning' | 'error' | 'default' {
     switch (level) {
         case 'low':
             return 'success';
@@ -186,7 +201,9 @@ export function formatRiskDate(value: string | null | undefined): string {
     }).format(date);
 }
 
-export function getFeatureCards(features: Record<string, number | null> | null | undefined) {
+export function getFeatureCards(
+    features: Record<string, number | null> | null | undefined,
+) {
     const payload = features ?? {};
 
     return [
@@ -204,7 +221,10 @@ export function getFeatureCards(features: Record<string, number | null> | null |
     }));
 }
 
-export function formatFeatureValue(key: string, value: number | null | undefined): string {
+export function formatFeatureValue(
+    key: string,
+    value: number | null | undefined,
+): string {
     if (typeof value !== 'number' || Number.isNaN(value)) {
         return '-';
     }

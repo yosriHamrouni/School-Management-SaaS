@@ -121,10 +121,14 @@ export default function PaymentInvoicesIndex({
         };
 
         setFilterData(emptyFilters);
-        router.get('/finance/payment-invoices', {}, {
-            preserveState: true,
-            replace: true,
-        });
+        router.get(
+            '/finance/payment-invoices',
+            {},
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
     };
 
     return (
@@ -160,7 +164,9 @@ export default function PaymentInvoicesIndex({
                                 <SelectValue placeholder="Eleve" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Tous les eleves</SelectItem>
+                                <SelectItem value="all">
+                                    Tous les eleves
+                                </SelectItem>
                                 {options.students.map((student) => (
                                     <SelectItem
                                         key={student.id}
@@ -185,7 +191,9 @@ export default function PaymentInvoicesIndex({
                                 <SelectValue placeholder="Type de frais" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Tous les frais</SelectItem>
+                                <SelectItem value="all">
+                                    Tous les frais
+                                </SelectItem>
                                 {options.feeTypes.map((feeType) => (
                                     <SelectItem
                                         key={feeType.id}
@@ -271,27 +279,38 @@ export default function PaymentInvoicesIndex({
                                                 {invoice.invoice_number}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
-                                                <div>{invoice.student.name}</div>
+                                                <div>
+                                                    {invoice.student.name}
+                                                </div>
                                                 <div className="text-xs text-muted-foreground">
-                                                    {invoice.student.student_number ??
-                                                        '-'}
+                                                    {invoice.student
+                                                        .student_number ?? '-'}
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {invoice.fee_type.name}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
-                                                {formatAmount(invoice.amount_paid)}
+                                                {formatAmount(
+                                                    invoice.amount_paid,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
-                                                <div>{invoice.payment_date}</div>
+                                                <div>
+                                                    {invoice.payment_date}
+                                                </div>
                                                 <div className="text-xs text-muted-foreground">
-                                                    {invoice.payment_method ?? '-'} -
-                                                    {invoice.payment_status ?? '-'}
+                                                    {invoice.payment_method ??
+                                                        '-'}{' '}
+                                                    -
+                                                    {invoice.payment_status ??
+                                                        '-'}
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-sm">
-                                                {formatDateTime(invoice.generated_at)}
+                                                {formatDateTime(
+                                                    invoice.generated_at,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-right">
                                                 <Button

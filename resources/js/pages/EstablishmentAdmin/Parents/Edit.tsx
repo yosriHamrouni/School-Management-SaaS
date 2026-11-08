@@ -41,14 +41,36 @@ export default function ParentsEdit({ parent, students }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Edit Parent</h1>
-                            <p className="mt-2 text-sm text-muted-foreground">Update {parent.name}.</p>
+                            <h1 className="text-2xl font-semibold">
+                                Edit Parent
+                            </h1>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Update {parent.name}.
+                            </p>
                         </div>
-                        <Button variant="outline" asChild><Link href="/establishment-admin/parents">Back to list</Link></Button>
+                        <Button variant="outline" asChild>
+                            <Link href="/establishment-admin/parents">
+                                Back to list
+                            </Link>
+                        </Button>
                     </div>
                 </div>
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
-                    <ParentForm data={form.data} errors={form.errors} processing={form.processing} submitLabel="Save changes" passwordOptional students={students} setData={form.setData} onSubmit={(event) => { event.preventDefault(); form.put(`/establishment-admin/parents/${parent.id}`); }} />
+                    <ParentForm
+                        data={form.data}
+                        errors={form.errors}
+                        processing={form.processing}
+                        submitLabel="Save changes"
+                        passwordOptional
+                        students={students}
+                        setData={form.setData}
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            form.put(
+                                `/establishment-admin/parents/${parent.id}`,
+                            );
+                        }}
+                    />
                 </div>
             </div>
         </AppLayout>

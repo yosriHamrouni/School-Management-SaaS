@@ -151,9 +151,13 @@ export default function PaymentShow({ invoice, options }: PageProps) {
             return;
         }
 
-        router.patch(`/finance/payments/${payment.id}/cancel`, {}, {
-            preserveScroll: true,
-        });
+        router.patch(
+            `/finance/payments/${payment.id}/cancel`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
     };
 
     return (
@@ -191,7 +195,10 @@ export default function PaymentShow({ invoice, options }: PageProps) {
                     {[
                         ['Montant total', formatAmount(invoice.amount)],
                         ['Montant paye', formatAmount(invoice.total_paid)],
-                        ['Reste a payer', formatAmount(invoice.remaining_amount)],
+                        [
+                            'Reste a payer',
+                            formatAmount(invoice.remaining_amount),
+                        ],
                         ['Echeance', invoice.due_date],
                     ].map(([label, value]) => (
                         <div
@@ -278,7 +285,9 @@ export default function PaymentShow({ invoice, options }: PageProps) {
                                                     {payment.payment_date}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm">
-                                                    {formatAmount(payment.amount)}
+                                                    {formatAmount(
+                                                        payment.amount,
+                                                    )}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm">
                                                     {
@@ -308,7 +317,9 @@ export default function PaymentShow({ invoice, options }: PageProps) {
                                                             'cancelled'
                                                         }
                                                         onClick={() =>
-                                                            cancelPayment(payment)
+                                                            cancelPayment(
+                                                                payment,
+                                                            )
                                                         }
                                                     >
                                                         Annuler
@@ -375,7 +386,10 @@ export default function PaymentShow({ invoice, options }: PageProps) {
                             <Select
                                 value={form.data.method}
                                 onValueChange={(value) =>
-                                    form.setData('method', value as PaymentMethod)
+                                    form.setData(
+                                        'method',
+                                        value as PaymentMethod,
+                                    )
                                 }
                             >
                                 <SelectTrigger className="w-full">
@@ -397,7 +411,10 @@ export default function PaymentShow({ invoice, options }: PageProps) {
                             <Select
                                 value={form.data.status}
                                 onValueChange={(value) =>
-                                    form.setData('status', value as PaymentStatus)
+                                    form.setData(
+                                        'status',
+                                        value as PaymentStatus,
+                                    )
                                 }
                             >
                                 <SelectTrigger className="w-full">

@@ -56,12 +56,17 @@ export default function ScheduleForm({
                     <select
                         id="class_id"
                         value={data.class_id}
-                        onChange={(event) => setData('class_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('class_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a class</option>
                         {classes.map((schoolClass) => (
-                            <option key={schoolClass.id} value={String(schoolClass.id)}>
+                            <option
+                                key={schoolClass.id}
+                                value={String(schoolClass.id)}
+                            >
                                 {schoolClass.name}
                             </option>
                         ))}
@@ -74,7 +79,9 @@ export default function ScheduleForm({
                     <select
                         id="subject_id"
                         value={data.subject_id}
-                        onChange={(event) => setData('subject_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('subject_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a subject</option>
@@ -92,7 +99,9 @@ export default function ScheduleForm({
                     <select
                         id="teacher_id"
                         value={data.teacher_id}
-                        onChange={(event) => setData('teacher_id', event.target.value)}
+                        onChange={(event) =>
+                            setData('teacher_id', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a teacher</option>
@@ -110,7 +119,9 @@ export default function ScheduleForm({
                     <select
                         id="day_of_week"
                         value={data.day_of_week}
-                        onChange={(event) => setData('day_of_week', event.target.value)}
+                        onChange={(event) =>
+                            setData('day_of_week', event.target.value)
+                        }
                         className={selectClassName}
                     >
                         <option value="">Select a day</option>
@@ -129,7 +140,9 @@ export default function ScheduleForm({
                         id="start_time"
                         type="time"
                         value={data.start_time}
-                        onChange={(event) => setData('start_time', event.target.value)}
+                        onChange={(event) =>
+                            setData('start_time', event.target.value)
+                        }
                     />
                     <InputError message={errors.start_time} />
                 </div>
@@ -140,7 +153,9 @@ export default function ScheduleForm({
                         id="end_time"
                         type="time"
                         value={data.end_time}
-                        onChange={(event) => setData('end_time', event.target.value)}
+                        onChange={(event) =>
+                            setData('end_time', event.target.value)
+                        }
                     />
                     <InputError message={errors.end_time} />
                 </div>

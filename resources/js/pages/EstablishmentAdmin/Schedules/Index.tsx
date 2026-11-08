@@ -108,7 +108,8 @@ export default function SchedulesIndex({
         day_of_week: initialFilters.day_of_week ?? '',
     });
     const [modalOpen, setModalOpen] = useState(false);
-    const [modalData, setModalData] = useState<ScheduleModalData>(emptyModalData);
+    const [modalData, setModalData] =
+        useState<ScheduleModalData>(emptyModalData);
     const [refreshKey, setRefreshKey] = useState(0);
     const [events, setEvents] = useState<ScheduleCalendarEvent[]>([]);
 
@@ -116,7 +117,10 @@ export default function SchedulesIndex({
         () => Object.values(filters).filter((value) => value !== '').length,
         [filters],
     );
-    const summaries = useMemo(() => buildScheduleSummaries(events, 'admin'), [events]);
+    const summaries = useMemo(
+        () => buildScheduleSummaries(events, 'admin'),
+        [events],
+    );
     const legend = useMemo(() => legendItems(events, 'class_name'), [events]);
 
     const applyFilters = () => {
@@ -162,7 +166,9 @@ export default function SchedulesIndex({
             class_id: filters.class_id,
             subject_id: filters.subject_id,
             teacher_id: filters.teacher_id,
-            day_of_week: selectionInfo.start.toLocaleDateString('en-US', { weekday: 'long' }),
+            day_of_week: selectionInfo.start.toLocaleDateString('en-US', {
+                weekday: 'long',
+            }),
             start_time: toTimeString(selectionInfo.start),
             end_time: toTimeString(selectionInfo.end),
         });
@@ -170,7 +176,10 @@ export default function SchedulesIndex({
     };
 
     const handleEventSelect = (clickInfo: EventClickArg) => {
-        const props = clickInfo.event.extendedProps as Record<string, string | number | null | undefined>;
+        const props = clickInfo.event.extendedProps as Record<
+            string,
+            string | number | null | undefined
+        >;
 
         setModalData({
             id: Number(props.schedule_id ?? clickInfo.event.id),
@@ -210,7 +219,8 @@ export default function SchedulesIndex({
                         <div>
                             <h2 className="text-lg font-semibold">Filters</h2>
                             <p className="text-sm text-muted-foreground">
-                                Filters are applied to both the calendar and the list.
+                                Filters are applied to both the calendar and the
+                                list.
                             </p>
                         </div>
                         <div className="text-sm text-muted-foreground">
@@ -242,7 +252,10 @@ export default function SchedulesIndex({
                         >
                             <option value="">All classes</option>
                             {classes.map((schoolClass) => (
-                                <option key={schoolClass.id} value={String(schoolClass.id)}>
+                                <option
+                                    key={schoolClass.id}
+                                    value={String(schoolClass.id)}
+                                >
                                     {schoolClass.name}
                                 </option>
                             ))}
@@ -260,7 +273,10 @@ export default function SchedulesIndex({
                         >
                             <option value="">All subjects</option>
                             {subjects.map((subject) => (
-                                <option key={subject.id} value={String(subject.id)}>
+                                <option
+                                    key={subject.id}
+                                    value={String(subject.id)}
+                                >
                                     {subject.name}
                                 </option>
                             ))}
@@ -278,7 +294,10 @@ export default function SchedulesIndex({
                         >
                             <option value="">All teachers</option>
                             {teachers.map((teacher) => (
-                                <option key={teacher.id} value={String(teacher.id)}>
+                                <option
+                                    key={teacher.id}
+                                    value={String(teacher.id)}
+                                >
                                     {teacher.name}
                                 </option>
                             ))}
@@ -351,7 +370,9 @@ export default function SchedulesIndex({
 
                 <div className="rounded-lg border border-sidebar-border/70 bg-card shadow-sm">
                     <div className="border-b border-border px-4 py-4">
-                        <h2 className="text-lg font-semibold">Administrative list</h2>
+                        <h2 className="text-lg font-semibold">
+                            Administrative list
+                        </h2>
                         <p className="text-sm text-muted-foreground">
                             Use the table for quick scanning and detail access.
                         </p>
@@ -361,25 +382,54 @@ export default function SchedulesIndex({
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Class</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Subject</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Teacher</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Day</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Start</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">End</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Class
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Subject
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Teacher
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Day
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Start
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        End
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {schedules.data.length > 0 ? (
                                     schedules.data.map((schedule) => (
-                                        <tr key={schedule.id} className="hover:bg-muted/30">
-                                            <td className="px-4 py-3 text-sm">{schedule.class_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.subject_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.teacher_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.day_of_week}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.start_time}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.end_time}</td>
+                                        <tr
+                                            key={schedule.id}
+                                            className="hover:bg-muted/30"
+                                        >
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.class_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.subject_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.teacher_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.day_of_week}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.start_time}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.end_time}
+                                            </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
                                                     <Button
@@ -387,7 +437,9 @@ export default function SchedulesIndex({
                                                         size="sm"
                                                         asChild
                                                     >
-                                                        <Link href={`/establishment-admin/schedules/${schedule.id}`}>
+                                                        <Link
+                                                            href={`/establishment-admin/schedules/${schedule.id}`}
+                                                        >
                                                             View
                                                         </Link>
                                                     </Button>
@@ -395,7 +447,9 @@ export default function SchedulesIndex({
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() =>
-                                                            router.visit(`/establishment-admin/schedules/${schedule.id}/edit`)
+                                                            router.visit(
+                                                                `/establishment-admin/schedules/${schedule.id}/edit`,
+                                                            )
                                                         }
                                                     >
                                                         Edit
@@ -406,7 +460,10 @@ export default function SchedulesIndex({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                                        <td
+                                            colSpan={7}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
                                             No schedules found.
                                         </td>
                                     </tr>
@@ -428,10 +485,16 @@ export default function SchedulesIndex({
                                     <Link
                                         href={link.url}
                                         preserveScroll
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: link.label,
+                                        }}
                                     />
                                 ) : (
-                                    <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html: link.label,
+                                        }}
+                                    />
                                 )}
                             </Button>
                         ))}

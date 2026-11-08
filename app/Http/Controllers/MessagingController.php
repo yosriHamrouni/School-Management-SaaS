@@ -18,8 +18,7 @@ class MessagingController extends Controller
     public function __construct(
         private readonly MessagingPermissionService $permissionService,
         private readonly MessagingService $messagingService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request, ?User $participant = null): Response
     {

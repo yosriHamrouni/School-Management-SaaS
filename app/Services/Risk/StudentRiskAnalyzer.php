@@ -16,8 +16,7 @@ class StudentRiskAnalyzer
         private readonly StudentRiskFeatureBuilder $studentRiskFeatureBuilder,
         private readonly StudentRiskRuleEngine $studentRiskRuleEngine,
         private readonly StudentRiskMlPredictor $studentRiskMlPredictor,
-    ) {
-    }
+    ) {}
 
     public function analyzeStudent(int $studentId, int $establishmentId, int $schoolYearId): ?StudentRiskPrediction
     {

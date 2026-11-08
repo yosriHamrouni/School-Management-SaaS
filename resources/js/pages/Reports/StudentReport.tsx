@@ -51,7 +51,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 const selectClassName =
     'border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]';
 
-export default function StudentReport({ student, terms, selectedTermId, report }: Props) {
+export default function StudentReport({
+    student,
+    terms,
+    selectedTermId,
+    report,
+}: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Student Report" />
@@ -60,9 +65,13 @@ export default function StudentReport({ student, terms, selectedTermId, report }
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">Student Report</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Student Report
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                {student.name} · {student.class_name ?? 'No class'} · {student.student_number ?? '-'}
+                                {student.name} ·{' '}
+                                {student.class_name ?? 'No class'} ·{' '}
+                                {student.student_number ?? '-'}
                             </p>
                         </div>
 
@@ -73,18 +82,27 @@ export default function StudentReport({ student, terms, selectedTermId, report }
                                     router.get(
                                         `/reports/student/${student.id}`,
                                         { term_id: event.target.value },
-                                        { preserveState: true, preserveScroll: true },
+                                        {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        },
                                     )
                                 }
                                 className={selectClassName}
                             >
                                 {terms.map((term) => (
-                                    <option key={term.id} value={String(term.id)}>
+                                    <option
+                                        key={term.id}
+                                        value={String(term.id)}
+                                    >
                                         {term.name}
                                     </option>
                                 ))}
                             </select>
-                            <Button variant="outline" onClick={() => window.print()}>
+                            <Button
+                                variant="outline"
+                                onClick={() => window.print()}
+                            >
                                 Print bulletin
                             </Button>
                         </div>
@@ -109,7 +127,9 @@ export default function StudentReport({ student, terms, selectedTermId, report }
                             className="overflow-hidden rounded-xl border border-sidebar-border/70 bg-background"
                         >
                             <div className="border-b border-border px-6 py-4">
-                                <h3 className="text-lg font-semibold">{subject.subject_name}</h3>
+                                <h3 className="text-lg font-semibold">
+                                    {subject.subject_name}
+                                </h3>
                                 <p className="text-sm text-muted-foreground">
                                     Subject average: {subject.average ?? '-'}
                                 </p>
@@ -119,27 +139,60 @@ export default function StudentReport({ student, terms, selectedTermId, report }
                                 <table className="min-w-full divide-y divide-border">
                                     <thead className="bg-muted/50">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Evaluation</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Type</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Date</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Coeff.</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Grade</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Max</th>
-                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Remarks</th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Evaluation
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Type
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Date
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Coeff.
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Grade
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Max
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                                Remarks
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border">
-                                        {subject.evaluations.map((evaluation) => (
-                                            <tr key={evaluation.id}>
-                                                <td className="px-4 py-3 text-sm">{evaluation.title}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.type}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.evaluation_date}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.coefficient}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.grade}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.max_grade}</td>
-                                                <td className="px-4 py-3 text-sm">{evaluation.remarks ?? '-'}</td>
-                                            </tr>
-                                        ))}
+                                        {subject.evaluations.map(
+                                            (evaluation) => (
+                                                <tr key={evaluation.id}>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.title}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.type}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {
+                                                            evaluation.evaluation_date
+                                                        }
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.coefficient}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.grade}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.max_grade}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm">
+                                                        {evaluation.remarks ??
+                                                            '-'}
+                                                    </td>
+                                                </tr>
+                                            ),
+                                        )}
                                     </tbody>
                                 </table>
                             </div>

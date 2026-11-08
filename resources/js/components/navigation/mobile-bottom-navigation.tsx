@@ -6,11 +6,7 @@ import ClassRoundedIcon from '@mui/icons-material/ClassRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import {
-    BottomNavigation,
-    BottomNavigationAction,
-    Paper,
-} from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import type { ElementType, ReactNode } from 'react';
 import type { UserRole } from '@/types';
 
@@ -26,21 +22,57 @@ const common: MobileNavItem[] = [
 
 const byRole: Record<string, MobileNavItem[]> = {
     teacher: [
-        { label: 'Classes', href: '/teacher/classes', icon: <ClassRoundedIcon /> },
-        { label: 'Attendance', href: '/teacher/attendances', icon: <ChecklistRoundedIcon /> },
-        { label: 'Grades', href: '/evaluations', icon: <AssignmentRoundedIcon /> },
+        {
+            label: 'Classes',
+            href: '/teacher/classes',
+            icon: <ClassRoundedIcon />,
+        },
+        {
+            label: 'Attendance',
+            href: '/teacher/attendances',
+            icon: <ChecklistRoundedIcon />,
+        },
+        {
+            label: 'Grades',
+            href: '/evaluations',
+            icon: <AssignmentRoundedIcon />,
+        },
     ],
     student: [
-        { label: 'Schedule', href: '/student/schedules', icon: <CalendarMonthRoundedIcon /> },
-        { label: 'Assignments', href: '/student/assignments', icon: <AssignmentRoundedIcon /> },
+        {
+            label: 'Schedule',
+            href: '/student/schedules',
+            icon: <CalendarMonthRoundedIcon />,
+        },
+        {
+            label: 'Assignments',
+            href: '/student/assignments',
+            icon: <AssignmentRoundedIcon />,
+        },
     ],
     parent: [
-        { label: 'Children', href: '/parent/reports', icon: <GroupsRoundedIcon /> },
-        { label: 'Schedule', href: '/parent/schedules', icon: <CalendarMonthRoundedIcon /> },
+        {
+            label: 'Children',
+            href: '/parent/reports',
+            icon: <GroupsRoundedIcon />,
+        },
+        {
+            label: 'Schedule',
+            href: '/parent/schedules',
+            icon: <CalendarMonthRoundedIcon />,
+        },
     ],
     establishment_admin: [
-        { label: 'Classes', href: '/establishment-admin/classes', icon: <ClassRoundedIcon /> },
-        { label: 'Users', href: '/establishment-admin/students', icon: <GroupsRoundedIcon /> },
+        {
+            label: 'Classes',
+            href: '/establishment-admin/classes',
+            icon: <ClassRoundedIcon />,
+        },
+        {
+            label: 'Users',
+            href: '/establishment-admin/students',
+            icon: <GroupsRoundedIcon />,
+        },
     ],
 };
 
@@ -62,7 +94,8 @@ export default function MobileBottomNavigation({
         },
     ].slice(0, 5);
     const selected = items.findIndex(
-        (item) => currentUrl === item.href || currentUrl.startsWith(`${item.href}/`),
+        (item) =>
+            currentUrl === item.href || currentUrl.startsWith(`${item.href}/`),
     );
 
     return (
@@ -88,7 +121,11 @@ export default function MobileBottomNavigation({
                         href={item.href}
                         label={item.label}
                         icon={item.icon}
-                        sx={{ minWidth: 0, px: 0.5, touchAction: 'manipulation' }}
+                        sx={{
+                            minWidth: 0,
+                            px: 0.5,
+                            touchAction: 'manipulation',
+                        }}
                     />
                 ))}
             </BottomNavigation>

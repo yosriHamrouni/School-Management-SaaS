@@ -33,7 +33,7 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import ParentDashboard from '@/components/parent-dashboard';
-import type {ParentDashboardData} from '@/components/parent-dashboard';
+import type { ParentDashboardData } from '@/components/parent-dashboard';
 import PageHeader from '@/components/ui/page-header';
 import StatCard from '@/components/ui/stat-card';
 import type { StatCardProps } from '@/components/ui/stat-card';
@@ -145,7 +145,9 @@ function formatCount(value: number | null | undefined, locale = 'fr') {
         return '--';
     }
 
-    return new Intl.NumberFormat(locale === 'ar' ? 'ar-TN' : locale).format(value);
+    return new Intl.NumberFormat(locale === 'ar' ? 'ar-TN' : locale).format(
+        value,
+    );
 }
 
 function formatDate(value: string | null | undefined, locale: string) {
@@ -307,8 +309,17 @@ function StudentDashboardView({
                         <Typography variant="body1" color="text.secondary">
                             {t('dashboard.student.intro')}
                         </Typography>
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                            <Chip label={className} color="primary" variant="outlined" />
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            flexWrap="wrap"
+                            useFlexGap
+                        >
+                            <Chip
+                                label={className}
+                                color="primary"
+                                variant="outlined"
+                            />
                             <Chip
                                 label={establishmentName}
                                 color="success"
@@ -352,11 +363,19 @@ function StudentDashboardView({
                             spacing={2}
                         >
                             <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 700 }}
+                                >
                                     {t('dashboard.student.todaySchedule')}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {t('dashboard.student.todayScheduleDescription')}
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    {t(
+                                        'dashboard.student.todayScheduleDescription',
+                                    )}
                                 </Typography>
                             </Box>
                             <Button
@@ -375,7 +394,10 @@ function StudentDashboardView({
                                     <Card key={item.id} variant="outlined">
                                         <CardContent sx={{ py: 2 }}>
                                             <Stack
-                                                direction={{ xs: 'column', sm: 'row' }}
+                                                direction={{
+                                                    xs: 'column',
+                                                    sm: 'row',
+                                                }}
                                                 spacing={1.5}
                                                 justifyContent="space-between"
                                             >
@@ -385,7 +407,9 @@ function StudentDashboardView({
                                                         sx={{ fontWeight: 700 }}
                                                     >
                                                         {item.subject ??
-                                                            t('common.notAvailable')}
+                                                            t(
+                                                                'common.notAvailable',
+                                                            )}
                                                     </Typography>
                                                     <Typography
                                                         variant="body2"
@@ -393,8 +417,12 @@ function StudentDashboardView({
                                                         sx={{ mt: 0.5 }}
                                                     >
                                                         {item.teacher ??
-                                                            t('common.notAvailable')}
-                                                        {item.room ? ` - ${item.room}` : ''}
+                                                            t(
+                                                                'common.notAvailable',
+                                                            )}
+                                                        {item.room
+                                                            ? ` - ${item.room}`
+                                                            : ''}
                                                     </Typography>
                                                 </Box>
                                                 <Chip
@@ -407,7 +435,9 @@ function StudentDashboardView({
                                     </Card>
                                 ))
                             ) : (
-                                <EmptyState text={t('dashboard.student.emptySchedule')} />
+                                <EmptyState
+                                    text={t('dashboard.student.emptySchedule')}
+                                />
                             )}
                         </Stack>
                     </CardContent>
@@ -422,11 +452,19 @@ function StudentDashboardView({
                             spacing={2}
                         >
                             <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 700 }}
+                                >
                                     {t('dashboard.student.assignments')}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {t('dashboard.student.assignmentsDescription')}
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    {t(
+                                        'dashboard.student.assignmentsDescription',
+                                    )}
                                 </Typography>
                             </Box>
                             <Button
@@ -442,7 +480,10 @@ function StudentDashboardView({
                         <Stack spacing={1.5} sx={{ mt: 3 }}>
                             {data.assignments.length > 0 ? (
                                 data.assignments.map((assignment) => (
-                                    <Card key={assignment.id} variant="outlined">
+                                    <Card
+                                        key={assignment.id}
+                                        variant="outlined"
+                                    >
                                         <CardActionArea
                                             component={Link}
                                             href={`/student/assignments/${assignment.id}`}
@@ -455,19 +496,27 @@ function StudentDashboardView({
                                                         justifyContent="space-between"
                                                         alignItems="flex-start"
                                                     >
-                                                        <Box sx={{ minWidth: 0 }}>
+                                                        <Box
+                                                            sx={{ minWidth: 0 }}
+                                                        >
                                                             <Typography
                                                                 variant="subtitle1"
-                                                                sx={{ fontWeight: 700 }}
+                                                                sx={{
+                                                                    fontWeight: 700,
+                                                                }}
                                                             >
-                                                                {assignment.title}
+                                                                {
+                                                                    assignment.title
+                                                                }
                                                             </Typography>
                                                             <Typography
                                                                 variant="body2"
                                                                 color="text.secondary"
                                                             >
                                                                 {assignment.subject ??
-                                                                    t('common.notAvailable')}
+                                                                    t(
+                                                                        'common.notAvailable',
+                                                                    )}
                                                             </Typography>
                                                         </Box>
                                                         <Chip
@@ -487,12 +536,15 @@ function StudentDashboardView({
                                                         variant="body2"
                                                         color="text.secondary"
                                                     >
-                                                        {t('dashboard.student.dueDate', {
-                                                            date: formatDate(
-                                                                assignment.due_date,
-                                                                locale,
-                                                            ),
-                                                        })}
+                                                        {t(
+                                                            'dashboard.student.dueDate',
+                                                            {
+                                                                date: formatDate(
+                                                                    assignment.due_date,
+                                                                    locale,
+                                                                ),
+                                                            },
+                                                        )}
                                                     </Typography>
                                                 </Stack>
                                             </CardContent>
@@ -501,7 +553,9 @@ function StudentDashboardView({
                                 ))
                             ) : (
                                 <EmptyState
-                                    text={t('dashboard.student.emptyAssignments')}
+                                    text={t(
+                                        'dashboard.student.emptyAssignments',
+                                    )}
                                 />
                             )}
                         </Stack>
@@ -541,7 +595,10 @@ function StudentDashboardView({
                                     href={item.href}
                                     variant="outlined"
                                     startIcon={item.icon}
-                                    sx={{ justifyContent: 'flex-start', py: 1.2 }}
+                                    sx={{
+                                        justifyContent: 'flex-start',
+                                        py: 1.2,
+                                    }}
                                 >
                                     {item.title}
                                 </Button>
@@ -564,31 +621,42 @@ function StudentDashboardView({
                         </Typography>
                         <List sx={{ mt: 1 }}>
                             {data.notifications.recent.length > 0 ? (
-                                data.notifications.recent.map((notification, index) => (
-                                    <Box key={notification.id}>
-                                        <ListItem disableGutters alignItems="flex-start">
-                                            <ListItemIcon sx={{ minWidth: 36 }}>
-                                                <NotificationsActiveRoundedIcon color="primary" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={notification.title}
-                                                secondary={
-                                                    notification.body ??
-                                                    formatDateTime(
-                                                        notification.created_at,
-                                                        locale,
-                                                    )
-                                                }
-                                            />
-                                        </ListItem>
-                                        {index < data.notifications.recent.length - 1 ? (
-                                            <Divider component="li" />
-                                        ) : null}
-                                    </Box>
-                                ))
+                                data.notifications.recent.map(
+                                    (notification, index) => (
+                                        <Box key={notification.id}>
+                                            <ListItem
+                                                disableGutters
+                                                alignItems="flex-start"
+                                            >
+                                                <ListItemIcon
+                                                    sx={{ minWidth: 36 }}
+                                                >
+                                                    <NotificationsActiveRoundedIcon color="primary" />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={notification.title}
+                                                    secondary={
+                                                        notification.body ??
+                                                        formatDateTime(
+                                                            notification.created_at,
+                                                            locale,
+                                                        )
+                                                    }
+                                                />
+                                            </ListItem>
+                                            {index <
+                                            data.notifications.recent.length -
+                                                1 ? (
+                                                <Divider component="li" />
+                                            ) : null}
+                                        </Box>
+                                    ),
+                                )
                             ) : (
                                 <EmptyState
-                                    text={t('dashboard.student.emptyNotifications')}
+                                    text={t(
+                                        'dashboard.student.emptyNotifications',
+                                    )}
                                 />
                             )}
                         </List>
@@ -598,48 +666,64 @@ function StudentDashboardView({
                         </Typography>
                         <List sx={{ mt: 1 }}>
                             {data.messages.recent.length > 0 ? (
-                                data.messages.recent.map((conversation, index) => (
-                                    <Box
-                                        key={
-                                            conversation.participant?.id ??
-                                            `conversation-${index}`
-                                        }
-                                    >
-                                        <ListItem disableGutters alignItems="flex-start">
-                                            <ListItemIcon sx={{ minWidth: 36 }}>
-                                                <ForumRoundedIcon color="primary" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={
-                                                    conversation.participant?.name ??
-                                                    t('common.notAvailable')
-                                                }
-                                                secondary={
-                                                    conversation.last_message?.content ??
-                                                    formatDateTime(
-                                                        conversation.last_message?.created_at,
-                                                        locale,
-                                                    )
-                                                }
-                                            />
-                                            {conversation.unread_count > 0 ? (
-                                                <Chip
-                                                    size="small"
-                                                    color="secondary"
-                                                    label={formatCount(
-                                                        conversation.unread_count,
-                                                        locale,
-                                                    )}
+                                data.messages.recent.map(
+                                    (conversation, index) => (
+                                        <Box
+                                            key={
+                                                conversation.participant?.id ??
+                                                `conversation-${index}`
+                                            }
+                                        >
+                                            <ListItem
+                                                disableGutters
+                                                alignItems="flex-start"
+                                            >
+                                                <ListItemIcon
+                                                    sx={{ minWidth: 36 }}
+                                                >
+                                                    <ForumRoundedIcon color="primary" />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        conversation.participant
+                                                            ?.name ??
+                                                        t('common.notAvailable')
+                                                    }
+                                                    secondary={
+                                                        conversation
+                                                            .last_message
+                                                            ?.content ??
+                                                        formatDateTime(
+                                                            conversation
+                                                                .last_message
+                                                                ?.created_at,
+                                                            locale,
+                                                        )
+                                                    }
                                                 />
+                                                {conversation.unread_count >
+                                                0 ? (
+                                                    <Chip
+                                                        size="small"
+                                                        color="secondary"
+                                                        label={formatCount(
+                                                            conversation.unread_count,
+                                                            locale,
+                                                        )}
+                                                    />
+                                                ) : null}
+                                            </ListItem>
+                                            {index <
+                                            data.messages.recent.length - 1 ? (
+                                                <Divider component="li" />
                                             ) : null}
-                                        </ListItem>
-                                        {index < data.messages.recent.length - 1 ? (
-                                            <Divider component="li" />
-                                        ) : null}
-                                    </Box>
-                                ))
+                                        </Box>
+                                    ),
+                                )
                             ) : (
-                                <EmptyState text={t('dashboard.student.emptyMessages')} />
+                                <EmptyState
+                                    text={t('dashboard.student.emptyMessages')}
+                                />
                             )}
                         </List>
                     </CardContent>
@@ -655,7 +739,10 @@ function StudentDashboardView({
                                 [t('dashboard.account.user'), profile.name],
                                 [t('dashboard.account.email'), profile.email],
                                 [t('dashboard.student.class'), className],
-                                [t('dashboard.account.establishment'), establishmentName],
+                                [
+                                    t('dashboard.account.establishment'),
+                                    establishmentName,
+                                ],
                                 [
                                     t('dashboard.account.role'),
                                     formatRoleLabel(profile.role, t),
@@ -674,9 +761,14 @@ function StudentDashboardView({
                                                 <SchoolRoundedIcon color="primary" />
                                             )}
                                         </ListItemIcon>
-                                        <ListItemText primary={label} secondary={value} />
+                                        <ListItemText
+                                            primary={label}
+                                            secondary={value}
+                                        />
                                     </ListItem>
-                                    {index < 4 ? <Divider component="li" /> : null}
+                                    {index < 4 ? (
+                                        <Divider component="li" />
+                                    ) : null}
                                 </Box>
                             ))}
                         </List>
@@ -862,7 +954,9 @@ export default function Dashboard() {
         {
             title: t('navigation.schedule'),
             description: t('dashboard.quick.scheduleDescription'),
-            href: isTeacher ? '/teacher/schedules' : '/establishment-admin/schedules',
+            href: isTeacher
+                ? '/teacher/schedules'
+                : '/establishment-admin/schedules',
             icon: <CalendarViewWeekRoundedIcon />,
             visible: isEstablishmentAdmin || isTeacher,
         },
@@ -947,7 +1041,10 @@ export default function Dashboard() {
                             alignItems={{ xs: 'flex-start', md: 'center' }}
                         >
                             <Box sx={{ minWidth: 0 }}>
-                                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 700 }}
+                                >
                                     {auth.user.name}
                                 </Typography>
                                 <Typography
@@ -958,7 +1055,12 @@ export default function Dashboard() {
                                     {roleLabel} - {establishmentName}
                                 </Typography>
                             </Box>
-                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                flexWrap="wrap"
+                                useFlexGap
+                            >
                                 {roles.map((role) => (
                                     <Chip
                                         key={role}
@@ -1012,10 +1114,16 @@ export default function Dashboard() {
                     <Card>
                         <CardContent>
                             <Stack spacing={0.75}>
-                                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 700 }}
+                                >
                                     {t('dashboard.quickActions')}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
                                     {t('dashboard.quickActionsDescription')}
                                 </Typography>
                             </Stack>
@@ -1043,15 +1151,20 @@ export default function Dashboard() {
                                             sx={{ height: '100%' }}
                                         >
                                             <CardContent>
-                                                <Stack direction="row" spacing={1.5}>
+                                                <Stack
+                                                    direction="row"
+                                                    spacing={1.5}
+                                                >
                                                     <Box
                                                         sx={{
                                                             display: 'grid',
-                                                            placeItems: 'center',
+                                                            placeItems:
+                                                                'center',
                                                             width: 42,
                                                             height: 42,
                                                             borderRadius: 2,
-                                                            bgcolor: 'primary.main',
+                                                            bgcolor:
+                                                                'primary.main',
                                                             color: 'primary.contrastText',
                                                             flexShrink: 0,
                                                         }}
@@ -1061,7 +1174,9 @@ export default function Dashboard() {
                                                     <Box sx={{ minWidth: 0 }}>
                                                         <Typography
                                                             variant="subtitle1"
-                                                            sx={{ fontWeight: 700 }}
+                                                            sx={{
+                                                                fontWeight: 700,
+                                                            }}
                                                         >
                                                             {item.title}
                                                         </Typography>
@@ -1121,7 +1236,9 @@ export default function Dashboard() {
                                         <SchoolRoundedIcon color="primary" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={t('dashboard.account.establishment')}
+                                        primary={t(
+                                            'dashboard.account.establishment',
+                                        )}
                                         secondary={establishmentName}
                                     />
                                 </ListItem>
@@ -1141,10 +1258,14 @@ export default function Dashboard() {
                                         <MailOutlineRoundedIcon color="primary" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={t('dashboard.account.emailVerification')}
+                                        primary={t(
+                                            'dashboard.account.emailVerification',
+                                        )}
                                         secondary={
                                             auth.user.email_verified_at
-                                                ? t('dashboard.account.verified')
+                                                ? t(
+                                                      'dashboard.account.verified',
+                                                  )
                                                 : t('dashboard.account.pending')
                                         }
                                     />

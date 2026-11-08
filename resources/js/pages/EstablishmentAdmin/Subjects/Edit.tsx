@@ -60,7 +60,9 @@ export default function SubjectsEdit({ subject }: Props) {
                         setData={form.setData}
                         onSubmit={(event) => {
                             event.preventDefault();
-                            form.put(`/establishment-admin/subjects/${subject.id}`);
+                            form.put(
+                                `/establishment-admin/subjects/${subject.id}`,
+                            );
                         }}
                     />
                 </div>

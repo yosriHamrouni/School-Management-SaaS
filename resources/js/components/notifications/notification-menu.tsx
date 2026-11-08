@@ -74,7 +74,9 @@ export default function NotificationMenu() {
                 onClose={() => setAnchorEl(null)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{ sx: { width: 380, maxWidth: 'calc(100vw - 24px)' } }}
+                PaperProps={{
+                    sx: { width: 380, maxWidth: 'calc(100vw - 24px)' },
+                }}
             >
                 <Box sx={{ px: 2, py: 1.5 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
@@ -95,15 +97,19 @@ export default function NotificationMenu() {
                             <ListItemButton
                                 key={notification.id}
                                 onClick={() => {
-                                    if (! notification.read_at) {
+                                    if (!notification.read_at) {
                                         router.patch(
                                             `/notifications/${notification.id}`,
                                             {},
                                             {
                                                 preserveScroll: true,
                                                 onSuccess: () => {
-                                                    if (notification.action_url) {
-                                                        router.visit(notification.action_url);
+                                                    if (
+                                                        notification.action_url
+                                                    ) {
+                                                        router.visit(
+                                                            notification.action_url,
+                                                        );
                                                     }
                                                 },
                                             },
@@ -119,22 +125,38 @@ export default function NotificationMenu() {
                                 sx={{
                                     alignItems: 'flex-start',
                                     gap: 1.5,
-                                    bgcolor: notification.read_at ? 'transparent' : 'action.hover',
+                                    bgcolor: notification.read_at
+                                        ? 'transparent'
+                                        : 'action.hover',
                                 }}
                             >
                                 <ListItemText
                                     primary={notification.title}
-                                    primaryTypographyProps={{ fontWeight: notification.read_at ? 500 : 700 }}
+                                    primaryTypographyProps={{
+                                        fontWeight: notification.read_at
+                                            ? 500
+                                            : 700,
+                                    }}
                                     secondary={
                                         <Stack spacing={0.5} sx={{ mt: 0.5 }}>
                                             {notification.body ? (
-                                                <Typography variant="body2" color="text.secondary">
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
                                                     {notification.body}
                                                 </Typography>
                                             ) : null}
-                                            <Typography variant="caption" color="text.secondary">
+                                            <Typography
+                                                variant="caption"
+                                                color="text.secondary"
+                                            >
                                                 {notification.created_at
-                                                    ? dateFormatter.format(new Date(notification.created_at))
+                                                    ? dateFormatter.format(
+                                                          new Date(
+                                                              notification.created_at,
+                                                          ),
+                                                      )
                                                     : ''}
                                             </Typography>
                                         </Stack>

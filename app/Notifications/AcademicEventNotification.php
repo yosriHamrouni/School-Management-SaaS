@@ -18,8 +18,7 @@ class AcademicEventNotification extends Notification
         private readonly string $category,
         private readonly ?string $actionUrl = null,
         private readonly array $metadata = [],
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {

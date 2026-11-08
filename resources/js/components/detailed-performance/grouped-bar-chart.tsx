@@ -80,7 +80,10 @@ export default function GroupedBarChart({
                         <Stack direction="row" spacing={1.25} alignItems="end">
                             {series.map((item, seriesIndex) => {
                                 const value = item.values[labelIndex] ?? 0;
-                                const height = Math.max((value / maxValue) * 180, 6);
+                                const height = Math.max(
+                                    (value / maxValue) * 180,
+                                    6,
+                                );
 
                                 return (
                                     <Stack
@@ -101,7 +104,11 @@ export default function GroupedBarChart({
                                                 maxWidth: 42,
                                                 height,
                                                 borderRadius: '12px 12px 0 0',
-                                                bgcolor: COLORS[seriesIndex % COLORS.length],
+                                                bgcolor:
+                                                    COLORS[
+                                                        seriesIndex %
+                                                            COLORS.length
+                                                    ],
                                             }}
                                         />
                                     </Stack>

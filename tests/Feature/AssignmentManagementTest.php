@@ -10,6 +10,9 @@ use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\Subject;
 use App\Models\User;
+use App\Notifications\AcademicEventNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('teacher can create an assignment for an assigned class subject and notify class students', function () {
@@ -40,12 +43,12 @@ test('teacher can create an assignment for an assigned class subject and notify 
     $this->assertDatabaseHas('notifications', [
         'notifiable_type' => User::class,
         'notifiable_id' => $context['student']->id,
-        'type' => \App\Notifications\AcademicEventNotification::class,
+        'type' => AcademicEventNotification::class,
     ]);
     $this->assertDatabaseHas('notifications', [
         'notifiable_type' => User::class,
         'notifiable_id' => $context['second_student']->id,
-        'type' => \App\Notifications\AcademicEventNotification::class,
+        'type' => AcademicEventNotification::class,
     ]);
 });
 
@@ -253,15 +256,15 @@ function createAssignmentStudent(
         'updated_at' => now(),
     ];
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'academic_year_id')) {
+    if (Schema::hasColumn('class_students', 'academic_year_id')) {
         $payload['academic_year_id'] = $academicYearId;
     }
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'establishment_id')) {
+    if (Schema::hasColumn('class_students', 'establishment_id')) {
         $payload['establishment_id'] = $establishment->id;
     }
 
-    \Illuminate\Support\Facades\DB::table('class_students')->insert($payload);
+    DB::table('class_students')->insert($payload);
 
     return $student;
 }

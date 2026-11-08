@@ -32,7 +32,8 @@ export default function TeacherClassesIndex({ classes }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <h1 className="text-2xl font-semibold">My Classes</h1>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        Review the classes and subjects currently assigned to you.
+                        Review the classes and subjects currently assigned to
+                        you.
                     </p>
                 </div>
 
@@ -45,9 +46,15 @@ export default function TeacherClassesIndex({ classes }: Props) {
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div>
-                                        <h2 className="text-lg font-semibold">{schoolClass.name}</h2>
+                                        <h2 className="text-lg font-semibold">
+                                            {schoolClass.name}
+                                        </h2>
                                         <p className="mt-1 text-sm text-muted-foreground">
-                                            {schoolClass.level_name ?? 'No level'} · {schoolClass.academic_year_name ?? 'No academic year'}
+                                            {schoolClass.level_name ??
+                                                'No level'}{' '}
+                                            ·{' '}
+                                            {schoolClass.academic_year_name ??
+                                                'No academic year'}
                                         </p>
                                     </div>
                                     <div className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
@@ -56,7 +63,9 @@ export default function TeacherClassesIndex({ classes }: Props) {
                                 </div>
 
                                 <div className="mt-5">
-                                    <p className="text-sm font-medium">Subjects</p>
+                                    <p className="text-sm font-medium">
+                                        Subjects
+                                    </p>
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {schoolClass.subjects.map((subject) => (
                                             <span
@@ -71,10 +80,14 @@ export default function TeacherClassesIndex({ classes }: Props) {
 
                                 <div className="mt-5 flex gap-2">
                                     <Button variant="outline" asChild>
-                                        <Link href="/evaluations">Open evaluations</Link>
+                                        <Link href="/evaluations">
+                                            Open evaluations
+                                        </Link>
                                     </Button>
                                     <Button variant="outline" asChild>
-                                        <Link href="/teacher/schedules">View schedule</Link>
+                                        <Link href="/teacher/schedules">
+                                            View schedule
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>
@@ -82,7 +95,9 @@ export default function TeacherClassesIndex({ classes }: Props) {
                     </div>
                 ) : (
                     <div className="rounded-xl border border-sidebar-border/70 bg-background px-6 py-8 text-sm text-muted-foreground">
-                        No classes are assigned to you yet. Ask your establishment admin to configure your class-subject assignments.
+                        No classes are assigned to you yet. Ask your
+                        establishment admin to configure your class-subject
+                        assignments.
                     </div>
                 )}
             </div>

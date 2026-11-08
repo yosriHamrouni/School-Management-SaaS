@@ -55,7 +55,9 @@ export default function ScheduleFormModal({
 }: Props) {
     const form = useForm<ScheduleModalData>(initialData);
     const isEditing = initialData.id !== null;
-    const errorMessages = Object.values(form.errors).filter(Boolean) as string[];
+    const errorMessages = Object.values(form.errors).filter(
+        Boolean,
+    ) as string[];
 
     const handleSubmit = () => {
         const options = {
@@ -93,7 +95,9 @@ export default function ScheduleFormModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>{isEditing ? 'Edit schedule' : 'Create schedule'}</DialogTitle>
+                    <DialogTitle>
+                        {isEditing ? 'Edit schedule' : 'Create schedule'}
+                    </DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? 'Update the selected teaching session.'
@@ -114,12 +118,17 @@ export default function ScheduleFormModal({
                         <select
                             id="modal_class_id"
                             value={form.data.class_id}
-                            onChange={(event) => form.setData('class_id', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('class_id', event.target.value)
+                            }
                             className={selectClassName}
                         >
                             <option value="">Select a class</option>
                             {classes.map((schoolClass) => (
-                                <option key={schoolClass.id} value={String(schoolClass.id)}>
+                                <option
+                                    key={schoolClass.id}
+                                    value={String(schoolClass.id)}
+                                >
                                     {schoolClass.name}
                                 </option>
                             ))}
@@ -132,12 +141,17 @@ export default function ScheduleFormModal({
                         <select
                             id="modal_subject_id"
                             value={form.data.subject_id}
-                            onChange={(event) => form.setData('subject_id', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('subject_id', event.target.value)
+                            }
                             className={selectClassName}
                         >
                             <option value="">Select a subject</option>
                             {subjects.map((subject) => (
-                                <option key={subject.id} value={String(subject.id)}>
+                                <option
+                                    key={subject.id}
+                                    value={String(subject.id)}
+                                >
                                     {subject.name}
                                 </option>
                             ))}
@@ -150,12 +164,17 @@ export default function ScheduleFormModal({
                         <select
                             id="modal_teacher_id"
                             value={form.data.teacher_id}
-                            onChange={(event) => form.setData('teacher_id', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('teacher_id', event.target.value)
+                            }
                             className={selectClassName}
                         >
                             <option value="">Select a teacher</option>
                             {teachers.map((teacher) => (
-                                <option key={teacher.id} value={String(teacher.id)}>
+                                <option
+                                    key={teacher.id}
+                                    value={String(teacher.id)}
+                                >
                                     {teacher.name}
                                 </option>
                             ))}
@@ -168,7 +187,9 @@ export default function ScheduleFormModal({
                         <select
                             id="modal_day_of_week"
                             value={form.data.day_of_week}
-                            onChange={(event) => form.setData('day_of_week', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('day_of_week', event.target.value)
+                            }
                             className={selectClassName}
                         >
                             <option value="">Select a day</option>
@@ -187,7 +208,9 @@ export default function ScheduleFormModal({
                             id="modal_start_time"
                             type="time"
                             value={form.data.start_time}
-                            onChange={(event) => form.setData('start_time', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('start_time', event.target.value)
+                            }
                         />
                         <InputError message={form.errors.start_time} />
                     </div>
@@ -198,7 +221,9 @@ export default function ScheduleFormModal({
                             id="modal_end_time"
                             type="time"
                             value={form.data.end_time}
-                            onChange={(event) => form.setData('end_time', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('end_time', event.target.value)
+                            }
                         />
                         <InputError message={form.errors.end_time} />
                     </div>

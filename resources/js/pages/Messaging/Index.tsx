@@ -67,7 +67,8 @@ export default function MessagingIndex({
 
     const selectedConversationSummary = conversations.find(
         (conversation) =>
-            conversation.participant.id === selectedConversation?.participant.id,
+            conversation.participant.id ===
+            selectedConversation?.participant.id,
     );
 
     useEffect(() => {
@@ -170,16 +171,17 @@ export default function MessagingIndex({
                                     spacing={1}
                                     sx={{ mt: 1, flexWrap: 'wrap' }}
                                 >
-                                    {(selectedConversation?.participant.roles ?? []).map(
-                                        (role) => (
-                                            <Chip
-                                                key={role}
-                                                size="small"
-                                                variant="outlined"
-                                                label={role}
-                                            />
-                                        ),
-                                    )}
+                                    {(
+                                        selectedConversation?.participant
+                                            .roles ?? []
+                                    ).map((role) => (
+                                        <Chip
+                                            key={role}
+                                            size="small"
+                                            variant="outlined"
+                                            label={role}
+                                        />
+                                    ))}
                                 </Stack>
                             </Box>
 
@@ -196,7 +198,9 @@ export default function MessagingIndex({
                                         setData('receiver_id', nextValue);
 
                                         if (nextValue) {
-                                            router.get(`/messaging/${nextValue}`);
+                                            router.get(
+                                                `/messaging/${nextValue}`,
+                                            );
                                         }
                                     }}
                                     sx={{ minWidth: { xs: '100%', sm: 260 } }}

@@ -3,12 +3,16 @@ import ShieldRoundedIcon from '@mui/icons-material/ShieldRounded';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { Chip, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
-import PageHeader from '@/components/ui/page-header';
 import RiskFilters from '@/components/Risk/RiskFilters';
 import RiskStudentTable from '@/components/Risk/RiskStudentTable';
+import PageHeader from '@/components/ui/page-header';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import type { RiskFilters as RiskFiltersShape, RiskListResponse, RiskOption } from '@/utils/risk';
+import type {
+    RiskFilters as RiskFiltersShape,
+    RiskListResponse,
+    RiskOption,
+} from '@/utils/risk';
 import { buildRiskStudentsApiUrl } from '@/utils/risk';
 
 type Props = {
@@ -60,7 +64,9 @@ export default function RiskIndex({
                 });
 
                 if (!request.ok) {
-                    throw new Error('Impossible de charger les analyses de risque.');
+                    throw new Error(
+                        'Impossible de charger les analyses de risque.',
+                    );
                 }
 
                 const payload = (await request.json()) as RiskListResponse;
@@ -143,7 +149,12 @@ export default function RiskIndex({
                     title="Analyse des risques"
                     description="Identifiez rapidement les eleves les plus fragiles, comprenez les causes principales et accedez au detail de chaque analyse sans quitter l espace de pilotage."
                     actions={
-                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            useFlexGap
+                            flexWrap="wrap"
+                        >
                             <Chip
                                 color="primary"
                                 variant="outlined"

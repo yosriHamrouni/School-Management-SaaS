@@ -50,7 +50,9 @@ export default function SchedulesShow({ schedule }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">{schedule.class_name ?? 'Schedule'}</h1>
+                            <h1 className="text-2xl font-semibold">
+                                {schedule.class_name ?? 'Schedule'}
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Session details for the selected time slot.
                             </p>
@@ -58,10 +60,16 @@ export default function SchedulesShow({ schedule }: Props) {
 
                         <div className="flex gap-2">
                             <Button variant="outline" asChild>
-                                <Link href="/establishment-admin/schedules">Back</Link>
+                                <Link href="/establishment-admin/schedules">
+                                    Back
+                                </Link>
                             </Button>
                             <Button asChild>
-                                <Link href={`/establishment-admin/schedules/${schedule.id}/edit`}>Edit</Link>
+                                <Link
+                                    href={`/establishment-admin/schedules/${schedule.id}/edit`}
+                                >
+                                    Edit
+                                </Link>
                             </Button>
                         </div>
                     </div>
@@ -70,11 +78,16 @@ export default function SchedulesShow({ schedule }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="grid gap-4 md:grid-cols-2">
                         {detailRows(schedule).map((row) => (
-                            <div key={row.label} className="rounded-lg border border-border p-4">
-                                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <div
+                                key={row.label}
+                                className="rounded-lg border border-border p-4"
+                            >
+                                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                     {row.label}
                                 </p>
-                                <p className="mt-2 text-sm text-foreground">{row.value}</p>
+                                <p className="mt-2 text-sm text-foreground">
+                                    {row.value}
+                                </p>
                             </div>
                         ))}
                     </div>

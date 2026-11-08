@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class BulletinService
 {
-    public function __construct(private readonly GradeService $gradeService)
-    {
-    }
+    public function __construct(private readonly GradeService $gradeService) {}
 
     public function getStudentReport(int $studentId, int $termId): array
     {

@@ -79,7 +79,9 @@ export default function TeacherForm({
                     <Input
                         id="name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         placeholder="Teacher name"
                     />
                     <InputError message={errors.name} />
@@ -91,7 +93,9 @@ export default function TeacherForm({
                         id="email"
                         type="email"
                         value={data.email}
-                        onChange={(event) => setData('email', event.target.value)}
+                        onChange={(event) =>
+                            setData('email', event.target.value)
+                        }
                         placeholder="teacher@school.test"
                     />
                     <InputError message={errors.email} />
@@ -140,12 +144,15 @@ export default function TeacherForm({
                     {assignmentOptions.length > 0 ? (
                         <div className="grid gap-4">
                             {assignmentOptions.map((group) => {
-                                const classKeys = group.subjects.map((subject) => subject.key);
+                                const classKeys = group.subjects.map(
+                                    (subject) => subject.key,
+                                );
                                 const selectedCount = classKeys.filter((key) =>
                                     data.assignments.includes(key),
                                 ).length;
                                 const allSelected =
-                                    classKeys.length > 0 && selectedCount === classKeys.length;
+                                    classKeys.length > 0 &&
+                                    selectedCount === classKeys.length;
 
                                 return (
                                     <div
@@ -158,7 +165,9 @@ export default function TeacherForm({
                                                     Class: {group.class_name}
                                                 </p>
                                                 <p className="mt-1 text-xs text-muted-foreground">
-                                                    Choose the subjects this teacher handles in this class.
+                                                    Choose the subjects this
+                                                    teacher handles in this
+                                                    class.
                                                 </p>
                                             </div>
 
@@ -167,7 +176,11 @@ export default function TeacherForm({
                                                     type="checkbox"
                                                     checked={allSelected}
                                                     onChange={(event) =>
-                                                        toggleClassAssignments(classKeys, event.target.checked)
+                                                        toggleClassAssignments(
+                                                            classKeys,
+                                                            event.target
+                                                                .checked,
+                                                        )
                                                     }
                                                 />
                                                 <span>
@@ -187,17 +200,27 @@ export default function TeacherForm({
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        checked={data.assignments.includes(subject.key)}
+                                                        checked={data.assignments.includes(
+                                                            subject.key,
+                                                        )}
                                                         onChange={(event) =>
-                                                            toggleAssignment(subject.key, event.target.checked)
+                                                            toggleAssignment(
+                                                                subject.key,
+                                                                event.target
+                                                                    .checked,
+                                                            )
                                                         }
                                                     />
                                                     <div className="flex flex-col">
                                                         <span className="font-medium">
-                                                            {subject.subject_name}
+                                                            {
+                                                                subject.subject_name
+                                                            }
                                                         </span>
                                                         <span className="text-xs text-muted-foreground">
-                                                            Assign subject to teacher for {group.class_name}
+                                                            Assign subject to
+                                                            teacher for{' '}
+                                                            {group.class_name}
                                                         </span>
                                                     </div>
                                                 </label>
@@ -209,7 +232,8 @@ export default function TeacherForm({
                         </div>
                     ) : (
                         <div className="rounded-lg border border-border px-4 py-3 text-sm text-muted-foreground">
-                            No classes or subjects are available yet in this establishment.
+                            No classes or subjects are available yet in this
+                            establishment.
                         </div>
                     )}
 

@@ -53,7 +53,9 @@ export default function ParentForm({
                     <Input
                         id="name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         placeholder="Parent name"
                     />
                     <InputError message={errors.name} />
@@ -65,7 +67,9 @@ export default function ParentForm({
                         id="email"
                         type="email"
                         value={data.email}
-                        onChange={(event) => setData('email', event.target.value)}
+                        onChange={(event) =>
+                            setData('email', event.target.value)
+                        }
                         placeholder="parent@school.test"
                     />
                     <InputError message={errors.email} />
@@ -125,10 +129,14 @@ export default function ParentForm({
                                         setData(
                                             'student_ids',
                                             event.target.checked
-                                                ? [...data.student_ids, student.id]
+                                                ? [
+                                                      ...data.student_ids,
+                                                      student.id,
+                                                  ]
                                                 : data.student_ids.filter(
                                                       (studentId) =>
-                                                          studentId !== student.id,
+                                                          studentId !==
+                                                          student.id,
                                                   ),
                                         )
                                     }

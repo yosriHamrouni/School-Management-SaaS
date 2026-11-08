@@ -92,7 +92,9 @@ export default function EstablishmentsShow({ establishment }: Props) {
                                     )
                                 }
                             >
-                                {establishment.is_active ? 'Disable' : 'Activate'}
+                                {establishment.is_active
+                                    ? 'Disable'
+                                    : 'Activate'}
                             </Button>
                         </div>
                     </div>
@@ -105,7 +107,7 @@ export default function EstablishmentsShow({ establishment }: Props) {
                                 key={field.label}
                                 className="rounded-lg border border-border p-4"
                             >
-                                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                     {field.label}
                                 </p>
                                 <p className="mt-2 text-sm text-foreground">

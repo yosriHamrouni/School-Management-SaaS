@@ -51,14 +51,18 @@ export default function SchedulesEdit(props: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Edit Schedule</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Edit Schedule
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Update the selected teaching session.
                             </p>
                         </div>
 
                         <Button variant="outline" asChild>
-                            <Link href="/establishment-admin/schedules">Back to list</Link>
+                            <Link href="/establishment-admin/schedules">
+                                Back to list
+                            </Link>
                         </Button>
                     </div>
                 </div>
@@ -76,7 +80,9 @@ export default function SchedulesEdit(props: Props) {
                         setData={form.setData}
                         onSubmit={(event) => {
                             event.preventDefault();
-                            form.put(`/establishment-admin/schedules/${props.schedule.id}`);
+                            form.put(
+                                `/establishment-admin/schedules/${props.schedule.id}`,
+                            );
                         }}
                     />
                 </div>

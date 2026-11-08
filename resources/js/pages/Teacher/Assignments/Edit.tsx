@@ -48,13 +48,18 @@ export default function TeacherAssignmentsEdit({
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Edit Assignment</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Edit Assignment
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Update the assignment details and due date for your class.
+                                Update the assignment details and due date for
+                                your class.
                             </p>
                         </div>
                         <Button variant="outline" asChild>
-                            <Link href="/teacher/assignments">Back to list</Link>
+                            <Link href="/teacher/assignments">
+                                Back to list
+                            </Link>
                         </Button>
                     </div>
                 </div>

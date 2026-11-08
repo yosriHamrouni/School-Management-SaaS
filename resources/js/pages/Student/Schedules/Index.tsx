@@ -23,9 +23,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function StudentSchedulesIndex({ calendarFeedUrl, className }: Props) {
+export default function StudentSchedulesIndex({
+    calendarFeedUrl,
+    className,
+}: Props) {
     const [events, setEvents] = useState<ScheduleCalendarEvent[]>([]);
-    const summaries = useMemo(() => buildScheduleSummaries(events, 'student'), [events]);
+    const summaries = useMemo(
+        () => buildScheduleSummaries(events, 'student'),
+        [events],
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -13,6 +13,7 @@ use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -192,11 +193,11 @@ function studentAssignmentContext(string $suffix = 'default'): array
         'updated_at' => now(),
     ];
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'academic_year_id')) {
+    if (Schema::hasColumn('class_students', 'academic_year_id')) {
         $payload['academic_year_id'] = $class->academic_year_id;
     }
 
-    if (\Illuminate\Support\Facades\Schema::hasColumn('class_students', 'establishment_id')) {
+    if (Schema::hasColumn('class_students', 'establishment_id')) {
         $payload['establishment_id'] = $establishment->id;
     }
 

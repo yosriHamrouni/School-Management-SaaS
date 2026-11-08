@@ -95,25 +95,36 @@ export default function TeacherAttendancesIndex({
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">Attendance Sessions</h1>
+                        <h1 className="text-2xl font-semibold">
+                            Attendance Sessions
+                        </h1>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Select one of your sessions and record attendance in bulk for the class.
+                            Select one of your sessions and record attendance in
+                            bulk for the class.
                         </p>
                     </div>
 
                     <Button variant="outline" asChild>
-                        <Link href="/teacher/attendances/history">Open history</Link>
+                        <Link href="/teacher/attendances/history">
+                            Open history
+                        </Link>
                     </Button>
                 </div>
 
                 <FlashAlerts flash={flash} />
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitFilters} className="grid gap-4 md:grid-cols-4">
+                    <form
+                        onSubmit={submitFilters}
+                        className="grid gap-4 md:grid-cols-4"
+                    >
                         <Input
                             value={form.search}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, search: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    search: event.target.value,
+                                }))
                             }
                             placeholder="Search by class, subject or day"
                         />
@@ -121,13 +132,19 @@ export default function TeacherAttendancesIndex({
                         <select
                             value={form.class_id}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, class_id: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    class_id: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
                             <option value="">All classes</option>
                             {classes.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -136,7 +153,10 @@ export default function TeacherAttendancesIndex({
                         <select
                             value={form.day_of_week}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, day_of_week: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    day_of_week: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
@@ -150,7 +170,11 @@ export default function TeacherAttendancesIndex({
 
                         <div className="flex gap-2">
                             <Button type="submit">Apply filters</Button>
-                            <Button type="button" variant="outline" onClick={resetFilters}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={resetFilters}
+                            >
                                 Reset
                             </Button>
                         </div>
@@ -162,35 +186,65 @@ export default function TeacherAttendancesIndex({
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Class</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Subject</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Day</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Time</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Recorded</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Last update</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Action</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Class
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Subject
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Day
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Time
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Recorded
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Last update
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {schedules.data.length > 0 ? (
                                     schedules.data.map((schedule) => (
-                                        <tr key={schedule.id} className="hover:bg-muted/30">
-                                            <td className="px-4 py-3 text-sm">{schedule.class_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.subject_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{schedule.day_of_week}</td>
+                                        <tr
+                                            key={schedule.id}
+                                            className="hover:bg-muted/30"
+                                        >
                                             <td className="px-4 py-3 text-sm">
-                                                {schedule.start_time} - {schedule.end_time}
+                                                {schedule.class_name ?? '-'}
                                             </td>
-                                            <td className="px-4 py-3 text-sm">{schedule.attendance_count}</td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.subject_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.day_of_week}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.start_time} -{' '}
+                                                {schedule.end_time}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {schedule.attendance_count}
+                                            </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {schedule.last_recorded_at
-                                                    ? new Date(schedule.last_recorded_at).toLocaleString()
+                                                    ? new Date(
+                                                          schedule.last_recorded_at,
+                                                      ).toLocaleString()
                                                     : '-'}
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end">
                                                     <Button size="sm" asChild>
-                                                        <Link href={`/teacher/attendances/${schedule.id}/edit`}>
+                                                        <Link
+                                                            href={`/teacher/attendances/${schedule.id}/edit`}
+                                                        >
                                                             Record attendance
                                                         </Link>
                                                     </Button>
@@ -200,8 +254,12 @@ export default function TeacherAttendancesIndex({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-6 text-center text-sm text-muted-foreground">
-                                            No teaching sessions match the current filters.
+                                        <td
+                                            colSpan={7}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
+                                            No teaching sessions match the
+                                            current filters.
                                         </td>
                                     </tr>
                                 )}
@@ -223,10 +281,16 @@ export default function TeacherAttendancesIndex({
                                 <Link
                                     href={link.url}
                                     preserveScroll
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

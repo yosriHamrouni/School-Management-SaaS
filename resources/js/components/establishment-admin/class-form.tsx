@@ -48,7 +48,9 @@ export default function ClassForm({
                     <Input
                         id="name"
                         value={data.name}
-                        onChange={(event) => setData('name', event.target.value)}
+                        onChange={(event) =>
+                            setData('name', event.target.value)
+                        }
                         placeholder="Class A"
                     />
                     <InputError message={errors.name} />
@@ -62,7 +64,7 @@ export default function ClassForm({
                         onChange={(event) =>
                             setData('level_id', event.target.value)
                         }
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
+                        className="h-9 rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     >
                         <option value="">Select a level</option>
                         {levels.map((level) => (
@@ -82,7 +84,7 @@ export default function ClassForm({
                         onChange={(event) =>
                             setData('academic_year_id', event.target.value)
                         }
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
+                        className="h-9 rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     >
                         <option value="">Select an academic year</option>
                         {academicYears.map((academicYear) => (

@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import EvaluationForm, { type EvaluationFormData } from '@/components/evaluations/evaluation-form';
+import EvaluationForm from '@/components/evaluations/evaluation-form';
+import type { EvaluationFormData } from '@/components/evaluations/evaluation-form';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -29,7 +30,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Edit', href: '#' },
 ];
 
-export default function EvaluationsEdit({ evaluation, assignments, terms }: Props) {
+export default function EvaluationsEdit({
+    evaluation,
+    assignments,
+    terms,
+}: Props) {
     const form = useForm<EvaluationFormData>({
         title: evaluation.title,
         class_id: String(evaluation.class_id),
@@ -50,9 +55,12 @@ export default function EvaluationsEdit({ evaluation, assignments, terms }: Prop
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold">Edit Evaluation</h1>
+                            <h1 className="text-2xl font-semibold">
+                                Edit Evaluation
+                            </h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Update the assessment metadata before continuing with grade entry.
+                                Update the assessment metadata before continuing
+                                with grade entry.
                             </p>
                         </div>
                         <Button variant="outline" asChild>

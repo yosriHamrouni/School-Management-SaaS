@@ -15,8 +15,7 @@ class MessageSent implements ShouldBroadcastNow
 
     public function __construct(
         public Message $message,
-    ) {
-    }
+    ) {}
 
     public function broadcastAs(): string
     {

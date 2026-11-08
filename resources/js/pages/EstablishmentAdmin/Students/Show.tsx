@@ -45,19 +45,38 @@ export default function StudentsShow({ student }: Props) {
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold">{student.name}</h1>
-                            <p className="mt-2 text-sm text-muted-foreground">Student details.</p>
+                            <h1 className="text-2xl font-semibold">
+                                {student.name}
+                            </h1>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Student details.
+                            </p>
                         </div>
                         <div className="flex gap-2">
-                            <Button variant="outline" asChild><Link href="/establishment-admin/students">Back</Link></Button>
-                            <Button asChild><Link href={`/establishment-admin/students/${student.id}/edit`}>Edit</Link></Button>
+                            <Button variant="outline" asChild>
+                                <Link href="/establishment-admin/students">
+                                    Back
+                                </Link>
+                            </Button>
+                            <Button asChild>
+                                <Link
+                                    href={`/establishment-admin/students/${student.id}/edit`}
+                                >
+                                    Edit
+                                </Link>
+                            </Button>
                         </div>
                     </div>
                 </div>
                 <div className="grid gap-4 rounded-xl border border-sidebar-border/70 bg-background p-6 md:grid-cols-3">
                     {rows.map(([label, value]) => (
-                        <div key={label} className="rounded-lg border border-border p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+                        <div
+                            key={label}
+                            className="rounded-lg border border-border p-4"
+                        >
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                                {label}
+                            </p>
                             <p className="mt-2 text-sm">{value}</p>
                         </div>
                     ))}

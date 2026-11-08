@@ -68,8 +68,11 @@ export default function TeacherAssignmentsIndex({
         const seen = new Map<number, string>();
 
         assignmentOptions.forEach((assignment) => {
-            if (! seen.has(assignment.class_id)) {
-                seen.set(assignment.class_id, assignment.label.split(' - ')[0] ?? assignment.label);
+            if (!seen.has(assignment.class_id)) {
+                seen.set(
+                    assignment.class_id,
+                    assignment.label.split(' - ')[0] ?? assignment.label,
+                );
             }
         });
 
@@ -78,15 +81,18 @@ export default function TeacherAssignmentsIndex({
 
     const subjectOptions = useMemo(() => {
         const filtered = form.class_id
-            ? assignmentOptions.filter((assignment) => String(assignment.class_id) === form.class_id)
+            ? assignmentOptions.filter(
+                  (assignment) => String(assignment.class_id) === form.class_id,
+              )
             : assignmentOptions;
 
         const seen = new Map<number, string>();
 
         filtered.forEach((assignment) => {
-            const subjectName = assignment.label.split(' - ')[1] ?? assignment.label;
+            const subjectName =
+                assignment.label.split(' - ')[1] ?? assignment.label;
 
-            if (! seen.has(assignment.subject_id)) {
+            if (!seen.has(assignment.subject_id)) {
                 seen.set(assignment.subject_id, subjectName);
             }
         });
@@ -104,7 +110,7 @@ export default function TeacherAssignmentsIndex({
     };
 
     const handleDelete = (id: number) => {
-        if (! window.confirm('Delete this assignment?')) {
+        if (!window.confirm('Delete this assignment?')) {
             return;
         }
 
@@ -122,23 +128,32 @@ export default function TeacherAssignmentsIndex({
                     <div>
                         <h1 className="text-2xl font-semibold">Assignments</h1>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Publish and manage assignments for the classes and subjects you teach.
+                            Publish and manage assignments for the classes and
+                            subjects you teach.
                         </p>
                     </div>
 
                     <Button asChild>
-                        <Link href="/teacher/assignments/create">Create assignment</Link>
+                        <Link href="/teacher/assignments/create">
+                            Create assignment
+                        </Link>
                     </Button>
                 </div>
 
                 <FlashAlerts flash={flash} />
 
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-4">
-                    <form onSubmit={submitSearch} className="grid gap-4 xl:grid-cols-4">
+                    <form
+                        onSubmit={submitSearch}
+                        className="grid gap-4 xl:grid-cols-4"
+                    >
                         <Input
                             value={form.search}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, search: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    search: event.target.value,
+                                }))
                             }
                             placeholder="Search title, class or subject"
                         />
@@ -156,7 +171,10 @@ export default function TeacherAssignmentsIndex({
                         >
                             <option value="">All classes</option>
                             {classOptions.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -165,13 +183,19 @@ export default function TeacherAssignmentsIndex({
                         <select
                             value={form.subject_id}
                             onChange={(event) =>
-                                setForm((current) => ({ ...current, subject_id: event.target.value }))
+                                setForm((current) => ({
+                                    ...current,
+                                    subject_id: event.target.value,
+                                }))
                             }
                             className={selectClassName}
                         >
                             <option value="">All subjects</option>
                             {subjectOptions.map((option) => (
-                                <option key={option.id} value={String(option.id)}>
+                                <option
+                                    key={option.id}
+                                    value={String(option.id)}
+                                >
                                     {option.name}
                                 </option>
                             ))}
@@ -207,50 +231,96 @@ export default function TeacherAssignmentsIndex({
                         <table className="min-w-full divide-y divide-border">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Title</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Class</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Subject</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Academic year</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Due date</th>
-                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Title
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Class
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Subject
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Academic year
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Due date
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {assignments.data.length > 0 ? (
                                     assignments.data.map((assignment) => (
-                                        <tr key={assignment.id} className="hover:bg-muted/30">
+                                        <tr
+                                            key={assignment.id}
+                                            className="hover:bg-muted/30"
+                                        >
                                             <td className="px-4 py-3 text-sm">
-                                                <div className="font-medium">{assignment.title}</div>
+                                                <div className="font-medium">
+                                                    {assignment.title}
+                                                </div>
                                                 {assignment.description ? (
                                                     <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                                                         {assignment.description}
                                                     </div>
                                                 ) : null}
                                             </td>
-                                            <td className="px-4 py-3 text-sm">{assignment.class_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{assignment.subject_name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-sm">{assignment.academic_year_name ?? '-'}</td>
                                             <td className="px-4 py-3 text-sm">
-                                                <span className={assignment.is_overdue ? 'text-red-600' : ''}>
+                                                {assignment.class_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {assignment.subject_name ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {assignment.academic_year_name ??
+                                                    '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                <span
+                                                    className={
+                                                        assignment.is_overdue
+                                                            ? 'text-red-600'
+                                                            : ''
+                                                    }
+                                                >
                                                     {assignment.due_date ?? '-'}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/teacher/assignment-submissions?assignment_id=${assignment.id}`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/teacher/assignment-submissions?assignment_id=${assignment.id}`}
+                                                        >
                                                             Submissions
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/teacher/assignments/${assignment.id}/edit`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={`/teacher/assignments/${assignment.id}/edit`}
+                                                        >
                                                             Edit
                                                         </Link>
                                                     </Button>
                                                     <Button
                                                         variant="destructive"
                                                         size="sm"
-                                                        onClick={() => handleDelete(assignment.id)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                assignment.id,
+                                                            )
+                                                        }
                                                     >
                                                         Delete
                                                     </Button>
@@ -260,8 +330,12 @@ export default function TeacherAssignmentsIndex({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-6 text-center text-sm text-muted-foreground">
-                                            No assignments have been published yet.
+                                        <td
+                                            colSpan={6}
+                                            className="px-4 py-6 text-center text-sm text-muted-foreground"
+                                        >
+                                            No assignments have been published
+                                            yet.
                                         </td>
                                     </tr>
                                 )}
@@ -276,17 +350,23 @@ export default function TeacherAssignmentsIndex({
                             key={`${link.label}-${index}`}
                             variant={link.active ? 'default' : 'outline'}
                             size="sm"
-                            disabled={! link.url}
+                            disabled={!link.url}
                             asChild={Boolean(link.url)}
                         >
                             {link.url ? (
                                 <Link
                                     href={link.url}
                                     preserveScroll
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ) : (
-                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
                             )}
                         </Button>
                     ))}

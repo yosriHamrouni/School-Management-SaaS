@@ -198,7 +198,7 @@
     }
 
     .schedule-calendar .fc .fc-col-header-cell-cushion {
-        @apply py-2 text-xs font-semibold uppercase text-muted-foreground no-underline;
+        @apply py-2 text-xs font-semibold text-muted-foreground uppercase no-underline;
     }
 
     .schedule-calendar .fc .fc-timegrid-axis-cushion,

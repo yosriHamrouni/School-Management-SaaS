@@ -3,6 +3,7 @@ import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +36,6 @@ import { useTranslation } from '@/i18n';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -119,7 +119,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                         <item.icon className="h-5 w-5" />
                                                     )}
                                                     <span>
-                                                        {translateNavTitle(item.title)}
+                                                        {translateNavTitle(
+                                                            item.title,
+                                                        )}
                                                     </span>
                                                 </Link>
                                             ))}
@@ -138,7 +140,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                         <item.icon className="h-5 w-5" />
                                                     )}
                                                     <span>
-                                                        {translateNavTitle(item.title)}
+                                                        {translateNavTitle(
+                                                            item.title,
+                                                        )}
                                                     </span>
                                                 </a>
                                             ))}
@@ -211,7 +215,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                 className="group inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                                             >
                                                 <span className="sr-only">
-                                                    {translateNavTitle(item.title)}
+                                                    {translateNavTitle(
+                                                        item.title,
+                                                    )}
                                                 </span>
                                                 {item.icon && (
                                                     <item.icon className="size-5 opacity-80 group-hover:opacity-100" />
@@ -219,7 +225,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                             </a>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>{translateNavTitle(item.title)}</p>
+                                            <p>
+                                                {translateNavTitle(item.title)}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 ))}

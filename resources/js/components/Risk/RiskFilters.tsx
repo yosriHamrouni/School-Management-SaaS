@@ -55,7 +55,9 @@ export default function RiskFilters({
                             label="Rechercher un eleve"
                             placeholder="Nom ou matricule"
                             value={values.search}
-                            onChange={(event) => onChange('search', event.target.value)}
+                            onChange={(event) =>
+                                onChange('search', event.target.value)
+                            }
                             size="small"
                             sx={{ minWidth: { xs: '100%', md: 260 }, flex: 1 }}
                             InputProps={{
@@ -67,72 +69,119 @@ export default function RiskFilters({
                             }}
                         />
 
-                        <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
-                            <InputLabel id="risk-school-year-label">Annee scolaire</InputLabel>
+                        <FormControl
+                            size="small"
+                            sx={{ minWidth: { xs: '100%', sm: 180 } }}
+                        >
+                            <InputLabel id="risk-school-year-label">
+                                Annee scolaire
+                            </InputLabel>
                             <Select
                                 labelId="risk-school-year-label"
                                 label="Annee scolaire"
                                 value={values.school_year_id}
-                                onChange={(event) => onChange('school_year_id', event.target.value)}
+                                onChange={(event) =>
+                                    onChange(
+                                        'school_year_id',
+                                        event.target.value,
+                                    )
+                                }
                             >
                                 {schoolYears.map((schoolYear) => (
-                                    <MenuItem key={schoolYear.id} value={String(schoolYear.id)}>
+                                    <MenuItem
+                                        key={schoolYear.id}
+                                        value={String(schoolYear.id)}
+                                    >
                                         {schoolYear.name}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
 
-                        <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
-                            <InputLabel id="risk-class-label">Classe</InputLabel>
+                        <FormControl
+                            size="small"
+                            sx={{ minWidth: { xs: '100%', sm: 160 } }}
+                        >
+                            <InputLabel id="risk-class-label">
+                                Classe
+                            </InputLabel>
                             <Select
                                 labelId="risk-class-label"
                                 label="Classe"
                                 value={values.class_id}
-                                onChange={(event) => onChange('class_id', event.target.value)}
+                                onChange={(event) =>
+                                    onChange('class_id', event.target.value)
+                                }
                             >
                                 <MenuItem value="">Toutes</MenuItem>
                                 {classes.map((schoolClass) => (
-                                    <MenuItem key={schoolClass.id} value={String(schoolClass.id)}>
+                                    <MenuItem
+                                        key={schoolClass.id}
+                                        value={String(schoolClass.id)}
+                                    >
                                         {schoolClass.name}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
 
-                        <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
-                            <InputLabel id="risk-level-label">Niveau de risque</InputLabel>
+                        <FormControl
+                            size="small"
+                            sx={{ minWidth: { xs: '100%', sm: 160 } }}
+                        >
+                            <InputLabel id="risk-level-label">
+                                Niveau de risque
+                            </InputLabel>
                             <Select
                                 labelId="risk-level-label"
                                 label="Niveau de risque"
                                 value={values.risk_level}
-                                onChange={(event) => onChange('risk_level', event.target.value)}
+                                onChange={(event) =>
+                                    onChange('risk_level', event.target.value)
+                                }
                             >
                                 {riskLevelOptions.map((option) => (
-                                    <MenuItem key={option.value || 'all'} value={option.value}>
+                                    <MenuItem
+                                        key={option.value || 'all'}
+                                        value={option.value}
+                                    >
                                         {option.label}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
 
-                        <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 150 } }}>
-                            <InputLabel id="risk-per-page-label">Pagination</InputLabel>
+                        <FormControl
+                            size="small"
+                            sx={{ minWidth: { xs: '100%', sm: 150 } }}
+                        >
+                            <InputLabel id="risk-per-page-label">
+                                Pagination
+                            </InputLabel>
                             <Select
                                 labelId="risk-per-page-label"
                                 label="Pagination"
                                 value={values.per_page}
-                                onChange={(event) => onChange('per_page', event.target.value)}
+                                onChange={(event) =>
+                                    onChange('per_page', event.target.value)
+                                }
                             >
                                 {perPageOptions.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
                                         {option.label}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
 
-                        <Stack direction="row" spacing={1.5} sx={{ ml: 'auto' }}>
+                        <Stack
+                            direction="row"
+                            spacing={1.5}
+                            sx={{ ml: 'auto' }}
+                        >
                             <Button
                                 type="button"
                                 variant="outlined"

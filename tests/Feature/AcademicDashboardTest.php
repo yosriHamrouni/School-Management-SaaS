@@ -1,12 +1,13 @@
 <?php
 
 use App\Models\AcademicYear;
-use App\Models\Evaluation;
 use App\Models\Establishment;
+use App\Models\Evaluation;
 use App\Models\Grade;
 use App\Models\Level;
 use App\Models\Role;
 use App\Models\SchoolClass;
+use App\Models\StudentProfile;
 use App\Models\Subject;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -178,7 +179,7 @@ function createAcademicDashboardStudent(Establishment $establishment): User
         Role::firstOrCreate(['name' => 'student'])->id,
     ]);
 
-    \App\Models\StudentProfile::create([
+    StudentProfile::create([
         'user_id' => $student->id,
         'establishment_id' => $establishment->id,
         'student_number' => fake()->unique()->bothify('STD-###'),

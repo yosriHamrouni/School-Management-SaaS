@@ -16,10 +16,12 @@ export default function PlatformAdminDashboard() {
 
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="rounded-xl border border-sidebar-border/70 bg-background p-6">
-                    <h1 className="text-2xl font-semibold">Platform Admin Dashboard</h1>
+                    <h1 className="text-2xl font-semibold">
+                        Platform Admin Dashboard
+                    </h1>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        Cette page est accessible uniquement aux utilisateurs ayant le role
-                        platform_admin.
+                        Cette page est accessible uniquement aux utilisateurs
+                        ayant le role platform_admin.
                     </p>
                 </div>
             </div>

@@ -18,8 +18,7 @@ class AssignmentSubmissionController extends Controller
 {
     public function __construct(
         private readonly AssignmentService $assignmentService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

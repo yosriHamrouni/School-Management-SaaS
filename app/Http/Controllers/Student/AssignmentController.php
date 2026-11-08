@@ -22,8 +22,7 @@ class AssignmentController extends Controller
         private readonly AssignmentService $assignmentService,
         private readonly AssignmentSubmissionService $submissionService,
         private readonly ActivityLogService $activityLogService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): Response
     {

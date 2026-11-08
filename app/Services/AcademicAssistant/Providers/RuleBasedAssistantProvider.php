@@ -34,7 +34,7 @@ class RuleBasedAssistantProvider implements AssistantProviderInterface
             return $this->classesAndStudentsAnswer($context);
         }
 
-        return "Bonjour. Je peux vous aider sur les notes, les moyennes, les absences, les retards, les classes et les eleves a risque, uniquement avec les donnees auxquelles vous avez acces.";
+        return 'Bonjour. Je peux vous aider sur les notes, les moyennes, les absences, les retards, les classes et les eleves a risque, uniquement avec les donnees auxquelles vous avez acces.';
     }
 
     private function gradesAnswer(array $context): string

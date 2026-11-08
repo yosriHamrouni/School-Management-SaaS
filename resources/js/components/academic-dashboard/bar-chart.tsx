@@ -45,7 +45,10 @@ export default function AcademicBarChart({
                             justifyContent="space-between"
                             spacing={2}
                         >
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 600 }}
+                            >
                                 {item.label}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
